@@ -22,8 +22,8 @@ export const ui = {
     'hero.contact':   'Entre em contato',
 
     'about.title':    'Sobre mim',
-    'about.p1':       'Desenvolvedor Fullstack com mais de 5 anos de experiência em sistemas enterprise para gestão de tempo, RH e workforce management.',
-    'about.p2':       'Passionate por criar soluções robustas e escaláveis, combinando backend robusto com interfaces modernas e responsivas.',
+    'about.p1':       'Sou desenvolvedor Full Stack com mais de 5 anos de experiência na criação de soluções digitais completas e escaláveis. Minha trajetória é marcada pela entrega de projetos que unem performance, design funcional e arquitetura robusta, sempre com foco na melhor experiência para o usuário.',
+    'about.p2':       'Ao longo da minha carreira, já coloquei no ar mais de 10 projetos para diferentes plataformas, atuando desde a concepção até a entrega final. Tenho um olhar atento para detalhes, valorizo código limpo e mantenho uma abordagem colaborativa para transformar ideias em produtos digitais de alto impacto.',
 
     'projects.title': 'Projetos',
     'projects.more':  'Ver mais',
@@ -60,8 +60,8 @@ export const ui = {
     'hero.contact':   'Get in touch',
 
     'about.title':    'About me',
-    'about.p1':       'Fullstack developer with over 5 years of experience in enterprise systems for time tracking, HR and workforce management.',
-    'about.p2':       'Passionate about creating robust and scalable solutions, combining solid backend with modern and responsive interfaces.',
+    'about.p1':       'I\'m a Full Stack developer with over 5 years of experience creating complete and scalable digital solutions. My journey is marked by delivering projects that combine performance, functional design, and robust architecture, always focusing on the best user experience.',
+    'about.p2':       'Throughout my career, I\'ve launched over 10 projects across different platforms, working from conception to final delivery. I have a keen eye for details, value clean code, and maintain a collaborative approach to transform ideas into high-impact digital products.',
 
     'projects.title': 'Projects',
     'projects.more':  'View more',
