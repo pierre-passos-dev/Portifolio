@@ -1,0 +1,60 @@
+---
+// src/components/Footer.astro
+import { useTranslations, type Lang } from '../i18n/translations';
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container footer__inner">
+    <a href={lang === 'pt' ? '/' : '/en'} class="footer__logo">
+      <span class="logo-bracket">&lt;</span>pierre<span class="logo-bracket">/&gt;</span>
+    </a>
+    <p class="footer__copy">
+      © {year} Pierre. {t('footer.rights')}
+    </p>
+    <p class="footer__made">
+      {lang === 'pt' ? 'Feito com' : 'Made with'}
+      <a href="https://astro.build" target="_blank" rel="noopener">Astro</a>
+      {lang === 'pt' ? '& hospedado no' : '& hosted on'}
+      <a href="https://pages.cloudflare.com" target="_blank" rel="noopener">Cloudflare Pages</a>
+    </p>
+  </div>
+</footer>
+
+<style>
+.footer {
+  border-top: 1px solid var(--border);
+  padding-block: 2rem;
+}
+.footer__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.footer__logo {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+.logo-bracket { color: var(--accent); }
+.footer__copy {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+.footer__made {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+.footer__made a {
+  color: var(--accent);
+  transition: opacity var(--transition);
+}
+.footer__made a:hover { opacity: 0.7; }
+</style>

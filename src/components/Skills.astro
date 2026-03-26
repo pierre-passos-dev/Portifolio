@@ -1,0 +1,116 @@
+---
+// src/components/Skills.astro
+import { useTranslations, type Lang } from '../i18n/translations';
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const skillGroups = [
+  {
+    key: 'skills.backend',
+    icon: '⚙️',
+    items: ['Java', 'Spring Boot', 'Hibernate', 'REST APIs', 'Python', 'FastAPI', 'Node.js'],
+  },
+  {
+    key: 'skills.frontend',
+    icon: '🖥️',
+    items: ['Angular', 'AngularJS', 'TypeScript', 'HTML/CSS', 'Astro', 'RxJS'],
+  },
+  {
+    key: 'skills.mobile',
+    icon: '📱',
+    items: ['Ionic', 'Capacitor', 'Cordova', 'Android', 'React Native'],
+  },
+  {
+    key: 'skills.devops',
+    icon: '☁️',
+    items: ['Azure App Service', 'Cloudflare Pages', 'Docker', 'nginx', 'CI/CD', 'Git'],
+  },
+  {
+    key: 'skills.db',
+    icon: '🗄️',
+    items: ['PostgreSQL', 'SQL Server', 'SQLAlchemy', 'Hibernate ORM', 'Azure SQL'],
+  },
+] as const;
+---
+
+<section class="section skills" id="skills">
+  <div class="container">
+    <span class="section-label">// {lang === 'pt' ? '03. stack' : '03. stack'}</span>
+    <h2 class="section-title">{t('skills.title')}</h2>
+    <p class="section-subtitle">
+      {lang === 'pt' ? 'Tecnologias que uso no dia a dia' : 'Technologies I use daily'}
+    </p>
+
+    <div class="skills__grid">
+      {skillGroups.map((group, i) => (
+        <div class="skill-group" data-reveal style={`transition-delay: ${i * 0.08}s`}>
+          <div class="skill-group__header">
+            <span class="skill-group__icon">{group.icon}</span>
+            <h3 class="skill-group__title">{t(group.key as any)}</h3>
+          </div>
+          <div class="skill-group__items">
+            {group.items.map(item => (
+              <span class="skill-pill">{item}</span>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+.skills__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+  gap: 1.25rem;
+}
+
+.skill-group {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  transition: border-color var(--transition);
+}
+.skill-group:hover { border-color: var(--border-accent); }
+
+.skill-group__header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+.skill-group__icon { font-size: 1.15rem; }
+.skill-group__title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.skill-group__items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.skill-pill {
+  display: inline-block;
+  padding: 0.3em 0.8em;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  transition: color var(--transition), border-color var(--transition), background var(--transition);
+}
+.skill-pill:hover {
+  color: var(--accent);
+  border-color: var(--border-accent);
+  background: var(--accent-glow);
+}
+</style>

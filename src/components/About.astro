@@ -1,0 +1,141 @@
+---
+// src/components/About.astro
+import { useTranslations, type Lang } from '../i18n/translations';
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section class="section about" id="about">
+  <div class="container">
+    <div class="about__inner">
+      <div class="about__text" data-reveal>
+        <span class="section-label">// {lang === 'pt' ? '01. sobre' : '01. about'}</span>
+        <h2 class="section-title">{t('about.title')}</h2>
+        <p class="about__p">{t('about.p1')}</p>
+        <p class="about__p">{t('about.p2')}</p>
+      </div>
+
+      <div class="about__card" data-reveal>
+        <div class="about__avatar">
+          <div class="about__avatar-ring"></div>
+          <div class="about__avatar-inner">P</div>
+        </div>
+        <div class="about__stats">
+          <div class="stat">
+            <span class="stat__num">5+</span>
+            <span class="stat__label">{lang === 'pt' ? 'Anos exp.' : 'Years exp.'}</span>
+          </div>
+          <div class="stat">
+            <span class="stat__num">10+</span>
+            <span class="stat__label">{lang === 'pt' ? 'Projetos' : 'Projects'}</span>
+          </div>
+          <div class="stat">
+            <span class="stat__num">3</span>
+            <span class="stat__label">{lang === 'pt' ? 'Plataformas' : 'Platforms'}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+.about__inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+}
+@media (max-width: 768px) {
+  .about__inner { grid-template-columns: 1fr; gap: 2.5rem; }
+}
+
+.section-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--accent);
+  letter-spacing: 0.06em;
+  margin-bottom: 0.5rem;
+}
+
+.about__p {
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: 1rem;
+  font-size: 0.975rem;
+}
+
+/* Card */
+.about__card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  box-shadow: var(--shadow-card);
+}
+
+.about__avatar {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+.about__avatar-ring {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: var(--gradient-hero);
+  animation: spin 8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.about__avatar-inner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--accent);
+  margin: 4px;
+  width: calc(100% - 8px);
+  height: calc(100% - 8px);
+}
+
+.about__stats {
+  display: flex;
+  gap: 2rem;
+  width: 100%;
+  justify-content: center;
+}
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+.stat__num {
+  font-size: 1.75rem;
+  font-weight: 800;
+  background: var(--gradient-hero);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.stat__label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+</style>
