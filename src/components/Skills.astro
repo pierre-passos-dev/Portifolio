@@ -5,32 +5,45 @@ interface Props { lang: Lang; }
 const { lang } = Astro.props;
 const t = useTranslations(lang);
 
-const skillGroups = [
+const currentSkills = [
   {
     key: 'skills.backend',
     icon: '⚙️',
-    items: ['Java', 'Spring Boot', 'Hibernate', 'REST APIs', 'Python', 'FastAPI', 'Node.js'],
+    items: ['Java', 'Spring Boot', 'Hibernate', 'JPA', 'REST APIs', 'Node.js', 'Express', 'TypeORM', 'Redis', 'Kafka', 'C# .NET', 'Tomcat'],
   },
   {
     key: 'skills.frontend',
     icon: '🖥️',
-    items: ['Angular', 'AngularJS', 'TypeScript', 'HTML/CSS', 'Astro', 'RxJS'],
+    items: ['JavaScript', 'AngularJS', 'Angular', 'TypeScript', 'Bootstrap', 'CSS', 'SCSS', 'HTML', 'PWA'],
   },
   {
     key: 'skills.mobile',
     icon: '📱',
-    items: ['Ionic', 'Capacitor', 'Cordova', 'Android', 'React Native'],
+    items: ['Ionic', 'Capacitor', 'Cordova', 'Android'],
   },
   {
     key: 'skills.devops',
     icon: '☁️',
-    items: ['Azure App Service', 'Cloudflare Pages', 'Docker', 'nginx', 'CI/CD', 'Git'],
+    items: ['Azure', 'Docker', 'Grafana', 'Prometheus', 'CI/CD', 'Git', 'Postman', 'Trello', 'Kanban'],
   },
   {
     key: 'skills.db',
     icon: '🗄️',
-    items: ['PostgreSQL', 'SQL Server', 'SQLAlchemy', 'Hibernate ORM', 'Azure SQL'],
+    items: ['SQL Server', 'PostgreSQL', 'DBeaver', 'JasperReports'],
   },
+] as const;
+
+const learningSkills = [
+  {
+    key: 'skills.learningBackend',
+    icon: '⚙️',
+    items: ['FastAPI', 'Supabase', 'Firebase', 'Cloudflare R2', 'Astro'],
+  },
+  {
+    key: 'skills.learningMobile',
+    icon: '📱',
+    items: ['Flutter', 'Dart', 'Drift', 'SQLite'],
+  }
 ] as const;
 ---
 
@@ -43,11 +56,35 @@ const skillGroups = [
     </p>
 
     <div class="skills__grid">
-      {skillGroups.map((group, i) => (
+      {currentSkills.map((group, i) => (
         <div class="skill-group" data-reveal style={`transition-delay: ${i * 0.08}s`}>
           <div class="skill-group__header">
             <span class="skill-group__icon">{group.icon}</span>
             <h3 class="skill-group__title">{t(group.key as any)}</h3>
+          </div>
+          <div class="skill-group__items">
+            {group.items.map(item => (
+              <span class="skill-pill">{item}</span>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <p class="section-subtitle" style="margin-top: 3rem;">
+      {lang === 'pt' ? 'Em desenvolvimento' : 'Learning'}
+    </p>
+
+    <div class="skills__grid">
+      {learningSkills.map((group, i) => (
+        <div class="skill-group" data-reveal style={`transition-delay: ${i * 0.08}s`}>
+          <div class="skill-group__header">
+            <span class="skill-group__icon">{group.icon}</span>
+            <h3 class="skill-group__title">
+              {group.key === 'skills.learningMobile' 
+                ? (lang === 'pt' ? 'Mobile' : 'Mobile') 
+                : (lang === 'pt' ? 'Backend & Cloud' : 'Backend & Cloud')}
+            </h3>
           </div>
           <div class="skill-group__items">
             {group.items.map(item => (

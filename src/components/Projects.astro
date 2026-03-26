@@ -16,7 +16,12 @@ const t = useTranslations(lang);
     </p>
 
     <div class="projects__grid">
-      {projects.filter(p => p.featured).map((p, i) => (
+      {projects.filter(p => p.featured).map((p, i) => {
+        const fullDescPt = lang === 'pt' ? p.descPt : p.descEn;
+        const firstSentence = fullDescPt.split('. ')[0] + '.';
+        const restContent = fullDescPt.split('. ').slice(1).join('. ');
+        
+        return (
         <article class="project-card" data-reveal style={`transition-delay: ${i * 0.1}s`}>
           <div class="project-card__header">
             <div class="project-card__icon">
@@ -46,15 +51,20 @@ const t = useTranslations(lang);
           <h3 class="project-card__title">
             {lang === 'pt' ? p.titlePt : p.titleEn}
           </h3>
-          <p class="project-card__desc">
-            {lang === 'pt' ? p.descPt : p.descEn}
+          <p class="project-card__short">
+            {firstSentence}
           </p>
+          <div class="project-card__expand">
+            <p class="project-card__full">
+              {restContent}
+            </p>
+          </div>
 
           <div class="project-card__tags">
             {p.tags.map(tag => <span class="tag">{tag}</span>)}
           </div>
         </article>
-      ))}
+      )})}
     </div>
   </div>
 </section>
@@ -64,6 +74,7 @@ const t = useTranslations(lang);
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
   gap: 1.5rem;
+  align-items: start;
 }
 
 .project-card {
@@ -75,13 +86,15 @@ const t = useTranslations(lang);
   flex-direction: column;
   gap: 0.75rem;
   box-shadow: var(--shadow-card);
-  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
-  cursor: default;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), width 0.4s cubic-bezier(0.4, 0, 0.2, 1), height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  position: relative;
 }
 .project-card:hover {
   border-color: var(--border-accent);
   box-shadow: var(--shadow-glow), var(--shadow-card);
-  transform: translateY(-3px);
+  transform: translateY(-8px) scale(1.02);
+  z-index: 10;
 }
 
 .project-card__header {
@@ -113,16 +126,34 @@ const t = useTranslations(lang);
   color: var(--text-primary);
   letter-spacing: -0.01em;
 }
-.project-card__desc {
+
+.project-card__short {
   font-size: 0.875rem;
   color: var(--text-secondary);
   line-height: 1.7;
-  flex: 1;
 }
+
+.project-card__expand {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.project-card__full {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  padding-top: 0.75rem;
+}
+
+.project-card:hover .project-card__expand {
+  max-height: 400px;
+}
+
 .project-card__tags {
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
-  margin-top: 0.5rem;
+  margin-top: auto;
 }
 </style>

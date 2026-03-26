@@ -22,8 +22,8 @@ export const ui = {
     'hero.contact':   'Entre em contato',
 
     'about.title':    'Sobre mim',
-    'about.p1':       'Desenvolvedor fullstack com foco em sistemas enterprise de gestão de tempo, RH e workforce management. Trabalho com Java (Spring Boot, Hibernate), Angular, AngularJS e Ionic.',
-    'about.p2':       'Tenho experiência em arquiteturas cloud (Azure), integrações complexas de backend, design de banco de dados e desenvolvimento de aplicações mobile híbridas.',
+    'about.p1':       'Desenvolvedor Fullstack com mais de 5 anos de experiência em sistemas enterprise para gestão de tempo, RH e workforce management.',
+    'about.p2':       'Passionate por criar soluções robustas e escaláveis, combinando backend robusto com interfaces modernas e responsivas.',
 
     'projects.title': 'Projetos',
     'projects.more':  'Ver mais',
@@ -34,6 +34,7 @@ export const ui = {
     'skills.mobile':  'Mobile',
     'skills.devops':  'DevOps & Cloud',
     'skills.db':      'Banco de dados',
+    'skills.learning': 'Em Desenvolvimento',
 
     'exp.title':      'Experiência',
 
@@ -59,8 +60,8 @@ export const ui = {
     'hero.contact':   'Get in touch',
 
     'about.title':    'About me',
-    'about.p1':       'Fullstack developer focused on enterprise time-tracking, HR and workforce management systems. I work with Java (Spring Boot, Hibernate), Angular, AngularJS and Ionic.',
-    'about.p2':       'Experienced in cloud architectures (Azure), complex backend integrations, database design and hybrid mobile application development.',
+    'about.p1':       'Fullstack developer with over 5 years of experience in enterprise systems for time tracking, HR and workforce management.',
+    'about.p2':       'Passionate about creating robust and scalable solutions, combining solid backend with modern and responsive interfaces.',
 
     'projects.title': 'Projects',
     'projects.more':  'View more',
