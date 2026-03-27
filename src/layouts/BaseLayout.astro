@@ -8,18 +8,14 @@ import { getLangFromUrl, useTranslations } from '../i18n/translations';
 interface Props {
   title?: string;
   description?: string;
-  image?: string;
 }
 
 const lang = getLangFromUrl(Astro.url);
-const t = useTranslations(lang);
-
 const {
   title = lang === 'pt' ? 'Pierre — Desenvolvedor Fullstack' : 'Pierre — Fullstack Developer',
   description = lang === 'pt'
-    ? 'Desenvolvedor Fullstack especializado em Java, Angular, Ionic e sistemas enterprise de gestão de tempo e RH.'
-    : 'Fullstack Developer specialized in Java, Angular, Ionic and enterprise time & HR management systems.',
-  image = '/og-image.png',
+    ? 'Desenvolvedor Fullstack especializado em Java, Angular, Ionic e sistemas enterprise.'
+    : 'Fullstack Developer specialized in Java, Angular, Ionic and enterprise systems.',
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
@@ -32,60 +28,151 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="canonical" href={canonicalURL} />
   <meta name="robots" content="index, follow" />
-
-  <!-- SEO -->
   <title>{title}</title>
   <meta name="description" content={description} />
   <meta name="author" content="Pierre" />
-
-  <!-- Open Graph -->
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content={canonicalURL} />
-  <meta property="og:title" content={title} />
-  <meta property="og:description" content={description} />
-  <meta property="og:image" content={new URL(image, Astro.site)} />
-
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content={title} />
-  <meta name="twitter:description" content={description} />
-  <meta name="twitter:image" content={new URL(image, Astro.site)} />
-
-  <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-
-  <!-- Theme init (avoid flash) -->
-  <script is:inline>
-    (function () {
-      const stored = localStorage.getItem('theme');
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const theme = stored ?? (prefersDark ? 'dark' : 'light');
-      document.documentElement.setAttribute('data-theme', theme);
-    })();
-  </script>
 </head>
 <body>
+  <!-- Custom cursor -->
+  <div id="cursor-dot"></div>
+  <div id="cursor-ring"></div>
+  <div id="cursor-cross-h"></div>
+  <div id="cursor-cross-v"></div>
+
+  <!-- Particle canvas -->
+  <canvas id="particle-canvas" style="position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0.5;"></canvas>
+
   <Navbar lang={lang} />
-  <main>
+  <main style="position:relative;z-index:1;">
     <slot />
   </main>
   <Footer lang={lang} />
 
-  <!-- Scroll reveal -->
   <script>
+    /* ── Custom Cursor ── */
+    const dot  = document.getElementById('cursor-dot')!;
+    const ring = document.getElementById('cursor-ring')!;
+    const ch   = document.getElementById('cursor-cross-h')!;
+    const cv   = document.getElementById('cursor-cross-v')!;
+
+    let mx = -100, my = -100;
+    let rx = -100, ry = -100;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+      ch.style.left  = mx + 'px'; ch.style.top  = my + 'px';
+      cv.style.left  = mx + 'px'; cv.style.top  = my + 'px';
+    });
+
+    (function animateRing() {
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+      requestAnimationFrame(animateRing);
+    })();
+
+    document.querySelectorAll('a,button,[role="button"]').forEach(el => {
+      el.addEventListener('mouseenter', () => ring.classList.add('hovering'));
+      el.addEventListener('mouseleave', () => ring.classList.remove('hovering'));
+    });
+
+    /* ── Particles ── */
+    const canvas = document.getElementById('particle-canvas') as HTMLCanvasElement;
+    const ctx = canvas.getContext('2d')!;
+
+    function resize() {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    interface Particle {
+      x: number; y: number;
+      vx: number; vy: number;
+      size: number; alpha: number;
+      color: string; life: number; maxLife: number;
+    }
+
+    const COLORS = ['#ff8c00','#ff4500','#ffb347','#ff6b35','rgba(255,140,0,0.6)'];
+    const particles: Particle[] = [];
+
+    function spawn() {
+      const life = 80 + Math.random() * 120;
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: canvas.height + 10,
+        vx: (Math.random() - 0.5) * 0.6,
+        vy: -(0.3 + Math.random() * 0.8),
+        size: 0.5 + Math.random() * 1.5,
+        alpha: 0,
+        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+        life: 0,
+        maxLife: life,
+      });
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      if (Math.random() < 0.4) spawn();
+      if (Math.random() < 0.1) {
+        // occasional horizontal streaks
+        particles.push({
+          x: 0,
+          y: Math.random() * canvas.height,
+          vx: 3 + Math.random() * 4,
+          vy: 0,
+          size: 1,
+          alpha: 0,
+          color: '#ff8c00',
+          life: 0,
+          maxLife: 40,
+        });
+      }
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.life++;
+        p.x += p.vx;
+        p.y += p.vy;
+        const ratio = p.life / p.maxLife;
+        p.alpha = ratio < 0.2
+          ? ratio / 0.2
+          : ratio > 0.7
+            ? 1 - (ratio - 0.7) / 0.3
+            : 1;
+
+        ctx.save();
+        ctx.globalAlpha = p.alpha * 0.7;
+        ctx.fillStyle = p.color;
+        ctx.shadowBlur = 6;
+        ctx.shadowColor = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+        if (p.life >= p.maxLife) particles.splice(i, 1);
+      }
+
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    /* ── Scroll Reveal ── */
     const observer = new IntersectionObserver(
-      (entries) => entries.forEach(e => {
+      entries => entries.forEach(e => {
         if (e.isIntersecting) {
           e.target.classList.add('visible');
           observer.unobserve(e.target);
         }
       }),
-      { threshold: 0.12 }
+      { threshold: 0.1 }
     );
-    document.querySelectorAll('[data-reveal]').forEach((el, i) => {
-      (el as HTMLElement).style.transitionDelay = `${i * 0.07}s`;
-      observer.observe(el);
-    });
+    document.querySelectorAll('[data-reveal]').forEach(el => observer.observe(el));
   </script>
 </body>
 </html>

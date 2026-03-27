@@ -5,6 +5,7 @@ import { projects } from '../data/projects';
 interface Props { lang: Lang; }
 const { lang } = Astro.props;
 const t = useTranslations(lang);
+const featured = projects.filter(p => p.featured);
 ---
 
 <section class="section projects" id="projects">
@@ -12,34 +13,37 @@ const t = useTranslations(lang);
     <span class="section-label">// {lang === 'pt' ? '02. projetos' : '02. projects'}</span>
     <h2 class="section-title">{t('projects.title')}</h2>
     <p class="section-subtitle">
-      {lang === 'pt' ? 'Alguns dos projetos que trabalhei' : 'Some of the projects I worked on'}
+      {lang === 'pt' ? '> Alguns dos projetos que trabalhei' : '> Some of the projects I worked on'}
     </p>
 
     <div class="projects__grid">
-      {projects.filter(p => p.featured).map((p, i) => {
-        const fullDescPt = lang === 'pt' ? p.descPt : p.descEn;
-        const firstSentence = fullDescPt.split('. ')[0] + '.';
-        const restContent = fullDescPt.split('. ').slice(1).join('. ');
-        
-        return (
-        <article class="project-card" data-reveal style={`transition-delay: ${i * 0.1}s`}>
-          <div class="project-card__header">
-            <div class="project-card__icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      {featured.map((p, i) => (
+        <article
+          class="proj-card"
+          data-reveal
+          style={`transition-delay: ${i * 0.08}s`}
+        >
+          <!-- Card index -->
+          <div class="proj-card__index">{String(i + 1).padStart(2, '0')}</div>
+
+          <!-- Header bar -->
+          <div class="proj-card__header">
+            <div class="proj-card__icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
               </svg>
             </div>
-            <div class="project-card__links">
+            <div class="proj-card__links">
               {p.github && (
-                <a href={p.github} target="_blank" rel="noopener" aria-label="GitHub">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <a href={p.github} target="_blank" rel="noopener" class="proj-link" aria-label="GitHub">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.1.82-.26.82-.57v-2c-3.34.72-4.04-1.6-4.04-1.6-.54-1.38-1.33-1.75-1.33-1.75-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.48 1 .1-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.13 3 .4 2.28-1.55 3.28-1.23 3.28-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.6-2.8 5.62-5.48 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.22.69.83.57C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/>
                   </svg>
                 </a>
               )}
               {p.demo && (
-                <a href={p.demo} target="_blank" rel="noopener" aria-label="Demo">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <a href={p.demo} target="_blank" rel="noopener" class="proj-link" aria-label="Demo">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
                     <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
                   </svg>
@@ -48,23 +52,22 @@ const t = useTranslations(lang);
             </div>
           </div>
 
-          <h3 class="project-card__title">
+          <h3 class="proj-card__title">
             {lang === 'pt' ? p.titlePt : p.titleEn}
           </h3>
-          <p class="project-card__short">
-            {firstSentence}
+
+          <p class="proj-card__desc">
+            {lang === 'pt' ? p.shortDescPt : p.shortDescEn}
           </p>
-          <div class="project-card__expand">
-            <p class="project-card__full">
-              {restContent}
-            </p>
+
+          <div class="proj-card__tags">
+            {p.tags.slice(0, 4).map(tag => <span class="tag">{tag}</span>)}
           </div>
 
-          <div class="project-card__tags">
-            {p.tags.map(tag => <span class="tag">{tag}</span>)}
-          </div>
+          <!-- Hover glow line -->
+          <div class="proj-card__glow-line" aria-hidden="true"></div>
         </article>
-      )})}
+      ))}
     </div>
   </div>
 </section>
@@ -72,90 +75,97 @@ const t = useTranslations(lang);
 <style>
 .projects__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
-  gap: 1.5rem;
-  align-items: start;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+  gap: 1px;
+  background: rgba(255,140,0,0.1);
+  border: 1px solid rgba(255,140,0,0.1);
 }
 
-.project-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 1.75rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  box-shadow: var(--shadow-card);
-  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), width 0.4s cubic-bezier(0.4, 0, 0.2, 1), height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
+.proj-card {
   position: relative;
-  /* height: 100%; */
-  min-height: 400px;
+  background: var(--bg-base);
+  padding: 2rem 1.75rem;
+  overflow: hidden;
+  transition: background 0.25s;
 }
-.project-card:hover {
-  border-color: var(--border-accent);
-  box-shadow: var(--shadow-glow), var(--shadow-card);
-  transform: translateY(-8px) scale(1.02);
-  z-index: 10;
+.proj-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gradient-card);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.proj-card:hover { background: var(--bg-surface); }
+.proj-card:hover::before { opacity: 1; }
+.proj-card:hover .proj-card__glow-line { opacity: 1; }
+.proj-card:hover .proj-card__title { color: var(--accent); text-shadow: 0 0 20px rgba(255,140,0,0.3); }
+
+/* Index */
+.proj-card__index {
+  position: absolute;
+  top: 1.5rem; right: 1.5rem;
+  font-family: var(--font-display);
+  font-size: 0.55rem;
+  color: rgba(255,140,0,0.2);
+  letter-spacing: 0.1em;
 }
 
-.project-card__header {
+/* Header */
+.proj-card__header {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 0.25rem;
+  margin-bottom: 1.25rem;
 }
-.project-card__icon {
+.proj-card__icon {
   color: var(--accent);
-  padding: 0.5rem;
-  background: var(--accent-glow);
-  border: 1px solid var(--border-accent);
-  border-radius: var(--radius-sm);
+  opacity: 0.6;
 }
-.project-card__links {
-  display: flex;
-  gap: 0.75rem;
-}
-.project-card__links a {
+.proj-card__links { display: flex; gap: 0.75rem; }
+.proj-link {
   color: var(--text-muted);
-  transition: color var(--transition);
+  transition: color 0.2s, text-shadow 0.2s;
 }
-.project-card__links a:hover { color: var(--accent); }
+.proj-link:hover {
+  color: var(--accent);
+  text-shadow: 0 0 8px var(--accent);
+}
 
-.project-card__title {
-  font-size: 1.1rem;
+/* Title */
+.proj-card__title {
+  font-size: 0.9rem;
   font-weight: 700;
   color: var(--text-primary);
-  letter-spacing: -0.01em;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.75rem;
+  transition: color 0.2s, text-shadow 0.2s;
 }
 
-.project-card__short {
-  font-size: 0.875rem;
+/* Desc */
+.proj-card__desc {
+  font-size: 0.9rem;
   color: var(--text-secondary);
-  line-height: 1.7;
+  line-height: 1.6;
+  margin-bottom: 1.25rem;
+  font-family: var(--font-body);
 }
 
-.project-card__expand {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.project-card__full {
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-  line-height: 1.7;
-  padding-top: 0.75rem;
-}
-
-.project-card:hover .project-card__expand {
-  max-height: 400px;
-}
-
-.project-card__tags {
+/* Tags */
+.proj-card__tags {
   display: flex;
-  flex-wrap: wrap;
   gap: 0.4rem;
-  margin-top: auto;
+  flex-wrap: wrap;
+}
+
+/* Glow line on hover */
+.proj-card__glow-line {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+  box-shadow: 0 0 10px var(--accent);
 }
 </style>

@@ -4,183 +4,188 @@ import { useTranslations, type Lang } from '../i18n/translations';
 interface Props { lang: Lang; }
 const { lang } = Astro.props;
 const t = useTranslations(lang);
+
+const emailSubject = lang === 'pt' ? 'Interesse em seu trabalho' : 'Interest in your work';
+const emailBody    = lang === 'pt'
+  ? 'Olá,\n\nVi seu portfólio e gostaria de conversar.'
+  : 'Hi,\n\nI saw your portfolio and would like to connect.';
+const emailHref = `mailto:pierre.passos.dev@gmail.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
 ---
 
 <section class="section contact" id="contact">
+  <div class="contact__bg" aria-hidden="true">
+    <div class="contact__orb"></div>
+  </div>
+
   <div class="container">
     <span class="section-label">// {lang === 'pt' ? '05. contato' : '05. contact'}</span>
     <h2 class="section-title">{t('contact.title')}</h2>
-    <p class="contact__sub">{t('contact.sub')}</p>
 
-    <div class="contact__links" data-reveal>
-      <div class="email-group">
-        <a href={`mailto:pierre.passos.dev@gmail.com?subject=${lang === 'pt' ? encodeURIComponent(' Interesse em seu trabalho') : encodeURIComponent('Interest in your work')}&body=${lang === 'pt' ? encodeURIComponent('Olá,\n\nVi seu portfólio e gostei bastante do seu trabalho. Gostaria de saber mais sobre seus serviços e disponibilidade.\n\nAbraços') : encodeURIComponent('Hi,\n\nI saw your portfolio and really liked your work. I would like to know more about your services and availability.\n\nBest regards')}`} class="contact-link contact-link--primary">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-            <polyline points="22,6 12,13 2,6"/>
-          </svg>
-          {t('contact.email')}
-        </a>
-        <button class="copy-btn" id="copyEmailBtn" aria-label={lang === 'pt' ? 'Copiar email' : 'Copy email'}>
-          <span class="copy-tooltip">{lang === 'pt' ? 'Clique para copiar' : 'Click to copy'}</span>
-          <svg class="copy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-          </svg>
-          <svg class="check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
-            <polyline points="20 6 9 17 4 12"></polyline>
-          </svg>
-        </button>
+    <div class="contact__inner" data-reveal>
+      <div class="contact__left">
+        <p class="contact__sub">{t('contact.sub')}</p>
+        <p class="contact__email-display">pierre.passos.dev<span class="e-at">@</span>gmail.com</p>
       </div>
 
-      <a href="https://github.com/pierre-passos-dev" target="_blank" rel="noopener" class="contact-link">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.1.82-.26.82-.57v-2c-3.34.72-4.04-1.6-4.04-1.6-.54-1.38-1.33-1.75-1.33-1.75-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.48 1 .1-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.13 3 .4 2.28-1.55 3.28-1.23 3.28-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.6-2.8 5.62-5.48 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.22.69.83.57C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/>
-        </svg>
-        {t('contact.github')}
-      </a>
+      <div class="contact__links">
+        <a href={emailHref} class="contact-card contact-card--primary">
+          <div class="contact-card__icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+          </div>
+          <div class="contact-card__text">
+            <span class="contact-card__label">Email</span>
+            <span class="contact-card__value">{t('contact.email')}</span>
+          </div>
+          <div class="contact-card__arrow">▶</div>
+        </a>
 
-      <a href="https://www.linkedin.com/in/pierre-passos" target="_blank" rel="noopener" class="contact-link">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-        </svg>
-        {t('contact.linkedin')}
-      </a>
+        <a href="https://github.com/pierre-passos-dev" target="_blank" rel="noopener" class="contact-card">
+          <div class="contact-card__icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.1.82-.26.82-.57v-2c-3.34.72-4.04-1.6-4.04-1.6-.54-1.38-1.33-1.75-1.33-1.75-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.48 1 .1-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.13 3 .4 2.28-1.55 3.28-1.23 3.28-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.6-2.8 5.62-5.48 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.22.69.83.57C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/>
+            </svg>
+          </div>
+          <div class="contact-card__text">
+            <span class="contact-card__label">GitHub</span>
+            <span class="contact-card__value">pierre-passos-dev</span>
+          </div>
+          <div class="contact-card__arrow">▶</div>
+        </a>
+
+        <a href="https://www.linkedin.com/in/pierre-passos" target="_blank" rel="noopener" class="contact-card">
+          <div class="contact-card__icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+            </svg>
+          </div>
+          <div class="contact-card__text">
+            <span class="contact-card__label">LinkedIn</span>
+            <span class="contact-card__value">pierre-passos</span>
+          </div>
+          <div class="contact-card__arrow">▶</div>
+        </a>
+      </div>
     </div>
   </div>
 </section>
 
 <style>
-.contact__sub {
-  color: var(--text-secondary);
-  font-size: 1rem;
-  max-width: 480px;
-  line-height: 1.7;
-  margin-bottom: 2.5rem;
+.contact {
+  position: relative;
+  overflow: hidden;
+}
+.contact__bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.contact__orb {
+  position: absolute;
+  bottom: -200px; right: -200px;
+  width: 600px; height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,140,0,0.08) 0%, transparent 65%);
+  filter: blur(60px);
 }
 
+.contact__inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: start;
+}
+@media (max-width: 768px) {
+  .contact__inner { grid-template-columns: 1fr; gap: 2.5rem; }
+}
+
+.contact__sub {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+  font-family: var(--font-body);
+}
+.contact__email-display {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: rgba(255,140,0,0.4);
+  letter-spacing: 0.06em;
+}
+.e-at { color: var(--accent); }
+
+/* Contact cards */
 .contact__links {
   display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 1px;
+  border: 1px solid rgba(255,140,0,0.15);
+  background: rgba(255,140,0,0.08);
 }
 
-.contact-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.75em 1.5em;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-  background: var(--bg-card);
-  transition: all var(--transition);
-}
-.contact-link:hover {
-  color: var(--text-primary);
-  border-color: var(--border-accent);
-  background: var(--accent-glow);
-  transform: translateY(-2px);
-}
-.contact-link--primary {
-  background: var(--accent);
-  color: var(--bg-base);
-  border-color: var(--accent);
-}
-.contact-link--primary:hover {
-  background: transparent;
-  color: var(--accent);
-}
-
-.email-group {
+.contact-card {
   display: flex;
-  gap: 0;
-}
-
-.email-group .contact-link {
-  border-radius: var(--radius-md) 0 0 var(--radius-md);
-}
-
-.copy-btn {
-  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  padding: 0 0.75em;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-left: none;
-  border-radius: 0 var(--radius-md) var(--radius-md) 0;
-  color: var(--text-muted);
-  cursor: pointer;
-  transition: all var(--transition);
+  gap: 1.25rem;
+  padding: 1.25rem 1.5rem;
+  background: var(--bg-base);
+  transition: background 0.2s, box-shadow 0.2s;
   position: relative;
+  overflow: hidden;
 }
-
-.copy-btn:hover {
-  color: var(--accent);
-  border-color: var(--border-accent);
-  background: var(--accent-glow);
-}
-
-.copy-btn.copied {
-  color: var(--accent);
-  background: var(--accent-glow);
-}
-
-.copy-tooltip {
-  position: absolute;
-  bottom: calc(100% + 8px);
-  left: 50%;
-  transform: translateX(-50%) translateY(5px);
-  background: var(--bg-elevated);
-  color: var(--text-primary);
-  padding: 0.4em 0.8em;
-  border-radius: var(--radius-sm);
-  font-size: 0.75rem;
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-  border: 1px solid var(--border);
-}
-
-.copy-tooltip::after {
+.contact-card::after {
   content: '';
   position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  border: 6px solid transparent;
-  border-top-color: var(--border);
+  left: 0; top: 0; bottom: 0;
+  width: 2px;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.2s;
+}
+.contact-card:hover { background: var(--bg-surface); }
+.contact-card:hover::after { transform: scaleY(1); }
+.contact-card:hover .contact-card__arrow { color: var(--accent); transform: translateX(4px); }
+
+.contact-card--primary {
+  background: rgba(255,140,0,0.05);
+}
+.contact-card--primary:hover {
+  background: rgba(255,140,0,0.1);
+  box-shadow: inset 0 0 20px rgba(255,140,0,0.05);
 }
 
-.copy-btn:hover .copy-tooltip {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
+.contact-card__icon {
+  color: var(--accent);
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+.contact-card--primary .contact-card__icon { opacity: 1; }
+
+.contact-card__text { flex: 1; }
+.contact-card__label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: rgba(255,140,0,0.4);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 0.15rem;
+}
+.contact-card__value {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-primary);
+  letter-spacing: 0.04em;
+}
+
+.contact-card__arrow {
+  font-size: 0.55rem;
+  color: rgba(255,140,0,0.3);
+  transition: color 0.2s, transform 0.2s;
 }
 </style>
-
-<script is:inline>
-document.getElementById('copyEmailBtn').addEventListener('click', function() {
-  const email = 'pierre.passos.dev@gmail.com';
-  navigator.clipboard.writeText(email).then(() => {
-    const tooltip = this.querySelector('.copy-tooltip');
-    const copyIcon = this.querySelector('.copy-icon');
-    const checkIcon = this.querySelector('.check-icon');
-    
-    tooltip.textContent = 'Copiado!';
-    copyIcon.style.display = 'none';
-    checkIcon.style.display = 'block';
-    this.classList.add('copied');
-    
-    setTimeout(() => {
-      tooltip.textContent = 'Clique para copiar';
-      copyIcon.style.display = 'block';
-      checkIcon.style.display = 'none';
-      this.classList.remove('copied');
-    }, 2000);
-  });
-});
-</script>

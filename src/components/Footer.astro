@@ -8,53 +8,128 @@ const year = new Date().getFullYear();
 ---
 
 <footer class="footer">
+  <div class="footer__topline" aria-hidden="true"></div>
+
   <div class="container footer__inner">
-    <a href={lang === 'pt' ? '/' : '/en'} class="footer__logo">
-      <span class="logo-bracket">&lt;</span>pierre<span class="logo-bracket">/&gt;</span>
-    </a>
-    <p class="footer__copy">
-      © {year} Pierre. {t('footer.rights')}
-    </p>
-    <p class="footer__made">
-      {lang === 'pt' ? 'Feito com' : 'Made with'}
-      <a href="https://astro.build" target="_blank" rel="noopener">Astro</a>
-      {lang === 'pt' ? '& hospedado no' : '& hosted on'}
-      <a href="https://pages.cloudflare.com" target="_blank" rel="noopener">Cloudflare Pages</a>
-    </p>
+    <div class="footer__left">
+      <span class="footer__logo">
+        <span class="f-bracket">[</span>PIERRE<span class="f-dot">.</span><span class="f-bracket">]</span>
+      </span>
+      <span class="footer__copy">
+        © {year} — {t('footer.rights')}
+      </span>
+    </div>
+
+    <div class="footer__center">
+      <span class="footer__status">
+        <span class="status-dot"></span>
+        {lang === 'pt' ? 'Disponível para projetos' : 'Available for projects'}
+      </span>
+    </div>
+
+    <div class="footer__right">
+      <span class="footer__tech">Built with Astro</span>
+    </div>
+  </div>
+
+  <div class="footer__bottom" aria-hidden="true">
+    <span class="footer__line-text">// END OF FILE — PIERRE.DEV — {year}</span>
   </div>
 </footer>
 
 <style>
 .footer {
-  border-top: 1px solid var(--border);
-  padding-block: 2rem;
+  position: relative;
+  border-top: 1px solid rgba(255,140,0,0.12);
+  padding: 2rem 0 0;
+  margin-top: 4rem;
 }
+
+.footer__topline {
+  position: absolute;
+  top: -1px; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,140,0,0.5) 30%, rgba(255,69,0,0.7) 50%, rgba(255,140,0,0.5) 70%, transparent 100%);
+  box-shadow: 0 0 12px rgba(255,140,0,0.3);
+}
+
 .footer__inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 1.5rem;
   flex-wrap: wrap;
-  gap: 1rem;
+  padding-bottom: 1.5rem;
+}
+@media (max-width: 600px) {
+  .footer__inner { flex-direction: column; align-items: flex-start; gap: 1rem; }
+}
+
+/* Left */
+.footer__left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
 }
 .footer__logo {
-  font-family: var(--font-mono);
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: var(--text-secondary);
-}
-.logo-bracket { color: var(--accent); }
-.footer__copy {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-}
-.footer__made {
-  font-family: var(--font-mono);
+  font-family: var(--font-display);
   font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--text-primary);
+}
+.f-bracket { color: rgba(255,140,0,0.4); }
+.f-dot { color: var(--accent); text-shadow: 0 0 8px var(--accent); }
+.footer__copy {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
   color: var(--text-muted);
+  letter-spacing: 0.08em;
 }
-.footer__made a {
-  color: var(--accent);
-  transition: opacity var(--transition);
+
+/* Center */
+.footer__status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: rgba(255,140,0,0.5);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
-.footer__made a:hover { opacity: 0.7; }
+.status-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #44ff88;
+  box-shadow: 0 0 8px #44ff88, 0 0 16px rgba(68,255,136,0.4);
+  animation: statusPulse 2.5s ease-in-out infinite;
+}
+@keyframes statusPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* Right */
+.footer__tech {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Bottom strip */
+.footer__bottom {
+  border-top: 1px solid rgba(255,140,0,0.06);
+  padding: 0.6rem 2rem;
+  text-align: center;
+}
+.footer__line-text {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  color: rgba(255,140,0,0.15);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
 </style>

@@ -6,44 +6,16 @@ const { lang } = Astro.props;
 const t = useTranslations(lang);
 
 const currentSkills = [
-  {
-    key: 'skills.backend',
-    icon: '⚙️',
-    items: ['Java', 'Spring Boot', 'Hibernate', 'JPA', 'REST APIs', 'Node.js', 'Express', 'TypeORM', 'Redis', 'Kafka', 'C# .NET', 'Tomcat'],
-  },
-  {
-    key: 'skills.frontend',
-    icon: '🖥️',
-    items: ['JavaScript', 'AngularJS', 'Angular', 'TypeScript', 'Bootstrap', 'CSS', 'SCSS', 'HTML', 'PWA'],
-  },
-  {
-    key: 'skills.mobile',
-    icon: '📱',
-    items: ['Ionic', 'Capacitor', 'Cordova', 'Android'],
-  },
-  {
-    key: 'skills.devops',
-    icon: '☁️',
-    items: ['Azure', 'Docker', 'Grafana', 'Prometheus', 'CI/CD', 'Git', 'Postman', 'Trello', 'Kanban'],
-  },
-  {
-    key: 'skills.db',
-    icon: '🗄️',
-    items: ['SQL Server', 'PostgreSQL', 'DBeaver', 'JasperReports'],
-  },
+  { key: 'Backend', items: ['Java', 'Spring Boot', 'Hibernate', 'JPA', 'REST APIs', 'Node.js', 'Express', 'TypeORM', 'Redis', 'Kafka', 'C# .NET', 'Tomcat'] },
+  { key: 'Frontend', items: ['JavaScript', 'AngularJS', 'Angular', 'TypeScript', 'Bootstrap', 'CSS', 'SCSS', 'HTML', 'PWA'] },
+  { key: 'Mobile', items: ['Ionic', 'Capacitor', 'Cordova', 'Android'] },
+  { key: 'DevOps', items: ['Azure', 'Docker', 'Grafana', 'Prometheus', 'CI/CD', 'Git', 'Postman', 'Kanban'] },
+  { key: 'Database', items: ['SQL Server', 'PostgreSQL', 'DBeaver', 'JasperReports'] },
 ] as const;
 
 const learningSkills = [
-  {
-    key: 'skills.learningBackend',
-    icon: '⚙️',
-    items: ['FastAPI', 'Supabase', 'Firebase', 'Cloudflare R2', 'Astro'],
-  },
-  {
-    key: 'skills.learningMobile',
-    icon: '📱',
-    items: ['Flutter', 'Dart', 'Drift', 'SQLite'],
-  }
+  { key: 'Backend', items: ['FastAPI', 'Supabase', 'Firebase', 'Cloudflare R2', 'Astro'] },
+  { key: 'Mobile', items: ['Flutter', 'Dart', 'Drift', 'SQLite'] },
 ] as const;
 ---
 
@@ -51,16 +23,15 @@ const learningSkills = [
   <div class="container">
     <span class="section-label">// {lang === 'pt' ? '03. stack' : '03. stack'}</span>
     <h2 class="section-title">{t('skills.title')}</h2>
-    <p class="section-subtitle">
-      {lang === 'pt' ? 'Tecnologias que uso no dia a dia' : 'Technologies I use daily'}
-    </p>
+    <p class="section-subtitle">{lang === 'pt' ? '> Tecnologias que uso no dia a dia' : '> Technologies I use daily'}</p>
 
     <div class="skills__grid">
       {currentSkills.map((group, i) => (
-        <div class="skill-group" data-reveal style={`transition-delay: ${i * 0.08}s`}>
+        <div class="skill-group" data-reveal style={`transition-delay: ${i * 0.07}s`}>
           <div class="skill-group__header">
-            <span class="skill-group__icon">{group.icon}</span>
-            <h3 class="skill-group__title">{t(group.key as any)}</h3>
+            <span class="skill-group__bracket">[</span>
+            <span class="skill-group__name">{group.key}</span>
+            <span class="skill-group__bracket">]</span>
           </div>
           <div class="skill-group__items">
             {group.items.map(item => (
@@ -71,28 +42,25 @@ const learningSkills = [
       ))}
     </div>
 
-    <p class="section-subtitle" style="margin-top: 3rem;">
-      {lang === 'pt' ? 'Em desenvolvimento' : 'Learning'}
-    </p>
-
-    <div class="skills__grid">
-      {learningSkills.map((group, i) => (
-        <div class="skill-group" data-reveal style={`transition-delay: ${i * 0.08}s`}>
-          <div class="skill-group__header">
-            <span class="skill-group__icon">{group.icon}</span>
-            <h3 class="skill-group__title">
-              {group.key === 'skills.learningMobile' 
-                ? (lang === 'pt' ? 'Mobile' : 'Mobile') 
-                : (lang === 'pt' ? 'Backend & Cloud' : 'Backend & Cloud')}
-            </h3>
+    <!-- Learning section -->
+    <div class="learning-section" data-reveal>
+      <div class="learning-label">
+        <span class="l-icon">▶</span>
+        <span class="l-text">{lang === 'pt' ? 'Em desenvolvimento' : 'Learning now'}</span>
+        <span class="l-line"></span>
+      </div>
+      <div class="learning__grid">
+        {learningSkills.map(group => (
+          <div class="learning-group">
+            <span class="learning-group__name">{group.key}</span>
+            <div class="skill-group__items">
+              {group.items.map(item => (
+                <span class="skill-pill skill-pill--learning">{item}</span>
+              ))}
+            </div>
           </div>
-          <div class="skill-group__items">
-            {group.items.map(item => (
-              <span class="skill-pill">{item}</span>
-            ))}
-          </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   </div>
 </section>
@@ -101,31 +69,45 @@ const learningSkills = [
 .skills__grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
-  gap: 1.25rem;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
 }
 
 .skill-group {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255,140,0,0.15);
+  background: rgba(10,10,15,0.8);
   padding: 1.5rem;
-  transition: border-color var(--transition);
+  position: relative;
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
-.skill-group:hover { border-color: var(--border-accent); }
+.skill-group::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255,140,0,0.4), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.skill-group:hover {
+  border-color: rgba(255,140,0,0.35);
+  box-shadow: 0 0 20px rgba(255,140,0,0.05);
+}
+.skill-group:hover::before { opacity: 1; }
 
 .skill-group__header {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.2rem;
   margin-bottom: 1rem;
 }
-.skill-group__icon { font-size: 1.15rem; }
-.skill-group__title {
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: var(--text-primary);
+.skill-group__bracket { color: rgba(255,140,0,0.4); font-family: var(--font-mono); font-size: 0.75rem; }
+.skill-group__name {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--accent);
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
 }
 
 .skill-group__items {
@@ -135,19 +117,68 @@ const learningSkills = [
 }
 
 .skill-pill {
-  display: inline-block;
-  padding: 0.3em 0.8em;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  border-radius: 100px;
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.68rem;
+  padding: 0.25em 0.65em;
+  border: 1px solid rgba(255,140,0,0.2);
   color: var(--text-secondary);
-  transition: color var(--transition), border-color var(--transition), background var(--transition);
+  letter-spacing: 0.06em;
+  background: transparent;
+  transition: all 0.2s;
 }
 .skill-pill:hover {
+  border-color: var(--accent);
   color: var(--accent);
-  border-color: var(--border-accent);
-  background: var(--accent-glow);
+  background: rgba(255,140,0,0.08);
+  box-shadow: 0 0 8px rgba(255,140,0,0.15);
+}
+.skill-pill--learning {
+  border-color: rgba(0,180,255,0.2);
+  color: rgba(0,180,255,0.6);
+}
+.skill-pill--learning:hover {
+  border-color: #00b4ff;
+  color: #00b4ff;
+  background: rgba(0,180,255,0.05);
+  box-shadow: 0 0 8px rgba(0,180,255,0.2);
+}
+
+/* Learning section */
+.learning-section {
+  border-top: 1px solid rgba(255,140,0,0.1);
+  padding-top: 2rem;
+}
+.learning-label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+.l-icon { color: #00b4ff; font-size: 0.6rem; }
+.l-text {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: rgba(0,180,255,0.6);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.l-line {
+  flex: 1; height: 1px;
+  background: rgba(0,180,255,0.15);
+}
+.learning__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+  gap: 1.25rem;
+}
+.learning-group { }
+.learning-group__name {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: rgba(0,180,255,0.4);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
 }
 </style>

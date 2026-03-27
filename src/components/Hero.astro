@@ -7,41 +7,83 @@ const t = useTranslations(lang);
 ---
 
 <section class="hero" id="hero">
-  <!-- Animated background grid -->
+  <!-- HUD corner decorations -->
+  <div class="hud hud-tl" aria-hidden="true">
+    <span class="hud-line-h"></span><span class="hud-line-v"></span>
+  </div>
+  <div class="hud hud-tr" aria-hidden="true">
+    <span class="hud-line-h"></span><span class="hud-line-v"></span>
+  </div>
+  <div class="hud hud-bl" aria-hidden="true">
+    <span class="hud-line-h"></span><span class="hud-line-v"></span>
+  </div>
+  <div class="hud hud-br" aria-hidden="true">
+    <span class="hud-line-h"></span><span class="hud-line-v"></span>
+  </div>
+
+  <!-- Grid -->
   <div class="hero__grid" aria-hidden="true"></div>
 
-  <!-- Glow orbs -->
-  <div class="hero__orb hero__orb--1" aria-hidden="true"></div>
-  <div class="hero__orb hero__orb--2" aria-hidden="true"></div>
+  <!-- Floating neon orbs -->
+  <div class="orb orb--1" aria-hidden="true"></div>
+  <div class="orb orb--2" aria-hidden="true"></div>
+  <div class="orb orb--3" aria-hidden="true"></div>
+
+  <!-- HUD data strips -->
+  <div class="hud-data hud-data--left" aria-hidden="true">
+    <span>SYS.STATUS: ONLINE</span>
+    <span>LOCATION: CURITIBA.BR</span>
+    <span>STACK: JAVA.ANGULAR.IONIC</span>
+    <span>MODE: FULLSTACK</span>
+  </div>
+  <div class="hud-data hud-data--right" aria-hidden="true">
+    <span>BUILD: PROD</span>
+    <span>UPTIME: 5Y+</span>
+    <span>PROJECTS: 10+</span>
+    <span>STATUS: AVAILABLE</span>
+  </div>
 
   <div class="container hero__content">
-    <p class="hero__greeting">
-      <span class="hero__line"></span>
-      {t('hero.greeting')}
+    <p class="hero__sys">
+      <span class="sys-icon">▶</span>
+      <span id="sysText"></span>
+      <span class="cursor-blink">_</span>
     </p>
 
-    <h1 class="hero__name">Pierre<span class="accent-dot">.</span></h1>
+    <h1 class="hero__name glitch-text" data-text="PIERRE">
+      PIERRE
+    </h1>
 
-    <div class="hero__role">
-      <span class="hero__role-text">{t('hero.role')}</span>
+    <div class="hero__title-wrap">
+      <span class="hero__title-line"></span>
+      <span class="hero__title" id="typewriter"></span>
+      <span class="type-cursor">|</span>
     </div>
 
-    <p class="hero__sub">{t('hero.sub')}</p>
+    <p class="hero__sub">
+      <span class="sub-item">Java</span>
+      <span class="sub-sep">//</span>
+      <span class="sub-item">Angular</span>
+      <span class="sub-sep">//</span>
+      <span class="sub-item">Ionic</span>
+      <span class="sub-sep">//</span>
+      <span class="sub-item">Cloud</span>
+    </p>
 
     <div class="hero__cta">
       <a href="#projects" class="btn btn--primary">
-        {t('hero.cta')}
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-        </svg>
+        <span>▶ {t('hero.cta')}</span>
       </a>
-      <a href="#contact" class="btn btn--ghost">{t('hero.contact')}</a>
+      <a href="#contact" class="btn btn--ghost">
+        <span>{t('hero.contact')}</span>
+      </a>
     </div>
+  </div>
 
-    <div class="hero__scroll" aria-hidden="true">
-      <span>scroll</span>
-      <div class="hero__scroll-line"></div>
-    </div>
+  <!-- Scroll indicator -->
+  <div class="hero__scroll" aria-hidden="true">
+    <div class="scroll-track"><div class="scroll-thumb"></div></div>
+    <span>SCROLL</span>
   </div>
 </section>
 
@@ -54,169 +96,257 @@ const t = useTranslations(lang);
   overflow: hidden;
 }
 
-/* Grid background */
+/* Grid */
 .hero__grid {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(var(--border) 1px, transparent 1px),
-    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    linear-gradient(rgba(255,140,0,0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,140,0,0.07) 1px, transparent 1px);
   background-size: 60px 60px;
-  mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 40%, transparent 100%);
-  opacity: 0.5;
+  mask-image: radial-gradient(ellipse 85% 80% at 50% 50%, black 30%, transparent 100%);
 }
 
 /* Orbs */
-.hero__orb {
+.orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(80px);
+  filter: blur(100px);
   pointer-events: none;
 }
-.hero__orb--1 {
-  width: 500px; height: 500px;
-  top: -100px; left: -150px;
-  background: radial-gradient(circle, rgba(99,179,237,0.12) 0%, transparent 70%);
-  animation: floatOrb 12s ease-in-out infinite;
+.orb--1 {
+  width: 600px; height: 600px;
+  top: -200px; left: -200px;
+  background: radial-gradient(circle, rgba(255,140,0,0.15) 0%, transparent 65%);
+  animation: floatOrb 14s ease-in-out infinite;
 }
-.hero__orb--2 {
-  width: 400px; height: 400px;
-  bottom: -50px; right: -100px;
-  background: radial-gradient(circle, rgba(159,122,234,0.10) 0%, transparent 70%);
-  animation: floatOrb 16s ease-in-out infinite reverse;
+.orb--2 {
+  width: 450px; height: 450px;
+  bottom: -100px; right: -150px;
+  background: radial-gradient(circle, rgba(255,69,0,0.12) 0%, transparent 65%);
+  animation: floatOrb 18s ease-in-out infinite reverse;
+}
+.orb--3 {
+  width: 300px; height: 300px;
+  top: 40%; left: 60%;
+  background: radial-gradient(circle, rgba(255,179,71,0.08) 0%, transparent 65%);
+  animation: floatOrb 10s ease-in-out infinite 3s;
 }
 @keyframes floatOrb {
-  0%, 100% { transform: translate(0, 0); }
-  50% { transform: translate(30px, -30px); }
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(40px, -40px) scale(1.05); }
+  66% { transform: translate(-20px, 30px) scale(0.95); }
 }
+
+/* HUD corners */
+.hud {
+  position: absolute;
+  width: 40px; height: 40px;
+  pointer-events: none;
+  z-index: 2;
+}
+.hud-tl { top: 80px; left: 24px; }
+.hud-tr { top: 80px; right: 24px; }
+.hud-bl { bottom: 60px; left: 24px; }
+.hud-br { bottom: 60px; right: 24px; }
+
+.hud-line-h, .hud-line-v {
+  position: absolute;
+  background: rgba(255,140,0,0.6);
+  box-shadow: 0 0 6px rgba(255,140,0,0.4);
+}
+.hud-line-h { width: 100%; height: 1px; top: 0; left: 0; }
+.hud-line-v { width: 1px; height: 100%; top: 0; left: 0; }
+
+.hud-tr .hud-line-v { left: auto; right: 0; }
+.hud-bl .hud-line-h { top: auto; bottom: 0; }
+.hud-br .hud-line-h { top: auto; bottom: 0; }
+.hud-br .hud-line-v { left: auto; right: 0; }
+
+/* HUD data strips */
+.hud-data {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: rgba(255,140,0,0.3);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+.hud-data--left { left: 1.5rem; writing-mode: vertical-rl; transform: rotate(180deg) translateY(50%); }
+.hud-data--right { right: 1.5rem; writing-mode: vertical-rl; }
+
+@media (max-width: 900px) { .hud-data { display: none; } }
 
 /* Content */
 .hero__content {
   position: relative;
-  z-index: 1;
-  padding-top: 80px;
+  z-index: 3;
+  padding-top: 60px;
 }
 
-.hero__greeting {
+/* System line */
+.hero__sys {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: rgba(255,140,0,0.6);
+  letter-spacing: 0.1em;
+  margin-bottom: 1.5rem;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  font-family: var(--font-mono);
-  font-size: 0.875rem;
-  color: var(--accent);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-bottom: 1rem;
-  animation: fadeUp 0.7s ease both;
+  gap: 0.5rem;
+  animation: fadeUp 0.5s ease both;
 }
-.hero__line {
-  display: block;
-  width: 2.5rem;
-  height: 1px;
-  background: var(--accent);
-}
+.sys-icon { color: var(--accent); }
+.cursor-blink { animation: blink 1s step-end infinite; }
+@keyframes blink { 50% { opacity: 0; } }
 
+/* Name */
 .hero__name {
-  font-size: clamp(4rem, 12vw, 8rem);
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  line-height: 0.9;
-  color: var(--text-primary);
-  animation: fadeUp 0.7s 0.1s ease both;
+  font-size: clamp(5rem, 16vw, 11rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 0.85;
+  background: linear-gradient(135deg, #fff5e0 0%, #ff8c00 50%, #ff4500 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
 }
-.accent-dot { color: var(--accent); }
 
-.hero__role {
-  margin-top: 1rem;
-  margin-bottom: 0.75rem;
-  animation: fadeUp 0.7s 0.2s ease both;
-}
-.hero__role-text {
-  font-size: clamp(1.25rem, 3vw, 1.75rem);
-  font-weight: 600;
-  background: var(--gradient-hero);
+/* Glitch effect */
+.glitch-text::before, .glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0; left: 0;
+  background: linear-gradient(135deg, #fff5e0 0%, #ff8c00 50%, #ff4500 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
-
-.hero__sub {
-  font-family: var(--font-mono);
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  letter-spacing: 0.04em;
-  margin-bottom: 2.5rem;
-  animation: fadeUp 0.7s 0.3s ease both;
+.glitch-text::before {
+  animation: gName-a 3s infinite;
+  clip-path: polygon(0 0, 100% 0, 100% 38%, 0 38%);
+  filter: hue-rotate(180deg) brightness(1.5);
+}
+.glitch-text::after {
+  animation: gName-b 3s infinite;
+  clip-path: polygon(0 62%, 100% 62%, 100% 100%, 0 100%);
+  filter: hue-rotate(-60deg) brightness(1.2);
+}
+@keyframes gName-a {
+  0%, 70%, 100% { transform: translate(0, 0); opacity: 0; }
+  72% { transform: translate(-14px,  -8px); opacity: 0.9; }
+  74% { transform: translate( 10px,   5px); opacity: 0.8; }
+  76% { transform: translate( -6px,  -3px); opacity: 0.9; }
+  78% { transform: translate(   0,     0); opacity: 0; }
+}
+@keyframes gName-b {
+  0%, 70%, 100% { transform: translate(0, 0); opacity: 0; }
+  73% { transform: translate( 14px,   6px); opacity: 0.8; }
+  75% { transform: translate(-10px,  -8px); opacity: 0.9; }
+  77% { transform: translate(  4px,   4px); opacity: 0.7; }
+  79% { transform: translate(   0,     0); opacity: 0; }
 }
 
-/* Buttons */
+/* Role typewriter */
+.hero__title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  animation: fadeUp 0.6s 0.2s ease both;
+}
+.hero__title-line {
+  display: block;
+  width: 3rem; height: 2px;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  flex-shrink: 0;
+}
+.hero__title {
+  font-family: var(--font-mono);
+  font-size: clamp(1rem, 2.5vw, 1.4rem);
+  color: var(--accent);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.type-cursor {
+  color: var(--accent);
+  font-family: var(--font-mono);
+  animation: blink 0.8s step-end infinite;
+}
+
+/* Sub */
+.hero__sub {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 2.5rem;
+  animation: fadeUp 0.6s 0.3s ease both;
+}
+.sub-item {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.sub-sep {
+  color: rgba(255,140,0,0.3);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+/* CTA */
 .hero__cta {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
-  animation: fadeUp 0.7s 0.4s ease both;
+  animation: fadeUp 0.6s 0.4s ease both;
 }
 
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75em 1.5em;
-  border-radius: var(--radius-md);
-  font-weight: 600;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all var(--transition);
-  letter-spacing: 0.01em;
-  border: 1px solid transparent;
-}
-.btn--primary {
-  background: var(--accent);
-  color: var(--bg-base);
-  border-color: var(--accent);
-}
-.btn--primary:hover {
-  background: transparent;
-  color: var(--accent);
-  box-shadow: var(--shadow-glow);
-}
-.btn--ghost {
-  background: transparent;
-  color: var(--text-secondary);
-  border-color: var(--border);
-}
-.btn--ghost:hover {
-  color: var(--text-primary);
-  border-color: var(--border-accent);
-  background: var(--accent-glow);
-}
-
-/* Scroll indicator */
+/* Scroll */
 .hero__scroll {
   position: absolute;
-  bottom: 2.5rem;
+  bottom: 2rem;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
-  color: var(--text-muted);
   font-family: var(--font-mono);
-  font-size: 0.65rem;
-  letter-spacing: 0.12em;
+  font-size: 0.55rem;
+  color: rgba(255,140,0,0.4);
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  animation: fadeUp 1s 0.8s ease both;
+  animation: fadeUp 0.8s 0.8s ease both;
 }
-.hero__scroll-line {
-  width: 1px;
-  height: 40px;
-  background: linear-gradient(to bottom, var(--text-muted), transparent);
-  animation: scrollPulse 2s ease-in-out infinite;
+.scroll-track {
+  width: 2px; height: 40px;
+  background: rgba(255,140,0,0.15);
+  position: relative;
+  overflow: hidden;
 }
-@keyframes scrollPulse {
-  0%, 100% { opacity: 0.4; transform: scaleY(1); }
-  50% { opacity: 1; transform: scaleY(1.1); }
+.scroll-thumb {
+  width: 100%; height: 40%;
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent);
+  position: absolute;
+  top: -40%;
+  animation: scrollThumb 2s ease-in-out infinite;
+}
+@keyframes scrollThumb {
+  0% { top: -40%; }
+  100% { top: 140%; }
 }
 
 @keyframes fadeUp {
@@ -224,3 +354,48 @@ const t = useTranslations(lang);
   to   { opacity: 1; transform: none; }
 }
 </style>
+
+<script>
+  /* Typewriter effect */
+  const roles = [
+    'FULLSTACK DEVELOPER',
+    'JAVA ENGINEER',
+    'ANGULAR SPECIALIST',
+    'IONIC DEVELOPER',
+    'CLOUD ARCHITECT',
+  ];
+  const el = document.getElementById('typewriter')!;
+  let ri = 0, ci = 0, deleting = false;
+
+  function typeLoop() {
+    const word = roles[ri];
+    el.textContent = deleting ? word.slice(0, ci--) : word.slice(0, ci++);
+    if (!deleting && ci > word.length) { setTimeout(() => { deleting = true; typeLoop(); }, 1800); return; }
+    if (deleting && ci < 0) { deleting = false; ri = (ri + 1) % roles.length; ci = 0; }
+    setTimeout(typeLoop, deleting ? 40 : 80);
+  }
+  setTimeout(typeLoop, 800);
+
+  /* System text */
+  const sysEl = document.getElementById('sysText')!;
+  const sysMsg = '> INITIALIZING SYSTEM... PIERRE.DEV';
+  let si = 0;
+  function sysType() {
+    sysEl.textContent = sysMsg.slice(0, si++);
+    if (si <= sysMsg.length) setTimeout(sysType, 35);
+  }
+  setTimeout(sysType, 200);
+
+  /* Parallax orbs on mouse move */
+  const orbs = document.querySelectorAll('.orb') as NodeListOf<HTMLElement>;
+  document.addEventListener('mousemove', (e) => {
+    const cx = window.innerWidth  / 2;
+    const cy = window.innerHeight / 2;
+    const dx = (e.clientX - cx) / cx;
+    const dy = (e.clientY - cy) / cy;
+    orbs.forEach((orb, i) => {
+      const strength = (i + 1) * 18;
+      orb.style.transform = `translate(${dx * strength}px, ${dy * strength}px)`;
+    });
+  }, { passive: true });
+</script>

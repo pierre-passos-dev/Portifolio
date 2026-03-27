@@ -15,14 +15,24 @@ const t = useTranslations(lang);
     <div class="timeline">
       {experiences.map((exp, i) => (
         <div class="timeline__item" data-reveal style={`transition-delay: ${i * 0.12}s`}>
-          <div class="timeline__marker">
-            <div class="timeline__dot"></div>
-            {i < experiences.length - 1 && <div class="timeline__line"></div>}
+
+          <!-- Left: period + line -->
+          <div class="timeline__left">
+            <span class="timeline__period">{exp.period}</span>
+            <div class="timeline__track">
+              <div class="timeline__node">
+                <div class="timeline__node-inner"></div>
+                <div class="timeline__node-ring"></div>
+              </div>
+              {i < experiences.length - 1 && <div class="timeline__line"></div>}
+            </div>
           </div>
+
+          <!-- Right: content -->
           <div class="timeline__content">
-            <div class="timeline__meta">
-              <span class="timeline__period">{exp.period}</span>
+            <div class="timeline__company-row">
               <span class="timeline__company">{exp.company}</span>
+              <span class="timeline__sep">/</span>
             </div>
             <h3 class="timeline__role">
               {lang === 'pt' ? exp.rolePt : exp.roleEn}
@@ -31,7 +41,7 @@ const t = useTranslations(lang);
               {lang === 'pt' ? exp.descPt : exp.descEn}
             </p>
             <div class="timeline__tags">
-              {exp.tags.map(tag => <span class="tag">{tag}</span>)}
+              {exp.tags.slice(0, 6).map(tag => <span class="tag">{tag}</span>)}
             </div>
           </div>
         </div>
@@ -45,82 +55,109 @@ const t = useTranslations(lang);
   display: flex;
   flex-direction: column;
   gap: 0;
-  max-width: 700px;
+  max-width: 800px;
 }
 
 .timeline__item {
   display: grid;
-  grid-template-columns: 40px 1fr;
-  gap: 1.5rem;
-  padding-bottom: 2.5rem;
+  grid-template-columns: 160px 1fr;
+  gap: 2rem;
+  padding-bottom: 3rem;
+}
+@media (max-width: 600px) {
+  .timeline__item { grid-template-columns: 100px 1fr; gap: 1rem; }
 }
 
-.timeline__marker {
+/* Left */
+.timeline__left {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding-top: 4px;
-}
-.timeline__dot {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: var(--accent);
-  border: 3px solid var(--bg-base);
-  box-shadow: 0 0 0 2px var(--accent);
-  flex-shrink: 0;
-  position: relative;
-  z-index: 1;
-}
-.timeline__line {
-  width: 1px;
-  flex: 1;
-  background: linear-gradient(to bottom, var(--accent), var(--border));
-  margin-top: 6px;
-  min-height: 40px;
-}
-
-.timeline__content {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-.timeline__meta {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0;
 }
 .timeline__period {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--accent);
-  letter-spacing: 0.05em;
+  font-size: 0.65rem;
+  color: rgba(255,140,0,0.5);
+  letter-spacing: 0.08em;
+  text-align: right;
+  margin-bottom: 0.5rem;
+  white-space: nowrap;
+}
+.timeline__track {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+.timeline__node {
+  position: relative;
+  width: 14px; height: 14px;
+  flex-shrink: 0;
+}
+.timeline__node-inner {
+  position: absolute;
+  inset: 3px;
+  background: var(--accent);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--accent), 0 0 16px rgba(255,140,0,0.4);
+}
+.timeline__node-ring {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(255,140,0,0.5);
+  border-radius: 50%;
+  animation: nodeRing 2s ease-in-out infinite;
+}
+@keyframes nodeRing {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.5); opacity: 0; }
+}
+.timeline__line {
+  flex: 1;
+  width: 1px;
+  background: linear-gradient(to bottom, rgba(255,140,0,0.4), rgba(255,140,0,0.05));
+  margin-top: 4px;
+}
+
+/* Content */
+.timeline__content {
+  padding-top: 0;
+}
+.timeline__company-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
 }
 .timeline__company {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  font-weight: 500;
-  background: var(--bg-elevated);
-  padding: 0.15em 0.6em;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--accent);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.timeline__sep {
+  color: rgba(255,140,0,0.3);
+  font-family: var(--font-mono);
 }
 .timeline__role {
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 700;
   color: var(--text-primary);
-  letter-spacing: -0.01em;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.75rem;
 }
 .timeline__desc {
-  font-size: 0.875rem;
+  font-size: 0.95rem;
   color: var(--text-secondary);
-  line-height: 1.75;
+  line-height: 1.7;
+  margin-bottom: 1rem;
+  font-family: var(--font-body);
 }
 .timeline__tags {
   display: flex;
-  flex-wrap: wrap;
   gap: 0.4rem;
-  margin-top: 0.25rem;
+  flex-wrap: wrap;
 }
 </style>
