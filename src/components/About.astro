@@ -1,7 +1,9 @@
 ---
 // src/components/About.astro
-import { useTranslations, type Lang } from '../i18n/translations';
-interface Props { lang: Lang; }
+import { useTranslations, type Lang } from "../i18n/translations";
+interface Props {
+  lang: Lang;
+}
 const { lang } = Astro.props;
 const t = useTranslations(lang);
 ---
@@ -13,10 +15,12 @@ const t = useTranslations(lang);
   <div class="container">
     <div class="about__inner">
       <div class="about__text" data-reveal>
-        <span class="section-label">// {lang === 'pt' ? '01. sobre' : '01. about'}</span>
-        <h2 class="section-title">{t('about.title')}</h2>
-        <p class="about__p">{t('about.p1')}</p>
-        <p class="about__p">{t('about.p2')}</p>
+        <span class="section-label"
+          >// {lang === "pt" ? "01. sobre" : "01. about"}</span
+        >
+        <h2 class="section-title">{t("about.title")}</h2>
+        <p class="about__p">{t("about.p1")}</p>
+        <p class="about__p">{t("about.p2")}</p>
       </div>
 
       <div class="about__right" data-reveal>
@@ -31,17 +35,33 @@ const t = useTranslations(lang);
           <div class="terminal-body">
             <div class="t-line"><span class="t-prompt">$</span> whoami</div>
             <div class="t-line t-out">pierre_fullstack_dev</div>
-            <div class="t-line"><span class="t-prompt">$</span> cat profile.json</div>
-            <div class="t-code">
-              <span class="t-brace">{'{'}</span><br/>
-              &nbsp;&nbsp;<span class="t-key">"name"</span>: <span class="t-val">"Pierre"</span>,<br/>
-              &nbsp;&nbsp;<span class="t-key">"xp"</span>: <span class="t-num">5</span>,<br/>
-              &nbsp;&nbsp;<span class="t-key">"projects"</span>: <span class="t-num">10</span>,<br/>
-              &nbsp;&nbsp;<span class="t-key">"city"</span>: <span class="t-val">"Curitiba"</span>,<br/>
-              &nbsp;&nbsp;<span class="t-key">"stack"</span>: <span class="t-val">"Java+Angular"</span><br/>
-              <span class="t-brace">{'}'}</span>
+            <div class="t-line">
+              <span class="t-prompt">$</span> cat profile.json
             </div>
-            <div class="t-line"><span class="t-prompt">$</span> status<span class="t-cursor">_</span></div>
+            <div class="t-code">
+              <span class="t-brace">{"{"}</span><br />
+              &nbsp;&nbsp;<span class="t-key">"name"</span>: <span class="t-val"
+                >"Pierre"</span
+              >,<br />
+              &nbsp;&nbsp;<span class="t-key">"xp"</span>: <span class="t-num"
+                >5</span
+              >,<br />
+              &nbsp;&nbsp;<span class="t-key">"projects"</span>: <span
+                class="t-num">10</span
+              >,<br />
+              &nbsp;&nbsp;<span class="t-key">"city"</span>: <span class="t-val"
+                >"Curitiba"</span
+              >,<br />
+              &nbsp;&nbsp;<span class="t-key">"stack"</span>: <span
+                class="t-val">"Java+Angular"</span
+              ><br />
+              <span class="t-brace">{"}"}</span>
+            </div>
+            <div class="t-line">
+              <span class="t-prompt">$</span> status<span class="t-cursor"
+                >_</span
+              >
+            </div>
           </div>
         </div>
 
@@ -49,17 +69,37 @@ const t = useTranslations(lang);
         <div class="stats-row">
           <div class="stat-block">
             <span class="stat-num">5<span class="stat-plus">+</span></span>
-            <span class="stat-label">{lang === 'pt' ? 'Anos exp.' : 'Years exp.'}</span>
+            <span class="stat-label"
+              >{lang === "pt" ? "Anos exp." : "Years exp."}</span
+            >
           </div>
           <div class="stat-divider"></div>
           <div class="stat-block">
             <span class="stat-num">10<span class="stat-plus">+</span></span>
-            <span class="stat-label">{lang === 'pt' ? 'Projetos' : 'Projects'}</span>
+            <span class="stat-label"
+              >{lang === "pt" ? "Projetos" : "Projects"}</span
+            >
           </div>
           <div class="stat-divider"></div>
           <div class="stat-block">
             <span class="stat-num">4</span>
-            <span class="stat-label">{lang === 'pt' ? 'Plataformas' : 'Platforms'}</span>
+            <span class="stat-label"
+              >{lang === "pt" ? "Plataformas" : "Platforms"}</span
+            >
+          </div>
+        </div>
+        <!-- Education block -->
+        <div class="edu-block">
+          <span class="edu-icon" aria-hidden="true">◈</span>
+          <div class="edu-text">
+            <span class="edu-course">
+              {
+                lang === "pt"
+                  ? "Análise e Des. de Sistemas · UNINTER"
+                  : "Systems Analysis & Dev. · UNINTER"
+              }
+            </span>
+            <span class="edu-period">2021 – 2024</span>
           </div>
         </div>
       </div>
@@ -68,121 +108,202 @@ const t = useTranslations(lang);
 </section>
 
 <style>
-.about__vline {
-  position: absolute;
-  left: 0; top: 0; bottom: 0;
-  width: 1px;
-  background: linear-gradient(to bottom, transparent, rgba(255,140,0,0.3), transparent);
-}
+  .about__vline {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      rgba(255, 140, 0, 0.3),
+      transparent
+    );
+  }
 
-.about__inner {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 5rem;
-  align-items: center;
-}
-@media (max-width: 768px) {
-  .about__inner { grid-template-columns: 1fr; gap: 3rem; }
-}
+  .about__inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: center;
+  }
+  @media (max-width: 768px) {
+    .about__inner {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+  }
 
-.about__p {
-  font-size: 1.05rem;
-  color: var(--text-secondary);
-  line-height: 1.8;
-  margin-top: 1.25rem;
-  font-weight: 400;
-}
+  .about__p {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-top: 1.25rem;
+    font-weight: 400;
+  }
 
-/* Terminal card */
-.terminal-card {
-  border: 1px solid rgba(255,140,0,0.25);
-  background: rgba(10,10,15,0.9);
-  box-shadow: 0 0 30px rgba(255,140,0,0.05), 0 20px 60px rgba(0,0,0,0.6);
-  overflow: hidden;
-}
-.terminal-bar {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.6rem 1rem;
-  background: rgba(255,140,0,0.05);
-  border-bottom: 1px solid rgba(255,140,0,0.15);
-}
-.t-dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-}
-.t-dot--r { background: #ff4444; box-shadow: 0 0 4px #ff4444; }
-.t-dot--y { background: #ff8c00; box-shadow: 0 0 4px #ff8c00; }
-.t-dot--g { background: #44ff44; box-shadow: 0 0 4px #44ff44; }
-.t-title {
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  color: rgba(255,140,0,0.5);
-  margin-left: 0.5rem;
-  letter-spacing: 0.06em;
-}
-.terminal-body { padding: 1.25rem; }
-.t-line {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-  line-height: 1.8;
-  letter-spacing: 0.04em;
-}
-.t-prompt { color: var(--accent); margin-right: 0.5rem; }
-.t-out { color: rgba(255,140,0,0.5); padding-left: 1.5rem; }
-.t-code {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  line-height: 1.8;
-  padding: 0.5rem 1.5rem;
-  color: var(--text-secondary);
-}
-.t-brace { color: rgba(255,140,0,0.6); }
-.t-key { color: #ffb347; }
-.t-val { color: #98d982; }
-.t-num { color: #7ecfff; }
-.t-cursor {
-  color: var(--accent);
-  animation: blink 1s step-end infinite;
-}
-@keyframes blink { 50% { opacity: 0; } }
+  /* Terminal card */
+  .terminal-card {
+    border: 1px solid rgba(255, 140, 0, 0.25);
+    background: rgba(10, 10, 15, 0.9);
+    box-shadow:
+      0 0 30px rgba(255, 140, 0, 0.05),
+      0 20px 60px rgba(0, 0, 0, 0.6);
+    overflow: hidden;
+  }
+  .terminal-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.6rem 1rem;
+    background: rgba(255, 140, 0, 0.05);
+    border-bottom: 1px solid rgba(255, 140, 0, 0.15);
+  }
+  .t-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .t-dot--r {
+    background: #ff4444;
+    box-shadow: 0 0 4px #ff4444;
+  }
+  .t-dot--y {
+    background: #ff8c00;
+    box-shadow: 0 0 4px #ff8c00;
+  }
+  .t-dot--g {
+    background: #44ff44;
+    box-shadow: 0 0 4px #44ff44;
+  }
+  .t-title {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: rgba(255, 140, 0, 0.5);
+    margin-left: 0.5rem;
+    letter-spacing: 0.06em;
+  }
+  .terminal-body {
+    padding: 1.25rem;
+  }
+  .t-line {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    letter-spacing: 0.04em;
+  }
+  .t-prompt {
+    color: var(--accent);
+    margin-right: 0.5rem;
+  }
+  .t-out {
+    color: rgba(255, 140, 0, 0.5);
+    padding-left: 1.5rem;
+  }
+  .t-code {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    line-height: 1.8;
+    padding: 0.5rem 1.5rem;
+    color: var(--text-secondary);
+  }
+  .t-brace {
+    color: rgba(255, 140, 0, 0.6);
+  }
+  .t-key {
+    color: #ffb347;
+  }
+  .t-val {
+    color: #98d982;
+  }
+  .t-num {
+    color: #7ecfff;
+  }
+  .t-cursor {
+    color: var(--accent);
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink {
+    50% {
+      opacity: 0;
+    }
+  }
 
-/* Stats */
-.stats-row {
-  display: flex;
-  align-items: center;
-  margin-top: 1.25rem;
-  border: 1px solid rgba(255,140,0,0.15);
-  background: rgba(10,10,15,0.8);
-}
-.stat-block {
-  flex: 1;
-  padding: 1.25rem;
-  text-align: center;
-}
-.stat-num {
-  display: block;
-  font-family: var(--font-display);
-  font-size: 1.8rem;
-  font-weight: 800;
-  color: var(--accent);
-  text-shadow: 0 0 20px rgba(255,140,0,0.4);
-  line-height: 1;
-}
-.stat-plus { font-size: 1.2rem; }
-.stat-label {
-  display: block;
-  font-family: var(--font-mono);
-  font-size: 0.6rem;
-  color: var(--text-muted);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  margin-top: 0.3rem;
-}
-.stat-divider {
-  width: 1px; height: 50px;
-  background: rgba(255,140,0,0.15);
-}
+  /* Stats */
+  .stats-row {
+    display: flex;
+    align-items: center;
+    margin-top: 1.25rem;
+    border: 1px solid rgba(255, 140, 0, 0.15);
+    background: rgba(10, 10, 15, 0.8);
+  }
+  .stat-block {
+    flex: 1;
+    padding: 1.25rem;
+    text-align: center;
+  }
+  .stat-num {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--accent);
+    text-shadow: 0 0 20px rgba(255, 140, 0, 0.4);
+    line-height: 1;
+  }
+  .stat-plus {
+    font-size: 1.2rem;
+  }
+  .stat-label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 0.3rem;
+  }
+  .stat-divider {
+    width: 1px;
+    height: 50px;
+    background: rgba(255, 140, 0, 0.15);
+  }
+  .edu-block {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+    padding: 10px 14px;
+    background: rgba(255, 140, 0, 0.04);
+    border: 1px solid rgba(255, 140, 0, 0.18);
+  }
+
+  .edu-icon {
+    color: var(--accent);
+    font-size: 13px;
+    flex-shrink: 0;
+    opacity: 0.7;
+  }
+
+  .edu-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .edu-course {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-primary);
+    letter-spacing: 0.04em;
+  }
+
+  .edu-period {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+  }
 </style>
