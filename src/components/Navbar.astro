@@ -1,18 +1,19 @@
 ---
 // src/components/Navbar.astro
-import { useTranslations, type Lang } from '../i18n/translations';
-interface Props { lang: Lang; }
+import { useTranslations, type Lang } from "../i18n/translations";
+interface Props {
+  lang: Lang;
+}
 const { lang } = Astro.props;
 const t = useTranslations(lang);
-const otherLang = lang === 'pt' ? 'en' : 'pt';
-const otherPath  = lang === 'pt' ? '/en' : '/';
+const otherLang = lang === "pt" ? "en" : "pt";
+const otherPath = lang === "pt" ? "/en" : "/";
 ---
 
 <header class="navbar" id="navbar">
   <div class="navbar__scanline"></div>
   <div class="container navbar__inner">
-
-    <a href={lang === 'pt' ? '/' : '/en'} class="navbar__logo">
+    <a href={lang === "pt" ? "/" : "/en"} class="navbar__logo">
       <span class="logo-bracket">[</span>
       <span class="logo-name">PIERRE</span>
       <span class="logo-dot">.</span>
@@ -20,193 +21,282 @@ const otherPath  = lang === 'pt' ? '/en' : '/';
     </a>
 
     <nav class="navbar__nav" aria-label="Main navigation">
-      <a href="#about"      class="nav-link">{t('nav.about')}</a>
-      <a href="#projects"   class="nav-link">{t('nav.projects')}</a>
-      <a href="#skills"     class="nav-link">{t('nav.skills')}</a>
-      <a href="#experience" class="nav-link">{t('nav.experience')}</a>
-      <a href="#contact"    class="nav-link">{t('nav.contact')}</a>
+      <a href="#about" class="nav-link">{t("nav.about")}</a>
+      <a href="#projects" class="nav-link">{t("nav.projects")}</a>
+      <a href="#skills" class="nav-link">{t("nav.skills")}</a>
+      <a href="#experience" class="nav-link">{t("nav.experience")}</a>
+      <a href="#contact" class="nav-link">{t("nav.contact")}</a>
     </nav>
 
     <div class="navbar__actions">
-      <a href={otherPath} class="lang-switch">{otherLang.toUpperCase()}</a>
-      <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false">
+      <div class="lang-toggle">
+        <a
+          href="/"
+          class={`lang-btn ${lang === "pt" ? "lang-btn--active" : ""}`}>PT</a
+        >
+        <span class="lang-divider">|</span>
+        <a
+          href="/en"
+          class={`lang-btn ${lang === "en" ? "lang-btn--active" : ""}`}>EN</a
+        >
+      </div>
+      <button
+        class="menu-toggle"
+        id="menuToggle"
+        aria-label="Toggle menu"
+        aria-expanded="false"
+      >
         <span></span><span></span><span></span>
       </button>
     </div>
   </div>
 
   <nav class="mobile-nav" id="mobileNav" aria-hidden="true">
-    <a href="#about"      class="mobile-nav__link">{t('nav.about')}</a>
-    <a href="#projects"   class="mobile-nav__link">{t('nav.projects')}</a>
-    <a href="#skills"     class="mobile-nav__link">{t('nav.skills')}</a>
-    <a href="#experience" class="mobile-nav__link">{t('nav.experience')}</a>
-    <a href="#contact"    class="mobile-nav__link">{t('nav.contact')}</a>
+    <a href="#about" class="mobile-nav__link">{t("nav.about")}</a>
+    <a href="#projects" class="mobile-nav__link">{t("nav.projects")}</a>
+    <a href="#skills" class="mobile-nav__link">{t("nav.skills")}</a>
+    <a href="#experience" class="mobile-nav__link">{t("nav.experience")}</a>
+    <a href="#contact" class="mobile-nav__link">{t("nav.contact")}</a>
   </nav>
 </header>
 
 <style>
-.navbar {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 100;
-  background: transparent;
-  transition: background 0.3s, border-color 0.3s;
-  border-bottom: 1px solid transparent;
-}
-.navbar__scanline {
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg, transparent, transparent 1px,
-    rgba(255,140,0,0.015) 1px, rgba(255,140,0,0.015) 2px
-  );
-  pointer-events: none;
-}
-.navbar.scrolled {
-  background: rgba(5, 5, 7, 0.92);
-  backdrop-filter: blur(20px);
-  border-color: rgba(255,140,0,0.2);
-  box-shadow: 0 0 30px rgba(255,140,0,0.05), 0 1px 0 rgba(255,140,0,0.15);
-}
-.navbar__inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 60px;
-}
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: transparent;
+    transition:
+      background 0.3s,
+      border-color 0.3s;
+    border-bottom: 1px solid transparent;
+  }
+  .navbar__scanline {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 1px,
+      rgba(255, 140, 0, 0.015) 1px,
+      rgba(255, 140, 0, 0.015) 2px
+    );
+    pointer-events: none;
+  }
+  .navbar.scrolled {
+    background: rgba(5, 5, 7, 0.92);
+    backdrop-filter: blur(20px);
+    border-color: rgba(255, 140, 0, 0.2);
+    box-shadow:
+      0 0 30px rgba(255, 140, 0, 0.05),
+      0 1px 0 rgba(255, 140, 0, 0.15);
+  }
+  .navbar__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+  }
 
-/* Logo */
-.navbar__logo {
-  font-family: var(--font-display);
-  font-size: 0.9rem;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  color: var(--text-primary);
-  display: flex;
-  align-items: center;
-  gap: 0.1em;
-  transition: all 0.2s;
-}
-.logo-bracket { color: rgba(255,140,0,0.5); }
-.logo-name { color: var(--text-primary); }
-.logo-dot {
-  color: var(--accent);
-  text-shadow: 0 0 10px var(--accent);
-  animation: pulse-dot 2s infinite;
-}
-@keyframes pulse-dot {
-  0%, 100% { text-shadow: 0 0 8px var(--accent); }
-  50% { text-shadow: 0 0 20px var(--accent), 0 0 40px var(--accent); }
-}
-.navbar__logo:hover .logo-name { color: var(--accent); }
+  /* Logo */
+  .navbar__logo {
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.1em;
+    transition: all 0.2s;
+  }
+  .logo-bracket {
+    color: rgba(255, 140, 0, 0.5);
+  }
+  .logo-name {
+    color: var(--text-primary);
+  }
+  .logo-dot {
+    color: var(--accent);
+    text-shadow: 0 0 10px var(--accent);
+    animation: pulse-dot 2s infinite;
+  }
+  @keyframes pulse-dot {
+    0%,
+    100% {
+      text-shadow: 0 0 8px var(--accent);
+    }
+    50% {
+      text-shadow:
+        0 0 20px var(--accent),
+        0 0 40px var(--accent);
+    }
+  }
+  .navbar__logo:hover .logo-name {
+    color: var(--accent);
+  }
 
-/* Nav links */
-.navbar__nav { display: flex; gap: 2rem; align-items: center; }
-.nav-link {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  color: var(--text-secondary);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  transition: color 0.2s;
-  position: relative;
-  padding: 0.2em 0;
-}
-.nav-link::after {
-  content: '';
-  position: absolute;
-  bottom: -2px; left: 0;
-  width: 0; height: 1px;
-  background: var(--accent);
-  box-shadow: 0 0 8px var(--accent);
-  transition: width 0.3s;
-}
-.nav-link:hover { color: var(--accent); }
-.nav-link:hover::after { width: 100%; }
+  /* Nav links */
+  .navbar__nav {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+  }
+  .nav-link {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+    position: relative;
+    padding: 0.2em 0;
+  }
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    transition: width 0.3s;
+  }
+  .nav-link:hover {
+    color: var(--accent);
+  }
+  .nav-link:hover::after {
+    width: 100%;
+  }
 
-/* Actions */
-.navbar__actions { display: flex; align-items: center; gap: 1rem; }
+  /* Actions */
+  .navbar__actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
 
-.lang-switch {
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-  border: 1px solid var(--border-accent);
-  padding: 0.3em 0.7em;
-  letter-spacing: 0.12em;
-  transition: all 0.2s;
-}
-.lang-switch:hover {
-  color: var(--accent);
-  border-color: var(--accent);
-  box-shadow: 0 0 10px rgba(255,140,0,0.2);
-}
+  .lang-toggle {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    border: 1px solid rgba(255, 140, 0, 0.2);
+    padding: 3px 6px;
+  }
 
-.menu-toggle {
-  display: none;
-  flex-direction: column;
-  gap: 5px;
-  background: none;
-  border: none;
-  cursor: none;
-  padding: 4px;
-}
-.menu-toggle span {
-  display: block;
-  width: 22px; height: 1px;
-  background: var(--accent);
-  box-shadow: 0 0 4px var(--accent);
-  transition: transform 0.25s, opacity 0.25s;
-}
+  .lang-btn {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 2px 5px;
+    transition: color 0.2s;
+  }
 
-/* Mobile nav */
-.mobile-nav {
-  display: none;
-  flex-direction: column;
-  background: rgba(5,5,7,0.97);
-  border-top: 1px solid var(--border-accent);
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.35s ease;
-}
-.mobile-nav.open { max-height: 400px; }
-.mobile-nav__link {
-  padding: 1rem 1.5rem;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  border-bottom: 1px solid var(--border);
-  transition: color 0.2s, padding-left 0.2s;
-}
-.mobile-nav__link:hover { color: var(--accent); padding-left: 2rem; }
+  .lang-btn:hover {
+    color: var(--accent);
+  }
 
-@media (max-width: 768px) {
-  .navbar__nav { display: none; }
-  .menu-toggle { display: flex; }
-  .mobile-nav { display: flex; }
-}
+  .lang-btn--active {
+    color: var(--accent);
+    background: rgba(255, 140, 0, 0.1);
+  }
+
+  .lang-divider {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: rgba(255, 140, 0, 0.2);
+    user-select: none;
+  }
+
+  .menu-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: none;
+    padding: 4px;
+  }
+  .menu-toggle span {
+    display: block;
+    width: 22px;
+    height: 1px;
+    background: var(--accent);
+    box-shadow: 0 0 4px var(--accent);
+    transition:
+      transform 0.25s,
+      opacity 0.25s;
+  }
+
+  /* Mobile nav */
+  .mobile-nav {
+    display: none;
+    flex-direction: column;
+    background: rgba(5, 5, 7, 0.97);
+    border-top: 1px solid var(--border-accent);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+  }
+  .mobile-nav.open {
+    max-height: 400px;
+  }
+  .mobile-nav__link {
+    padding: 1rem 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+    transition:
+      color 0.2s,
+      padding-left 0.2s;
+  }
+  .mobile-nav__link:hover {
+    color: var(--accent);
+    padding-left: 2rem;
+  }
+
+  @media (max-width: 768px) {
+    .navbar__nav {
+      display: none;
+    }
+    .menu-toggle {
+      display: flex;
+    }
+    .mobile-nav {
+      display: flex;
+    }
+  }
 </style>
 
 <script>
-  const nav = document.getElementById('navbar')!;
-  window.addEventListener('scroll', () => {
-    nav.classList.toggle('scrolled', window.scrollY > 20);
-  }, { passive: true });
+  const nav = document.getElementById("navbar")!;
+  window.addEventListener(
+    "scroll",
+    () => {
+      nav.classList.toggle("scrolled", window.scrollY > 20);
+    },
+    { passive: true },
+  );
 
-  const menuBtn   = document.getElementById('menuToggle')!;
-  const mobileNav = document.getElementById('mobileNav')!;
-  menuBtn.addEventListener('click', () => {
-    const open = mobileNav.classList.toggle('open');
-    menuBtn.setAttribute('aria-expanded', String(open));
-    mobileNav.setAttribute('aria-hidden', String(!open));
+  const menuBtn = document.getElementById("menuToggle")!;
+  const mobileNav = document.getElementById("mobileNav")!;
+  menuBtn.addEventListener("click", () => {
+    const open = mobileNav.classList.toggle("open");
+    menuBtn.setAttribute("aria-expanded", String(open));
+    mobileNav.setAttribute("aria-hidden", String(!open));
   });
-  mobileNav.querySelectorAll('a').forEach(a =>
-    a.addEventListener('click', () => {
-      mobileNav.classList.remove('open');
-      menuBtn.setAttribute('aria-expanded', 'false');
-    })
+  mobileNav.querySelectorAll("a").forEach((a) =>
+    a.addEventListener("click", () => {
+      mobileNav.classList.remove("open");
+      menuBtn.setAttribute("aria-expanded", "false");
+    }),
   );
 </script>

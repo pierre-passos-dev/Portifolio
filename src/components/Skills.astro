@@ -68,14 +68,14 @@ const learningSkills = [
 <section class="section skills" id="skills">
   <div class="container">
     <span class="section-label"
-      >// {lang === "pt" ? "03. stack" : "03. stack"}</span
+      >// {lang === "pt" ? "03. habilidades" : "03. skills"}</span
     >
     <h2 class="section-title">{t("skills.title")}</h2>
     <p class="section-subtitle">
       {
         lang === "pt"
-          ? "> Tecnologias que uso no dia a dia"
-          : "> Technologies I use daily"
+          ? "> Principais Tecnologias e Arquiteturas"
+          : "> Core Technologies & Architecture"
       }
     </p>
 
@@ -109,7 +109,9 @@ const learningSkills = [
         <span class="l-text"
           >{lang === "pt" ? "Em desenvolvimento" : "Learning now"}</span
         >
-        <span class="l-line"></span>
+        <div class="l-progress">
+          <div class="l-progress__bar"></div>
+        </div>
       </div>
       <div class="learning__grid">
         {
@@ -264,5 +266,32 @@ const learningSkills = [
     letter-spacing: 0.12em;
     text-transform: uppercase;
     margin-bottom: 0.6rem;
+  }
+
+  .l-progress {
+    flex: 1;
+    height: 2px;
+    background: transparent;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .l-progress__bar {
+    position: absolute;
+    top: 0;
+    left: -40%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, #00b4ff, transparent);
+    animation: progress-scan 2.4s ease-in-out infinite;
+  }
+
+  @keyframes progress-scan {
+    0% {
+      left: -40%;
+    }
+    100% {
+      left: 110%;
+    }
   }
 </style>

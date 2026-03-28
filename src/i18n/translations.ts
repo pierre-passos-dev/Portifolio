@@ -11,7 +11,7 @@ export const ui = {
   pt: {
     'nav.about': 'Sobre',
     'nav.projects': 'Projetos',
-    'nav.skills': 'Skills',
+    'nav.skills': 'Habilidades',
     'nav.experience': 'Experiência',
     'nav.contact': 'Contato',
 
@@ -28,7 +28,7 @@ export const ui = {
     'projects.title': 'Projetos',
     'projects.more': 'Ver mais',
 
-    'skills.title': 'Stack',
+    'skills.title': 'Habilidades',
     'skills.backend': 'Backend',
     'skills.frontend': 'Frontend',
     'skills.mobile': 'Mobile',
@@ -66,7 +66,7 @@ export const ui = {
     'projects.title': 'Projects',
     'projects.more': 'View more',
 
-    'skills.title': 'Stack',
+    'skills.title': 'Skills',
     'skills.backend': 'Backend',
     'skills.frontend': 'Frontend',
     'skills.mobile': 'Mobile',
