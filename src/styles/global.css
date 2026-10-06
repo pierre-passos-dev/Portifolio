@@ -44,7 +44,7 @@
 /* ─── Reset ──────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; font-size: 16px; cursor: none; }
+html { scroll-behavior: smooth; font-size: 16px; cursor: url('/cursors/default.svg') 3 2, auto; }
 
 body {
   background-color: var(--bg-base);
@@ -72,42 +72,6 @@ body::before {
   opacity: 0.35;
 }
 
-/* ─── Custom Cursor ──────────────────────────────────────── */
-#cursor-dot {
-  position: fixed;
-  width: 6px; height: 6px;
-  background: var(--accent);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 99999;
-  transform: translate(-50%, -50%);
-  box-shadow: 0 0 10px var(--accent), 0 0 20px var(--accent);
-  transition: transform 0.05s;
-}
-#cursor-ring {
-  position: fixed;
-  width: 32px; height: 32px;
-  border: 1px solid rgba(255, 140, 0, 0.5);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 99998;
-  transform: translate(-50%, -50%);
-  transition: width 0.2s, height 0.2s, border-color 0.2s, box-shadow 0.2s;
-}
-#cursor-ring.hovering {
-  width: 50px; height: 50px;
-  border-color: var(--accent-hot);
-  box-shadow: 0 0 15px rgba(255, 69, 0, 0.4);
-}
-#cursor-cross-h, #cursor-cross-v {
-  position: fixed;
-  pointer-events: none;
-  z-index: 99997;
-  background: rgba(255, 140, 0, 0.25);
-}
-#cursor-cross-h { width: 20px; height: 1px; transform: translate(-50%, -50%); }
-#cursor-cross-v { width: 1px; height: 20px; transform: translate(-50%, -50%); }
-
 /* ─── Typography ─────────────────────────────────────────── */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
@@ -116,7 +80,8 @@ h1, h2, h3, h4, h5, h6 {
   line-height: 1.1;
   text-transform: uppercase;
 }
-a { color: inherit; text-decoration: none; cursor: none; }
+a { color: inherit; text-decoration: none; }
+a, button, [role="button"] { cursor: url('/cursors/pointer.svg') 16 16, pointer; }
 
 /* ─── Container ──────────────────────────────────────────── */
 .container {
@@ -226,7 +191,6 @@ a { color: inherit; text-decoration: none; cursor: none; }
   font-weight: 700;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  cursor: none;
   position: relative;
   overflow: hidden;
   transition: all var(--transition);
