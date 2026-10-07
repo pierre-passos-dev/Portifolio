@@ -128,6 +128,230 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     }
     animateParticles();
 
+    /* ── Glitch ── */
+    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function glitchBurst(el: HTMLElement) {
+      el.classList.remove('is-glitching');
+      void el.offsetWidth; // restart the CSS animation
+      el.classList.add('is-glitching');
+      setTimeout(() => el.classList.remove('is-glitching'), 450);
+    }
+
+    // Teleport: the element snaps to one or two random spots on screen, then back home.
+    // Uses the `translate` property so it doesn't fight the burst's transform.
+    function glitchJump(el: HTMLElement) {
+      const r = el.getBoundingClientRect();
+      const padX = 16, padTop = 76, padBottom = 16; // padTop clears the fixed navbar
+      if (r.top < padTop || r.bottom > innerHeight - padBottom) return glitchBurst(el);
+
+      const between = (min: number, max: number) => min < max ? min + Math.random() * (max - min) : 0;
+      let hops = 1 + Math.floor(Math.random() * 2);
+      (function hop() {
+        if (hops-- > 0) {
+          const x = between(padX - r.left, innerWidth - padX - r.right);
+          const y = between(padTop - r.top, innerHeight - padBottom - r.bottom);
+          el.style.translate = `${x}px ${y}px`;
+          setTimeout(hop, 140 + Math.random() * 180);
+        } else {
+          el.style.translate = '';
+        }
+        glitchBurst(el);
+      })();
+    }
+
+    // Wrap each letter in a span so single letters can drop out or shift.
+    // Every letter repaints the parent's gradient at its own offset (--gx/--gy), so the
+    // word still looks like one continuous gradient while letters move independently.
+    function splitChars(el: HTMLElement) {
+      const text = el.textContent!.trim();
+      el.setAttribute('aria-label', text);
+      el.textContent = '';
+      const chars = [...text].map(c => {
+        const span = document.createElement('span');
+        span.className = 'glitch-char';
+        span.setAttribute('aria-hidden', 'true');
+        span.textContent = c;
+        el.appendChild(span);
+        return span;
+      });
+      const sync = () => {
+        el.style.setProperty('--gw', el.offsetWidth + 'px');
+        el.style.setProperty('--gh', el.offsetHeight + 'px');
+        chars.forEach(c => {
+          c.style.setProperty('--gx', -c.offsetLeft + 'px');
+          c.style.setProperty('--gy', -c.offsetTop + 'px');
+        });
+      };
+      el.classList.add('is-split');
+      new ResizeObserver(sync).observe(el);
+      document.fonts.ready.then(sync);
+      return chars;
+    }
+
+    function shuffle<T>(items: T[]) {
+      for (let i = items.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [items[i], items[j]] = [items[j], items[i]];
+      }
+      return items;
+    }
+
+    // Break: for a moment the word loses letters or comes apart, then snaps back.
+    // Break types are dealt from a shuffled bag so the same one rarely repeats.
+    let breakBag: string[] = [];
+    function glitchBreak(el: HTMLElement, chars: HTMLElement[]) {
+      const rand = (n: number) => (Math.random() * 2 - 1) * n;
+      const hide = (c: HTMLElement) => { c.style.visibility = 'hidden'; };
+
+      // free width to the right of the word, up to the viewport edge
+      const em = parseFloat(getComputedStyle(el).fontSize);
+      const last = chars[chars.length - 1];
+      const room = Math.max(0, innerWidth - 16 - (el.getBoundingClientRect().left + last.offsetLeft + last.offsetWidth));
+
+      if (!breakBag.length) {
+        breakBag = shuffle(['truncate', 'holes', 'split', 'shatter', 'spread', 'spread', 'apart', 'apart']);
+      }
+      let mode = breakBag.pop()!;
+      // the wide break needs room to travel; on narrow screens fall back to missing letters
+      if (room < em * 0.6 && mode === 'spread') mode = Math.random() < 0.5 ? 'truncate' : 'holes';
+      // flying apart only makes sense while the whole word is on screen
+      const home = el.getBoundingClientRect();
+      if (mode === 'apart' && (home.top < 76 || home.bottom > innerHeight - 16)) mode = 'holes';
+
+      const cut = 2 + Math.floor(Math.random() * (chars.length - 2)); // keeps at least 2 letters on the left
+
+      if (mode === 'truncate') {
+        // PIER, PIE
+        chars.slice(cut).forEach(hide);
+      } else if (mode === 'holes') {
+        // PIE RE
+        const victims = chars.filter(() => Math.random() < 0.3);
+        (victims.length ? victims : [chars[Math.floor(Math.random() * chars.length)]]).forEach(hide);
+      } else if (mode === 'split') {
+        // snapped in the middle: the two halves drift apart
+        const dx = 0.1 + Math.random() * 0.12, dy = (Math.random() < 0.5 ? -1 : 1) * (0.06 + Math.random() * 0.1);
+        chars.forEach((c, i) => {
+          const side = i < cut ? -1 : 1;
+          c.style.transform = `translate(${side * dx}em, ${side * dy}em)`;
+        });
+      } else if (mode === 'shatter') {
+        // every letter knocked out of place, a few missing
+        chars.forEach(c => {
+          c.style.transform = `translate(${rand(0.12)}em, ${rand(0.12)}em) rotate(${rand(8)}deg)`;
+          if (Math.random() < 0.2) hide(c);
+        });
+      } else if (mode === 'apart') {
+        // PIE in one place, RRE in another: the word snaps at a random letter and each
+        // piece teleports to its own spot on screen
+        const at = 1 + Math.floor(Math.random() * (chars.length - 1));
+        const placed: { l: number; t: number; r: number; b: number }[] = [];
+        [chars.slice(0, at), chars.slice(at)].forEach(piece => {
+          const a = piece[0].getBoundingClientRect(), z = piece[piece.length - 1].getBoundingClientRect();
+          const between = (min: number, max: number) => min < max ? min + Math.random() * (max - min) : 0;
+          let x = 0, y = 0;
+          // a few tries to keep the pieces from landing on top of each other
+          for (let tries = 0; tries < 10; tries++) {
+            x = between(16 - a.left, innerWidth - 16 - z.right);
+            y = between(76 - a.top, innerHeight - 16 - a.bottom);
+            if (!placed.some(p => a.left + x < p.r && z.right + x > p.l && a.top + y < p.b && a.bottom + y > p.t)) break;
+          }
+          placed.push({ l: a.left + x, t: a.top + y, r: z.right + x, b: a.bottom + y });
+          piece.forEach(c => { c.style.transform = `translate(${x}px, ${y}px)`; });
+        });
+      } else {
+        // torn wide: PIE ...... R ...... RE. Groups are pushed apart across the free width
+        const cuts = new Set<number>();
+        for (let i = 1 + Math.floor(Math.random() * 3); i > 0; i--) cuts.add(Math.floor(Math.random() * chars.length));
+        let left = room, x = 0, pending = cuts.size;
+        chars.forEach((c, i) => {
+          if (cuts.has(i)) {
+            const gap = left * (--pending ? Math.random() * 0.7 : 0.5 + Math.random() * 0.5);
+            left -= gap;
+            x += gap;
+          }
+          if (x) c.style.transform = `translateX(${x}px)`;
+        });
+        const lost = chars.filter(() => Math.random() < 0.3);
+        if (lost.length <= chars.length - 2) lost.forEach(hide);
+      }
+      el.classList.add('is-broken');
+      glitchBurst(el);
+
+      setTimeout(() => {
+        el.classList.remove('is-broken');
+        chars.forEach(c => { c.style.visibility = ''; c.style.transform = ''; });
+        glitchBurst(el);
+      }, 450 + Math.random() * 450);
+    }
+
+    // Idle bursts at irregular intervals, so they never read as a loop
+    document.querySelectorAll<HTMLElement>('[data-glitch-idle]').forEach(el => {
+      if (reduceMotion) return;
+      const chars = el.hasAttribute('data-glitch-break') ? splitChars(el) : null;
+      // Effects are dealt from a shuffled bag instead of rolled each time, so every
+      // round is guaranteed its jumps and breaks: no long droughts of one effect
+      const jump = el.hasAttribute('data-glitch-jump');
+      let bag: string[] = [];
+      const next = () => {
+        if (!bag.length) {
+          bag = shuffle(['burst', 'burst', 'burst', ...(jump ? ['jump', 'jump', 'jump'] : []), ...(chars ? ['break', 'break', 'break'] : [])]);
+        }
+        return bag.pop()!;
+      };
+      (function schedule() {
+        setTimeout(() => {
+          if (!document.hidden) {
+            const effect = next();
+            if (effect === 'break') glitchBreak(el, chars!);
+            else if (effect === 'jump') glitchJump(el);
+            else {
+              glitchBurst(el);
+              // sometimes a quick double hit
+              if (Math.random() < 0.3) setTimeout(() => glitchBurst(el), 520);
+            }
+          }
+          schedule();
+        }, 2500 + Math.random() * 4500);
+      })();
+    });
+
+    // Section titles decode from noise once, when scrolled into view
+    const GLYPHS = '!<>-_\\/[]{}=+*^?#01';
+    function decode(el: HTMLElement) {
+      const text = el.dataset.text!;
+      let done = 0;
+      const timer = setInterval(() => {
+        done += Math.max(1, Math.round(text.length / 14));
+        if (done >= text.length) {
+          clearInterval(timer);
+          el.textContent = text;
+          glitchBurst(el);
+          return;
+        }
+        el.textContent = text.slice(0, done) + [...text.slice(done)]
+          .map(c => c === ' ' ? c : GLYPHS[Math.floor(Math.random() * GLYPHS.length)])
+          .join('');
+      }, 40);
+    }
+
+    const titleObserver = new IntersectionObserver(
+      entries => entries.forEach(e => {
+        if (e.isIntersecting) {
+          decode(e.target as HTMLElement);
+          titleObserver.unobserve(e.target);
+        }
+      }),
+      { threshold: 0.6 }
+    );
+    document.querySelectorAll<HTMLElement>('.section-title').forEach(el => {
+      const text = el.textContent!.trim();
+      el.classList.add('glitch');
+      el.dataset.text = text;
+      el.setAttribute('aria-label', text);
+      if (!reduceMotion) titleObserver.observe(el);
+    });
+
     /* ── Scroll Reveal ── */
     const observer = new IntersectionObserver(
       entries => entries.forEach(e => {
