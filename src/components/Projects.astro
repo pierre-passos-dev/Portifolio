@@ -91,6 +91,8 @@ const featured = projects.filter(p => p.featured);
                 {p.tags.slice(4).map(tag => <span class="tag">{tag}</span>)}
               </div>
             )}
+            <!-- Fechar no fim do texto: o "Ver menos" do topo já saiu da tela depois de ler -->
+            <button type="button" class="proj-card__more proj-card__close">{t('projects.less')}</button>
           </details>
 
           <!-- Hover glow line -->
@@ -100,6 +102,18 @@ const featured = projects.filter(p => p.featured);
     </div>
   </div>
 </section>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.proj-card__close').forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.closest('details')!.open = false;
+      // Fechado, o card encolhe; se o topo dele ficou acima da tela, volta até ele,
+      // descontando a navbar fixa (o scrollIntoView ignorava o scroll-margin aqui)
+      const top = btn.closest<HTMLElement>('.proj-card')!.getBoundingClientRect().top;
+      if (top < 0) window.scrollBy({ top: top - 80 });
+    });
+  });
+</script>
 
 <style>
 .projects__grid {
@@ -215,6 +229,13 @@ const featured = projects.filter(p => p.featured);
 .proj-card__details[open] .proj-card__more::before { transform: rotate(90deg); }
 .proj-card__more:hover { text-shadow: 0 0 8px var(--accent); }
 .proj-card__more:focus-visible { outline: 1px solid var(--accent); outline-offset: 4px; }
+.proj-card__close {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-top: 1.25rem;
+}
+.proj-card__details[open] .proj-card__close::before { transform: rotate(-90deg); }
 .more-close, .proj-card__details[open] .more-open { display: none; }
 .proj-card__details[open] .more-close { display: inline; }
 

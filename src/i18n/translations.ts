@@ -67,7 +67,7 @@ export const ui = {
     'hero.sub': 'Java Backend · Angular · Ionic · Cloud',
     'hero.cta': 'View projects',
     'hero.contact': 'Get in touch',
-    'hero.cv': 'Download résumé',
+    'hero.cv': 'Download resume',
 
     'about.title': 'About me',
     'about.p1': 'I\'ve been a Full Stack developer for over 4 years, and my specialty is software that talks to the physical world: time tracking and access control systems integrated with time clocks, turnstiles and face readers, following Brazilian labor rules for work hours, overtime, night shift pay and hour banks.',
