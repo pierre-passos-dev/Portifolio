@@ -9,6 +9,7 @@ const emailSubject = lang === 'pt' ? 'Interesse em seu trabalho' : 'Interest in 
 const emailBody    = lang === 'pt'
   ? 'Olá,\n\nVi seu portfólio e gostaria de conversar.'
   : 'Hi,\n\nI saw your portfolio and would like to connect.';
+const cvHref = lang === 'pt' ? '/curriculo-pierre-passos.pdf' : '/resume-pierre-passos.pdf';
 const emailHref = `mailto:pierre.passos.dev@gmail.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
 ---
 
@@ -67,6 +68,20 @@ const emailHref = `mailto:pierre.passos.dev@gmail.com?subject=${encodeURICompone
           </div>
           <div class="contact-card__arrow">▶</div>
         </a>
+        <a href={cvHref} class="contact-card" download>
+          <div class="contact-card__icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="12" y1="12" x2="12" y2="18"/><polyline points="9 15 12 18 15 15"/>
+            </svg>
+          </div>
+          <div class="contact-card__text">
+            <span class="contact-card__label">PDF</span>
+            <span class="contact-card__value">{t('hero.cv')}</span>
+          </div>
+          <div class="contact-card__arrow">▶</div>
+        </a>
       </div>
     </div>
   </div>
@@ -111,7 +126,7 @@ const emailHref = `mailto:pierre.passos.dev@gmail.com?subject=${encodeURICompone
 .contact__email-display {
   font-family: var(--font-mono);
   font-size: 0.8rem;
-  color: rgba(255,140,0,0.4);
+  color: rgba(255,140,0,0.8);
   letter-spacing: 0.06em;
 }
 .e-at { color: var(--accent); }
@@ -169,8 +184,8 @@ const emailHref = `mailto:pierre.passos.dev@gmail.com?subject=${encodeURICompone
 .contact-card__label {
   display: block;
   font-family: var(--font-mono);
-  font-size: 0.6rem;
-  color: rgba(255,140,0,0.4);
+  font-size: 0.75rem;
+  color: rgba(255,140,0,0.8);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   margin-bottom: 0.15rem;

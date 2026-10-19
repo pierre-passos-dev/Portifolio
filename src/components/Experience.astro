@@ -18,7 +18,7 @@ const t = useTranslations(lang);
 
           <!-- Left: period + line -->
           <div class="timeline__left">
-            <span class="timeline__period">{exp.period}</span>
+            <span class="timeline__period">{lang === 'pt' ? exp.periodPt : exp.periodEn}</span>
             <div class="timeline__track">
               <div class="timeline__node">
                 <div class="timeline__node-inner"></div>
@@ -77,8 +77,8 @@ const t = useTranslations(lang);
 }
 .timeline__period {
   font-family: var(--font-mono);
-  font-size: 0.65rem;
-  color: rgba(255,140,0,0.5);
+  font-size: 0.75rem;
+  color: rgba(255,140,0,0.8);
   letter-spacing: 0.08em;
   text-align: right;
   margin-bottom: 0.5rem;
@@ -132,7 +132,7 @@ const t = useTranslations(lang);
 }
 .timeline__company {
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: var(--accent);
   letter-spacing: 0.12em;
   text-transform: uppercase;

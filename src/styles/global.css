@@ -1,7 +1,5 @@
 /* src/styles/global.css — CYBERPUNK AMBER EDITION */
 
-@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
-
 /* ─── CSS Variables ─────────────────────────────────────── */
 :root {
   --bg-base:        #050507;
@@ -15,7 +13,7 @@
 
   --text-primary:   #ffe8c0;
   --text-secondary: #b89060;
-  --text-muted:     #5a4020;
+  --text-muted:     #9a7648;
 
   --accent:         #ff8c00;
   --accent-hot:     #ff4500;
@@ -73,33 +71,6 @@ body::before {
   pointer-events: none;
   z-index: 9998;
   opacity: 0.35;
-}
-
-/* Screen tear: a faint band that jumps across the viewport every few seconds */
-body::after {
-  content: '';
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  height: 6vh;
-  background: linear-gradient(
-    180deg,
-    transparent,
-    rgba(255, 140, 0, 0.07) 45%,
-    rgba(47, 214, 224, 0.1) 50%,
-    rgba(255, 140, 0, 0.07) 55%,
-    transparent
-  );
-  mix-blend-mode: screen;
-  pointer-events: none;
-  z-index: 9997;
-  opacity: 0;
-  animation: screen-tear 11s step-end infinite;
-}
-@keyframes screen-tear {
-  0%, 94%, 100% { opacity: 0; }
-  91% { opacity: 1;   transform: translateY(22vh); }
-  92% { opacity: 0.7; transform: translateY(61vh); }
-  93% { opacity: 1;   transform: translateY(38vh); }
 }
 
 /* ─── Typography ─────────────────────────────────────────── */
@@ -220,7 +191,7 @@ a, button, [role="button"] { cursor: url('/cursors/pointer.svg') 16 16, pointer;
 .tag {
   display: inline-block;
   font-family: var(--font-mono);
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   padding: 0.2em 0.6em;
   border: 1px solid var(--border-accent);
   color: var(--accent-cool);
@@ -258,7 +229,7 @@ a, button, [role="button"] { cursor: url('/cursors/pointer.svg') 16 16, pointer;
   gap: 0.5rem;
   padding: 0.75em 1.75em;
   font-family: var(--font-display);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -308,7 +279,6 @@ a, button, [role="button"] { cursor: url('/cursors/pointer.svg') 16 16, pointer;
 
 /* ─── Reduced motion ─────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-  body::after { display: none; }
   .glitch.is-glitching,
   .glitch.is-glitching::before,
   .glitch.is-glitching::after,

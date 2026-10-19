@@ -4,6 +4,7 @@ import { useTranslations, type Lang } from '../i18n/translations';
 interface Props { lang: Lang; }
 const { lang } = Astro.props;
 const t = useTranslations(lang);
+const cvHref = lang === 'pt' ? '/curriculo-pierre-passos.pdf' : '/resume-pierre-passos.pdf';
 ---
 
 <section class="hero" id="hero">
@@ -38,8 +39,8 @@ const t = useTranslations(lang);
   </div>
   <div class="hud-data hud-data--right" aria-hidden="true">
     <span>BUILD: PROD</span>
-    <span>UPTIME: 5Y+</span>
-    <span>PROJECTS: 10+</span>
+    <span>UPTIME: 4Y+</span>
+    <span>PROJECTS: 07</span>
     <span>STATUS: AVAILABLE</span>
   </div>
 
@@ -76,6 +77,9 @@ const t = useTranslations(lang);
       </a>
       <a href="#contact" class="btn btn--ghost">
         <span>{t('hero.contact')}</span>
+      </a>
+      <a href={cvHref} class="btn btn--ghost" download>
+        <span>↓ {t('hero.cv')}</span>
       </a>
     </div>
   </div>
@@ -338,10 +342,10 @@ const t = useTranslations(lang);
   /* Typewriter effect */
   const roles = [
     'FULLSTACK DEVELOPER',
-    'JAVA ENGINEER',
-    'ANGULAR SPECIALIST',
+    'JAVA DEVELOPER',
+    'ANGULAR DEVELOPER',
     'IONIC DEVELOPER',
-    'CLOUD ARCHITECT',
+    'SOFTWARE + HARDWARE',
   ];
   const el = document.getElementById('typewriter')!;
   let ri = 0, ci = 0, deleting = false;
@@ -357,7 +361,7 @@ const t = useTranslations(lang);
 
   /* System text */
   const sysEl = document.getElementById('sysText')!;
-  const sysMsg = '> INITIALIZING SYSTEM... PIERRE.DEV';
+  const sysMsg = '> INITIALIZING SYSTEM... PIERREPASSOS.DEV';
   let si = 0;
   function sysType() {
     sysEl.textContent = sysMsg.slice(0, si++);

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Sitemap estático: o site tem poucas páginas. Se surgir página nova, acrescente aqui. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://pierrepassos.dev/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pierrepassos.dev/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pierrepassos.dev/en/" />
+  </url>
+  <url>
+    <loc>https://pierrepassos.dev/en/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pierrepassos.dev/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pierrepassos.dev/en/" />
+  </url>
+  <url>
+    <loc>https://pierrepassos.dev/controle-de-parcelas/privacidade</loc>
+  </url>
+</urlset>

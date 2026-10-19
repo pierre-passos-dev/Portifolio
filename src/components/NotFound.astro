@@ -1,0 +1,18 @@
+---
+// src/components/NotFound.astro
+import { useTranslations, type Lang } from '../i18n/translations';
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section style="min-height:100svh;display:flex;align-items:center;justify-content:center;text-align:center;padding:2rem;">
+  <div>
+    <p style="font-family:var(--font-mono);color:var(--accent);font-size:0.85rem;letter-spacing:0.1em;margin-bottom:1rem;">// 404</p>
+    <h1 class="glitch" data-text={t('404.title')} data-glitch-idle style="font-size:clamp(2.5rem,9vw,5.5rem);font-weight:800;letter-spacing:-0.02em;color:var(--text-primary);margin-bottom:1rem;">{t('404.title')}</h1>
+    <p style="color:var(--text-secondary);font-size:1.05rem;margin-bottom:2rem;">{t('404.sub')}</p>
+    <a href={lang === 'pt' ? '/' : '/en/'} class="btn btn--primary">
+      <span>{t('404.back')}</span>
+    </a>
+  </div>
+</section>

@@ -1,8 +1,9 @@
 import { defineConfig } from 'astro/config';
-// import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: 'https://portifolio-pierre-passos.pages.dev',
+  site: 'https://pierrepassos.dev',
   output: 'static',
-  // integrations: [sitemap()],
+  // 'preserve' gera en/404.html (e não en/404/index.html), que é o arquivo
+  // que o Cloudflare Pages procura para erros dentro de /en
+  build: { format: 'preserve' },
 });

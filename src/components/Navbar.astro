@@ -13,7 +13,7 @@ const otherPath = lang === "pt" ? "/en" : "/";
 <header class="navbar" id="navbar">
   <div class="navbar__scanline"></div>
   <div class="container navbar__inner">
-    <a href={lang === "pt" ? "/" : "/en"} class="navbar__logo">
+    <a href={lang === "pt" ? "/" : "/en/"} class="navbar__logo">
       <span class="logo-bracket">[</span>
       <span class="logo-name">PIERRE</span>
       <span class="logo-dot">.</span>
@@ -36,7 +36,7 @@ const otherPath = lang === "pt" ? "/en" : "/";
         >
         <span class="lang-divider">|</span>
         <a
-          href="/en"
+          href="/en/"
           class={`lang-btn ${lang === "en" ? "lang-btn--active" : ""}`}>EN</a
         >
       </div>
@@ -146,7 +146,7 @@ const otherPath = lang === "pt" ? "/en" : "/";
   }
   .nav-link {
     font-family: var(--font-mono);
-    font-size: 0.72rem;
+    font-size: 0.75rem;
     color: var(--text-secondary);
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -189,7 +189,7 @@ const otherPath = lang === "pt" ? "/en" : "/";
 
   .lang-btn {
     font-family: var(--font-mono);
-    font-size: 0.65rem;
+    font-size: 0.75rem;
     letter-spacing: 0.12em;
     color: var(--text-muted);
     text-decoration: none;

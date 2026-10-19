@@ -64,6 +64,35 @@ const featured = projects.filter(p => p.featured);
             {p.tags.slice(0, 4).map(tag => <span class="tag">{tag}</span>)}
           </div>
 
+          <!-- Detalhes: problema, o que fiz, resultado -->
+          <details class="proj-card__details">
+            <summary class="proj-card__more">
+              <span class="more-open">{t('projects.more')}</span>
+              <span class="more-close">{t('projects.less')}</span>
+            </summary>
+            <dl class="proj-card__story">
+              <div>
+                <dt>{t('projects.problem')}</dt>
+                <dd>{lang === 'pt' ? p.problemPt : p.problemEn}</dd>
+              </div>
+              <div>
+                <dt>{t('projects.built')}</dt>
+                <dd>{lang === 'pt' ? p.builtPt : p.builtEn}</dd>
+              </div>
+              {p.resultPt && (
+                <div>
+                  <dt>{t('projects.result')}</dt>
+                  <dd>{lang === 'pt' ? p.resultPt : p.resultEn}</dd>
+                </div>
+              )}
+            </dl>
+            {p.tags.length > 4 && (
+              <div class="proj-card__tags">
+                {p.tags.slice(4).map(tag => <span class="tag">{tag}</span>)}
+              </div>
+            )}
+          </details>
+
           <!-- Hover glow line -->
           <div class="proj-card__glow-line" aria-hidden="true"></div>
         </article>
@@ -77,13 +106,15 @@ const featured = projects.filter(p => p.featured);
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
   gap: 1px;
-  background: rgba(255,140,0,0.1);
   border: 1px solid rgba(255,140,0,0.1);
 }
 
+/* As linhas entre os cards vêm do outline de cada um (e não do fundo da grade),
+   para uma célula vazia na última linha não aparecer como bloco colorido */
 .proj-card {
   position: relative;
   background: var(--bg-base);
+  outline: 1px solid rgba(255,140,0,0.1);
   padding: 2rem 1.75rem;
   overflow: hidden;
   transition: background 0.25s;
@@ -92,6 +123,7 @@ const featured = projects.filter(p => p.featured);
   content: '';
   position: absolute;
   inset: 0;
+  pointer-events: none;
   background: var(--gradient-card);
   opacity: 0;
   transition: opacity 0.3s;
@@ -156,6 +188,54 @@ const featured = projects.filter(p => p.featured);
   display: flex;
   gap: 0.4rem;
   flex-wrap: wrap;
+}
+
+/* Details */
+.proj-card__details { position: relative; margin-top: 1.25rem; }
+/* Aberto, o card ocupa a linha toda e as três partes ficam lado a lado */
+.proj-card:has(> .proj-card__details[open]) { grid-column: 1 / -1; }
+.proj-card__more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--accent);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  list-style: none;
+  cursor: url('/cursors/pointer.svg') 16 16, pointer;
+}
+.proj-card__more::-webkit-details-marker { display: none; }
+.proj-card__more::before {
+  content: '▶';
+  font-size: 0.6rem;
+  transition: transform 0.2s;
+}
+.proj-card__details[open] .proj-card__more::before { transform: rotate(90deg); }
+.proj-card__more:hover { text-shadow: 0 0 8px var(--accent); }
+.proj-card__more:focus-visible { outline: 1px solid var(--accent); outline-offset: 4px; }
+.more-close, .proj-card__details[open] .more-open { display: none; }
+.proj-card__details[open] .more-close { display: inline; }
+
+.proj-card__story {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 1.25rem 2.5rem;
+  margin: 1.5rem 0 1.25rem;
+}
+.proj-card__story dt {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--accent-cool);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.proj-card__story dd {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-top: 0.3rem;
 }
 
 /* Glow line on hover */

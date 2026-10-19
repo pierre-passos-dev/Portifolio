@@ -20,13 +20,18 @@ export const ui = {
     'hero.sub': 'Backend Java · Angular · Ionic · Cloud',
     'hero.cta': 'Ver projetos',
     'hero.contact': 'Entre em contato',
+    'hero.cv': 'Baixar currículo',
 
     'about.title': 'Sobre mim',
-    'about.p1': 'Sou desenvolvedor Full Stack com mais de 5 anos de experiência na criação de soluções digitais completas e escaláveis. Minha trajetória é marcada pela entrega de projetos que unem performance, design funcional e arquitetura robusta, sempre com foco na melhor experiência para o usuário.',
-    'about.p2': 'Ao longo da minha carreira, já coloquei no ar mais de 10 projetos para diferentes plataformas, atuando desde a concepção até a entrega final. Tenho um olhar atento para detalhes, valorizo código limpo e mantenho uma abordagem colaborativa para transformar ideias em produtos digitais de alto impacto.',
+    'about.p1': 'Sou desenvolvedor Full Stack há mais de 4 anos e minha especialidade é software que conversa com o mundo físico: sistemas de ponto e de controle de acesso integrados a relógios de ponto, catracas e leitores faciais, seguindo as regras trabalhistas brasileiras de jornada, hora extra, adicional noturno e banco de horas.',
+    'about.p2': 'Hoje, na Topdata, participo de todas as etapas de uma plataforma multi-tenant na Azure que conecta relógios de ponto à nuvem, com sistema web, app Android e iOS (inclusive em modo quiosque), emissão do AFD, API de integração e observabilidade. Antes, na Bel, trabalhei em WMS e PWAs para operação logística. No backend uso Java e Spring Boot; no frontend e no mobile, Angular e Ionic.',
 
     'projects.title': 'Projetos',
     'projects.more': 'Ver mais',
+    'projects.less': 'Ver menos',
+    'projects.problem': 'Problema',
+    'projects.built': 'O que fiz',
+    'projects.result': 'Resultado',
 
     'skills.title': 'Habilidades',
     'skills.backend': 'Backend',
@@ -45,6 +50,10 @@ export const ui = {
     'contact.linkedin': 'LinkedIn',
 
     'footer.rights': 'Todos os direitos reservados.',
+
+    '404.title': 'Página não encontrada',
+    '404.sub': 'O endereço que você abriu não existe ou mudou de lugar.',
+    '404.back': '← Voltar ao início',
   },
   en: {
     'nav.about': 'About',
@@ -58,13 +67,18 @@ export const ui = {
     'hero.sub': 'Java Backend · Angular · Ionic · Cloud',
     'hero.cta': 'View projects',
     'hero.contact': 'Get in touch',
+    'hero.cv': 'Download résumé',
 
     'about.title': 'About me',
-    'about.p1': 'I\'m a Full Stack developer with over 5 years of experience creating complete and scalable digital solutions. My journey is marked by delivering projects that combine performance, functional design, and robust architecture, always focusing on the best user experience.',
-    'about.p2': 'Throughout my career, I\'ve launched over 10 projects across different platforms, working from conception to final delivery. I have a keen eye for details, value clean code, and maintain a collaborative approach to transform ideas into high-impact digital products.',
+    'about.p1': 'I\'ve been a Full Stack developer for over 4 years, and my specialty is software that talks to the physical world: time tracking and access control systems integrated with time clocks, turnstiles and face readers, following Brazilian labor rules for work hours, overtime, night shift pay and hour banks.',
+    'about.p2': 'Today at Topdata I take part in every stage of a multi-tenant platform on Azure that connects time clocks to the cloud, with a web system, Android and iOS apps (including kiosk mode), AFD file generation, an integration API and observability. Before that, at Bel, I worked on WMS and PWAs for logistics operations. I use Java and Spring Boot on the backend, and Angular and Ionic on the frontend and mobile.',
 
     'projects.title': 'Projects',
     'projects.more': 'View more',
+    'projects.less': 'View less',
+    'projects.problem': 'Problem',
+    'projects.built': 'What I did',
+    'projects.result': 'Result',
 
     'skills.title': 'Skills',
     'skills.backend': 'Backend',
@@ -82,6 +96,10 @@ export const ui = {
     'contact.linkedin': 'LinkedIn',
 
     'footer.rights': 'All rights reserved.',
+
+    '404.title': 'Page not found',
+    '404.sub': 'The address you opened does not exist or has moved.',
+    '404.back': '← Back to home',
   },
 } as const;
 

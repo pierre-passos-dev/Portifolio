@@ -44,10 +44,10 @@ const t = useTranslations(lang);
                 >"Pierre"</span
               >,<br />
               &nbsp;&nbsp;<span class="t-key">"xp"</span>: <span class="t-num"
-                >5</span
+                >4</span
               >,<br />
               &nbsp;&nbsp;<span class="t-key">"projects"</span>: <span
-                class="t-num">10</span
+                class="t-num">7</span
               >,<br />
               &nbsp;&nbsp;<span class="t-key">"city"</span>: <span class="t-val"
                 >"Curitiba"</span
@@ -68,24 +68,22 @@ const t = useTranslations(lang);
         <!-- Stats -->
         <div class="stats-row">
           <div class="stat-block">
-            <span class="stat-num">5<span class="stat-plus">+</span></span>
+            <span class="stat-num">4<span class="stat-plus">+</span></span>
             <span class="stat-label"
               >{lang === "pt" ? "Anos exp." : "Years exp."}</span
             >
           </div>
           <div class="stat-divider"></div>
           <div class="stat-block">
-            <span class="stat-num">10<span class="stat-plus">+</span></span>
+            <span class="stat-num">7</span>
             <span class="stat-label"
               >{lang === "pt" ? "Projetos" : "Projects"}</span
             >
           </div>
           <div class="stat-divider"></div>
           <div class="stat-block">
-            <span class="stat-num">4</span>
-            <span class="stat-label"
-              >{lang === "pt" ? "Plataformas" : "Platforms"}</span
-            >
+            <span class="stat-num">3</span>
+            <span class="stat-label">Web·Android·iOS</span>
           </div>
         </div>
         <!-- Education block -->
@@ -199,12 +197,12 @@ const t = useTranslations(lang);
     margin-right: 0.5rem;
   }
   .t-out {
-    color: rgba(255, 140, 0, 0.5);
+    color: rgba(255, 140, 0, 0.8);
     padding-left: 1.5rem;
   }
   .t-code {
     font-family: var(--font-mono);
-    font-size: 0.72rem;
+    font-size: 0.75rem;
     line-height: 1.8;
     padding: 0.5rem 1.5rem;
     color: var(--text-secondary);
@@ -258,10 +256,11 @@ const t = useTranslations(lang);
   }
   .stat-label {
     display: block;
+    white-space: nowrap;
     font-family: var(--font-mono);
-    font-size: 0.6rem;
+    font-size: 0.75rem;
     color: var(--text-muted);
-    letter-spacing: 0.12em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     margin-top: 0.3rem;
   }
@@ -295,14 +294,14 @@ const t = useTranslations(lang);
 
   .edu-course {
     font-family: var(--font-mono);
-    font-size: 0.72rem;
+    font-size: 0.75rem;
     color: var(--text-primary);
     letter-spacing: 0.04em;
   }
 
   .edu-period {
     font-family: var(--font-mono);
-    font-size: 0.65rem;
+    font-size: 0.75rem;
     color: var(--text-muted);
     letter-spacing: 0.08em;
   }

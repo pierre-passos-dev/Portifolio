@@ -1,6 +1,7 @@
 // src/data/experience.ts
 export interface Experience {
-  period: string;
+  periodPt: string;
+  periodEn: string;
   rolePt: string;
   roleEn: string;
   company: string;
@@ -11,16 +12,18 @@ export interface Experience {
 
 export const experiences: Experience[] = [
   {
-    period: 'Aug 2024 — Atual',
+    periodPt: 'ago 2024 — atual',
+    periodEn: 'Aug 2024 — Present',
     rolePt: 'Desenvolvedor Full Stack',
     roleEn: 'Full Stack Developer',
     company: 'Topdata',
-    descPt: 'Desenvolvimento de aplicações web e mobile voltadas para gestão e controle, atuando como desenvolvedor full stack.\n\n• Desenvolvimento de interfaces com Angular, Ionic, TypeScript e SCSS, garantindo aplicações responsivas e de boa usabilidade\n• Atuação em decisões técnicas relacionadas à arquitetura, escalabilidade e integração entre sistemas\n• Implementação de APIs REST com Java (Spring Boot), Hibernate e JPA\n• Integração de sistemas utilizando Kafka e Redis, melhorando a comunicação entre serviços\n• Implementação de sincronização automática de dados em aplicações mobile, garantindo consistência, escalabilidade e alta performance\n• Desenvolvimento de sistema de controle de acesso web integrado a dispositivos físicos (catracas e leitores faciais)\n• Deploy e gerenciamento de serviços na Azure\n• Publicação e distribuição de aplicações mobile via Google Play Console\n• Containerização de aplicações com Docker\n• Monitoramento com Grafana e Prometheus\n\nResultados:\n• Melhoria na performance e estabilidade dos sistemas\n• Otimização na comunicação entre serviços\n• Participação em soluções escaláveis integrando software e hardware',
-    descEn: 'Development of web and mobile applications focused on management and control systems, working as a full stack developer.\n\n• Built user interfaces using Angular, Ionic, TypeScript and SCSS\n• Developed REST APIs with Java (Spring Boot), Hibernate and JPA\n•Involvement in technical decisions related to architecture, scalability, and system integration\n• Integrated systems using Kafka and Redis to improve communication between services\n• Implemented automatic mobile data synchronization ensuring scalability and high performance\n• Worked on access control systems integrated with physical devices (turnstiles and facial recognition)\n• Managed deployments on Azure\n• Published and distributed mobile applications via Google Play Console\n• Containerized applications using Docker\n• Monitored systems with Grafana and Prometheus\n\nResults:\n• Improved system performance and stability\n• Enhanced service communication and data processing\n• Contributed to scalable solutions integrating software and hardware',
+    descPt: 'Desenvolvimento de aplicações web e mobile voltadas para gestão e controle, atuando como desenvolvedor full stack.\n\n• Participação em todas as etapas do desenvolvimento de uma plataforma multi-tenant na Azure que conecta relógios de ponto à nuvem: sistema web, app Android e iOS (individual e modo quiosque), emissão do AFD, API de integração, observabilidade e backend em Java com virtual threads\n• Desenvolvimento de interfaces com Angular, Ionic, TypeScript e SCSS, garantindo aplicações responsivas e de boa usabilidade\n• Atuação em decisões técnicas relacionadas à arquitetura, escalabilidade e integração entre sistemas\n• Implementação de APIs REST com Java (Spring Boot), Hibernate e JPA\n• Integração de sistemas utilizando Kafka e Redis, melhorando a comunicação entre serviços\n• Implementação de sincronização automática de dados em aplicações mobile, garantindo consistência, escalabilidade e alta performance\n• Desenvolvimento de sistema de controle de acesso web integrado a dispositivos físicos (catracas e leitores faciais)\n• Deploy e gerenciamento de serviços na Azure\n• Publicação e distribuição de aplicações mobile via Google Play Console\n• Containerização de aplicações com Docker\n• Monitoramento com Grafana e Prometheus\n\nResultados:\n• Melhoria na performance e estabilidade dos sistemas\n• Otimização na comunicação entre serviços\n• Participação em soluções escaláveis integrando software e hardware',
+    descEn: 'Development of web and mobile applications focused on management and control systems, working as a full stack developer.\n\n• Took part in every stage of developing a multi-tenant platform on Azure that connects time clocks to the cloud: web system, Android and iOS app (personal and kiosk mode), AFD file generation, integration API, observability and a Java backend using virtual threads\n• Built user interfaces using Angular, Ionic, TypeScript and SCSS\n• Developed REST APIs with Java (Spring Boot), Hibernate and JPA\n• Involvement in technical decisions related to architecture, scalability, and system integration\n• Integrated systems using Kafka and Redis to improve communication between services\n• Implemented automatic mobile data synchronization ensuring scalability and high performance\n• Worked on access control systems integrated with physical devices (turnstiles and facial recognition)\n• Managed deployments on Azure\n• Published and distributed mobile applications via Google Play Console\n• Containerized applications using Docker\n• Monitored systems with Grafana and Prometheus\n\nResults:\n• Improved system performance and stability\n• Enhanced service communication and data processing\n• Contributed to scalable solutions integrating software and hardware',
     tags: ['Java', 'Spring Boot', 'Angular', 'Ionic', 'TypeScript', 'Azure', 'Docker', 'Kafka', 'Redis'],
   },
   {
-    period: 'Mar 2022 — Mar 2024',
+    periodPt: 'mar 2022 — mar 2024',
+    periodEn: 'Mar 2022 — Mar 2024',
     rolePt: 'Desenvolvedor Full Stack',
     roleEn: 'Full Stack Developer',
     company: 'Bel',

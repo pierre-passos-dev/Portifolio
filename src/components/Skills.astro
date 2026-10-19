@@ -1,68 +1,12 @@
 ---
 // src/components/Skills.astro
 import { useTranslations, type Lang } from "../i18n/translations";
+import { coreSkills, currentSkills, learningSkills } from "../data/skills";
 interface Props {
   lang: Lang;
 }
 const { lang } = Astro.props;
 const t = useTranslations(lang);
-
-const currentSkills = [
-  {
-    key: "Backend",
-    items: [
-      "Java",
-      "Spring Boot",
-      "Hibernate",
-      "JPA",
-      "REST APIs",
-      "Node.js",
-      "Express",
-      "TypeORM",
-      "Redis",
-      "Kafka",
-      "C# .NET",
-      "Tomcat",
-    ],
-  },
-  {
-    key: "Frontend",
-    items: [
-      "JavaScript",
-      "AngularJS",
-      "Angular",
-      "TypeScript",
-      "Bootstrap",
-      "CSS",
-      "SCSS",
-      "HTML",
-      "PWA",
-    ],
-  },
-  { key: "Mobile", items: ["Ionic", "Capacitor", "Cordova", "Android"] },
-  {
-    key: "DevOps",
-    items: [
-      "Azure",
-      "Docker",
-      "Grafana",
-      "Prometheus",
-      "CI/CD",
-      "Git",
-      "Postman",
-      "Kanban",
-    ],
-  },
-  { key: "Database", items: ["SQL Server", "PostgreSQL", "DBeaver"] },
-] as const;
-
-const learningSkills = [
-  {
-    key: "Backend",
-    items: ["FastAPI", "Supabase", "Firebase", "Cloudflare R2", "Astro"],
-  },
-  { key: "Mobile", items: ["Flutter", "Dart", "Drift", "SQLite"] },
-] as const;
 ---
 
 <section class="section skills" id="skills">
@@ -78,6 +22,19 @@ const learningSkills = [
           : "> Core Technologies & Architecture"
       }
     </p>
+
+    <ul class="skills__core" data-reveal>
+      {
+        coreSkills.map((skill) => (
+          <li class="core-skill">
+            <span class="core-skill__name">{skill.name}</span>
+            <span class="core-skill__note">
+              {lang === "pt" ? skill.notePt : skill.noteEn}
+            </span>
+          </li>
+        ))
+      }
+    </ul>
 
     <div class="skills__grid">
       {
@@ -132,6 +89,36 @@ const learningSkills = [
 </section>
 
 <style>
+  .skills__core {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr));
+    gap: 1px;
+    background: rgba(255, 140, 0, 0.25);
+    border: 1px solid rgba(255, 140, 0, 0.35);
+    margin-bottom: 2rem;
+  }
+  .core-skill {
+    background: var(--bg-base);
+    padding: 1.25rem 1.25rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .core-skill__name {
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.06em;
+    text-shadow: 0 0 16px rgba(255, 140, 0, 0.3);
+  }
+  .core-skill__note {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+  }
+
   .skills__grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
@@ -185,7 +172,7 @@ const learningSkills = [
   }
   .skill-group__name {
     font-family: var(--font-mono);
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     color: var(--accent);
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -199,7 +186,7 @@ const learningSkills = [
 
   .skill-pill {
     font-family: var(--font-mono);
-    font-size: 0.68rem;
+    font-size: 0.75rem;
     padding: 0.25em 0.65em;
     border: 1px solid rgba(255, 140, 0, 0.2);
     color: var(--text-secondary);
@@ -215,7 +202,7 @@ const learningSkills = [
   }
   .skill-pill--learning {
     border-color: rgba(0, 180, 255, 0.2);
-    color: rgba(0, 180, 255, 0.6);
+    color: rgba(0, 180, 255, 0.85);
   }
   .skill-pill--learning:hover {
     border-color: #00b4ff;
@@ -241,8 +228,8 @@ const learningSkills = [
   }
   .l-text {
     font-family: var(--font-mono);
-    font-size: 0.7rem;
-    color: rgba(0, 180, 255, 0.6);
+    font-size: 0.75rem;
+    color: rgba(0, 180, 255, 0.85);
     letter-spacing: 0.12em;
     text-transform: uppercase;
   }
@@ -261,8 +248,8 @@ const learningSkills = [
   .learning-group__name {
     display: block;
     font-family: var(--font-mono);
-    font-size: 0.65rem;
-    color: rgba(0, 180, 255, 0.4);
+    font-size: 0.75rem;
+    color: rgba(0, 180, 255, 0.8);
     letter-spacing: 0.12em;
     text-transform: uppercase;
     margin-bottom: 0.6rem;
