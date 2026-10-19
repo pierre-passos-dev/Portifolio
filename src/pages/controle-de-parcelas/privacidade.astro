@@ -1,0 +1,202 @@
+---
+// Política de privacidade do app Controle de Parcelas (Android).
+// Página independente: não usa o BaseLayout de propósito. O visual do
+// portfólio (glitch, scanlines, partículas) atrapalha a leitura de um texto
+// legal, então ela segue a identidade do app.
+// URL: https://pierrepassos.dev/controle-de-parcelas/privacidade
+// Link cadastrado no Play Console: não mudar o caminho sem atualizar lá.
+---
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Política de Privacidade · Controle de Parcelas</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="canonical" href="https://pierrepassos.dev/controle-de-parcelas/privacidade">
+<meta name="description" content="Política de privacidade do app Controle de Parcelas para Android.">
+<style is:inline>
+  :root {
+    --fundo: #f7f9fc;
+    --cartao: #ffffff;
+    --texto: #1a1c1e;
+    --suave: #5b6168;
+    --borda: #dfe3e8;
+    --destaque: #1565c0;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --fundo: #111418;
+      --cartao: #1a1e23;
+      --texto: #e3e5e8;
+      --suave: #a2a8b0;
+      --borda: #2c323a;
+      --destaque: #90caf9;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--fundo);
+    color: var(--texto);
+    font: 16px/1.65 Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 16px 64px;
+  }
+  header { margin-bottom: 32px; }
+  .app {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--destaque);
+    font-weight: 600;
+  }
+  .app svg { flex: none; }
+  h1 { font-size: 1.9rem; line-height: 1.25; margin: 16px 0 4px; }
+  .vigencia { color: var(--suave); margin: 0; }
+  section {
+    background: var(--cartao);
+    border: 1px solid var(--borda);
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+  }
+  h2 { font-size: 1.15rem; margin: 0 0 8px; }
+  p, ul { margin: 0 0 10px; }
+  p:last-child, ul:last-child { margin-bottom: 0; }
+  ul { padding-left: 20px; }
+  li { margin-bottom: 4px; }
+  a { color: var(--destaque); }
+  .resumo { border-color: var(--destaque); }
+  footer { color: var(--suave); font-size: .9rem; margin-top: 32px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="app">
+      <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true">
+        <rect width="40" height="40" rx="10" fill="#1565c0"/>
+        <path d="M20 9.5a10.5 10.5 0 1 1-9.1 5.25" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/>
+        <path d="M15.3 20.3l3.3 3.3 6.3-6.4" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Controle de Parcelas
+    </div>
+    <h1>Política de Privacidade</h1>
+    <p class="vigencia">Vigente a partir de 18 de outubro de 2026</p>
+  </header>
+
+  <section class="resumo">
+    <h2>Resumo</h2>
+    <p>
+      O Controle de Parcelas não coleta, não envia e não vende seus dados.
+      Tudo o que você cadastra fica armazenado apenas no seu aparelho.
+      O app não tem servidor, não tem cadastro de usuário e não usa
+      anúncios nem ferramentas de rastreamento.
+    </p>
+  </section>
+
+  <section>
+    <h2>1. Quem é o responsável</h2>
+    <p>
+      O app é desenvolvido por Pierre Passos, desenvolvedor independente.
+      Contato para qualquer assunto de privacidade: <a href="mailto:suporte@pierrepassos.dev">suporte@pierrepassos.dev</a>.
+    </p>
+  </section>
+
+  <section>
+    <h2>2. Quais dados o app usa</h2>
+    <p>Para funcionar, o app guarda no seu aparelho as informações que você mesmo digita:</p>
+    <ul>
+      <li>dados dos financiamentos (nome, valores, taxa, prazo, datas, banco);</li>
+      <li>pagamentos registrados, amortizações extras e as observações que você escreve neles;</li>
+      <li>nomes de pessoas que você adiciona para dividir a conta;</li>
+      <li>comprovantes que você anexa (fotos ou arquivos PDF);</li>
+      <li>preferências do app (tema, horário dos avisos);</li>
+      <li>se a versão completa foi desbloqueada.</li>
+    </ul>
+    <p>
+      Esses dados ficam em uma área privada do app no aparelho e <strong>não são enviados ao desenvolvedor nem a terceiros</strong>.
+    </p>
+  </section>
+
+  <section>
+    <h2>3. Permissões do aparelho</h2>
+    <ul>
+      <li><strong>Notificações:</strong> para avisar sobre o vencimento das parcelas. Os avisos são agendados no próprio aparelho.</li>
+      <li><strong>Câmera e arquivos:</strong> usados somente quando você escolhe fotografar ou anexar um comprovante, por meio dos seletores do próprio Android. O app só acessa o arquivo que você escolher.</li>
+      <li><strong>Inicialização do aparelho:</strong> para reagendar os avisos depois que o celular é reiniciado.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>4. Compras</h2>
+    <p>
+      O desbloqueio da versão completa é uma compra única processada pelo
+      Google Play. O desenvolvedor não recebe nem armazena dados de cartão
+      ou pagamento; o app apenas recebe do Google Play a confirmação de que
+      a compra foi feita. O tratamento desses dados segue a <a href="https://policies.google.com/privacy?hl=pt-BR" rel="noopener">Política de Privacidade do Google</a>.
+    </p>
+  </section>
+
+  <section>
+    <h2>5. Backup e compartilhamento</h2>
+    <ul>
+      <li>
+        <strong>Backup do Android:</strong> se o backup automático estiver
+        ativado no seu aparelho, o Android pode incluir os dados do app no
+        backup criptografado da sua conta Google, permitindo restaurá-los em
+        um aparelho novo. Esse recurso é controlado por você nas
+        configurações do Android e o desenvolvedor não tem acesso a ele.
+      </li>
+      <li>
+        <strong>Exportação:</strong> planilhas só são geradas quando você
+        toca em "Exportar", e só são enviadas para onde você escolher
+        (e-mail, Drive, WhatsApp etc.).
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>6. Seus direitos e como apagar seus dados</h2>
+    <p>
+      Como os dados ficam somente no seu aparelho, você tem controle total
+      sobre eles. Você pode editar ou excluir qualquer financiamento,
+      pagamento ou comprovante dentro do app, ou apagar tudo de uma vez
+      desinstalando o app ou limpando os dados dele nas configurações do
+      Android. Dúvidas sobre os seus direitos previstos na Lei Geral de
+      Proteção de Dados (LGPD) podem ser enviadas para o e-mail acima.
+    </p>
+  </section>
+
+  <section>
+    <h2>7. Crianças</h2>
+    <p>O app não é direcionado a menores de 13 anos e não coleta dados de ninguém, inclusive de crianças.</p>
+  </section>
+
+  <section>
+    <h2>8. Aviso sobre os cálculos</h2>
+    <p>
+      Os valores futuros exibidos pelo app são estimativas calculadas a
+      partir dos dados informados e podem diferir do extrato da instituição
+      financeira. O app não oferece crédito e não tem vínculo com bancos ou
+      financeiras.
+    </p>
+  </section>
+
+  <section>
+    <h2>9. Alterações nesta política</h2>
+    <p>
+      Se esta política mudar, a nova versão será publicada nesta página com
+      a data de vigência atualizada. Mudanças relevantes também serão
+      informadas na página do app no Google Play.
+    </p>
+  </section>
+
+  <footer>© 2026 <a href="/">Pierre Passos</a> · <a href="mailto:suporte@pierrepassos.dev">suporte@pierrepassos.dev</a></footer>
+</main>
+</body>
+</html>
