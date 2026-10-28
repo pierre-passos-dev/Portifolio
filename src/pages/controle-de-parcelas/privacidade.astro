@@ -1,5 +1,6 @@
 ---
-// Política de privacidade do app Controle de Parcelas (Android).
+// Política de privacidade do app Parcelas, da Campier (Android).
+// Na Play Store: "Campier: Controle de Parcelas".
 // Página independente: não usa o BaseLayout de propósito. O visual do
 // portfólio (glitch, scanlines, partículas) atrapalha a leitura de um texto
 // legal, então ela segue a identidade do app.
@@ -11,10 +12,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Política de Privacidade · Controle de Parcelas</title>
+<title>Política de Privacidade · Parcelas, da Campier</title>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="canonical" href="https://pierrepassos.dev/controle-de-parcelas/privacidade">
-<meta name="description" content="Política de privacidade do app Controle de Parcelas para Android.">
+<meta name="description" content="Política de privacidade do app Parcelas (Campier: Controle de Parcelas) para Android.">
 <style is:inline>
   :root {
     --fundo: #f7f9fc;
@@ -22,7 +23,7 @@
     --texto: #1a1c1e;
     --suave: #5b6168;
     --borda: #dfe3e8;
-    --destaque: #1565c0;
+    --destaque: #0e3a75;
   }
   @media (prefers-color-scheme: dark) {
     :root {
@@ -31,7 +32,7 @@
       --texto: #e3e5e8;
       --suave: #a2a8b0;
       --borda: #2c323a;
-      --destaque: #90caf9;
+      --destaque: #8ec5ff;
     }
   }
   * { box-sizing: border-box; }
@@ -55,6 +56,7 @@
     font-weight: 600;
   }
   .app svg { flex: none; }
+  .app small { display: block; color: var(--suave); font-weight: 400; }
   h1 { font-size: 1.9rem; line-height: 1.25; margin: 16px 0 4px; }
   .vigencia { color: var(--suave); margin: 0; }
   section {
@@ -78,21 +80,24 @@
 <main>
   <header>
     <div class="app">
-      <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true">
-        <rect width="40" height="40" rx="10" fill="#1565c0"/>
-        <path d="M20 9.5a10.5 10.5 0 1 1-9.1 5.25" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/>
-        <path d="M15.3 20.3l3.3 3.3 6.3-6.4" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+      <svg width="44" height="44" viewBox="0 0 100 100" aria-hidden="true">
+        <rect width="100" height="100" rx="24" fill="#0e3a75"/>
+        <g transform="translate(17 17) scale(0.66)">
+          <path d="M50 14 A36 36 0 1 1 18.82 32" fill="none" stroke="#8ec5ff" stroke-width="10" stroke-linecap="round"/>
+          <circle cx="32" cy="18.82" r="7" fill="#f5a524"/>
+          <path d="M36 51 L46 61 L65 41" fill="none" stroke="#fff" stroke-width="8.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
       </svg>
-      Controle de Parcelas
+      <span>Parcelas<small>Campier: Controle de Parcelas</small></span>
     </div>
     <h1>Política de Privacidade</h1>
-    <p class="vigencia">Vigente a partir de 18 de outubro de 2026</p>
+    <p class="vigencia">Vigente a partir de 28 de outubro de 2026</p>
   </header>
 
   <section class="resumo">
     <h2>Resumo</h2>
     <p>
-      O Controle de Parcelas não coleta, não envia e não vende seus dados.
+      O Parcelas, app da Campier, não coleta, não envia e não vende seus dados.
       Tudo o que você cadastra fica armazenado apenas no seu aparelho.
       O app não tem servidor, não tem cadastro de usuário e não usa
       anúncios nem ferramentas de rastreamento.
@@ -102,7 +107,8 @@
   <section>
     <h2>1. Quem é o responsável</h2>
     <p>
-      O app é desenvolvido por Pierre Passos, desenvolvedor independente.
+      O app é publicado com a marca Campier e desenvolvido por Pierre Passos,
+      desenvolvedor independente (pessoa física).
       Contato para qualquer assunto de privacidade: <a href="mailto:suporte@pierrepassos.dev">suporte@pierrepassos.dev</a>.
     </p>
   </section>
@@ -115,8 +121,7 @@
       <li>pagamentos registrados, amortizações extras e as observações que você escreve neles;</li>
       <li>nomes de pessoas que você adiciona para dividir a conta;</li>
       <li>comprovantes que você anexa (fotos ou arquivos PDF);</li>
-      <li>preferências do app (tema, horário dos avisos);</li>
-      <li>se a versão completa foi desbloqueada.</li>
+      <li>preferências do app (tema, avisos, bloqueio com biometria).</li>
     </ul>
     <p>
       Esses dados ficam em uma área privada do app no aparelho e <strong>não são enviados ao desenvolvedor nem a terceiros</strong>.
@@ -126,19 +131,27 @@
   <section>
     <h2>3. Permissões do aparelho</h2>
     <ul>
-      <li><strong>Notificações:</strong> para avisar sobre o vencimento das parcelas. Os avisos são agendados no próprio aparelho.</li>
+      <li><strong>Notificações:</strong> para avisar sobre o vencimento e o atraso das parcelas. Os avisos são agendados no próprio aparelho.</li>
+      <li><strong>Digital, rosto ou senha do aparelho:</strong> usados só se você ligar o bloqueio do app. A verificação é feita pelo próprio Android: o app recebe apenas a resposta "liberado" ou "não liberado" e nunca tem acesso à sua digital, ao seu rosto ou à sua senha.</li>
       <li><strong>Câmera e arquivos:</strong> usados somente quando você escolhe fotografar ou anexar um comprovante, por meio dos seletores do próprio Android. O app só acessa o arquivo que você escolher.</li>
-      <li><strong>Inicialização do aparelho:</strong> para reagendar os avisos depois que o celular é reiniciado.</li>
+      <li><strong>Inicialização do aparelho:</strong> para reagendar os avisos e atualizar o widget depois que o celular é reiniciado.</li>
     </ul>
+    <p>
+      <strong>Widget na tela inicial:</strong> se você adicionar o widget, ele
+      mostra a próxima parcela, o valor e quanto falta pagar na tela inicial
+      do celular, sem abrir o app. Essas informações ficam visíveis para
+      quem estiver com o seu celular desbloqueado, mesmo com o bloqueio do
+      app ligado. Você pode remover o widget a qualquer momento.
+    </p>
   </section>
 
   <section>
     <h2>4. Compras</h2>
     <p>
-      O desbloqueio da versão completa é uma compra única processada pelo
-      Google Play. O desenvolvedor não recebe nem armazena dados de cartão
-      ou pagamento; o app apenas recebe do Google Play a confirmação de que
-      a compra foi feita. O tratamento desses dados segue a <a href="https://policies.google.com/privacy?hl=pt-BR" rel="noopener">Política de Privacidade do Google</a>.
+      Esta versão do app é gratuita: não tem compras dentro do app nem
+      anúncios. Se no futuro houver compras, elas serão processadas pelo
+      Google Play, o desenvolvedor não receberá dados de cartão ou
+      pagamento, e esta política será atualizada antes.
     </p>
   </section>
 
@@ -149,13 +162,23 @@
         <strong>Backup do Android:</strong> se o backup automático estiver
         ativado no seu aparelho, o Android pode incluir os dados do app no
         backup criptografado da sua conta Google, permitindo restaurá-los em
-        um aparelho novo. Esse recurso é controlado por você nas
-        configurações do Android e o desenvolvedor não tem acesso a ele.
+        um aparelho novo (os comprovantes ficam de fora). Esse recurso é
+        controlado por você nas configurações do Android e o desenvolvedor
+        não tem acesso a ele.
       </li>
       <li>
-        <strong>Exportação:</strong> planilhas só são geradas quando você
-        toca em "Exportar", e só são enviadas para onde você escolher
-        (e-mail, Drive, WhatsApp etc.).
+        <strong>Backup em arquivo:</strong> só é gerado quando você toca em
+        "Fazer backup", e vai apenas para onde você escolher (uma pasta do
+        celular, Drive, e-mail, WhatsApp etc.). O arquivo contém todos os
+        seus cadastros e, se você escolher, os comprovantes. Ele não é
+        protegido por senha: guarde-o em um lugar seguro. Restaurar um
+        backup substitui os dados que estão no app.
+      </li>
+      <li>
+        <strong>Compartilhamento:</strong> textos e arquivos só são gerados
+        quando você toca em compartilhar, e só são enviados para onde você
+        escolher. A mensagem de comemoração das etapas de pagamento não
+        inclui valores.
       </li>
     </ul>
   </section>
@@ -174,7 +197,7 @@
 
   <section>
     <h2>7. Crianças</h2>
-    <p>O app não é direcionado a menores de 13 anos e não coleta dados de ninguém, inclusive de crianças.</p>
+    <p>O app é destinado a maiores de 18 anos e não coleta dados de ninguém, inclusive de crianças e adolescentes.</p>
   </section>
 
   <section>
