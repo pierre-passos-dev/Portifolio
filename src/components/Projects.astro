@@ -6,9 +6,6 @@ interface Props { lang: Lang; }
 const { lang } = Astro.props;
 const t = useTranslations(lang);
 const featured = projects.filter(p => p.featured);
-// Mostra os primeiros e recolhe o resto: com os apps próprios logo acima,
-// a página não fica comprida demais. Ordem = ordem em projects.ts.
-const visiveis = 3;
 ---
 
 <section class="section projects" id="projects">
@@ -19,10 +16,10 @@ const visiveis = 3;
       &gt; {t('projects.sub')}
     </p>
 
-    <div class="projects__grid" id="projetosGrade">
+    <div class="projects__grid">
       {featured.map((p, i) => (
         <article
-          class={`proj-card${i >= visiveis ? ' proj-card--extra' : ''}`}
+          class="proj-card"
           data-reveal
           style={`animation-delay: ${i * 0.08}s`}
         >
@@ -103,29 +100,10 @@ const visiveis = 3;
         </article>
       ))}
     </div>
-
-    {featured.length > visiveis && (
-      <button type="button" class="projects__todos" id="projetosTodos" aria-expanded="false" aria-controls="projetosGrade">
-        <span class="todos-abrir">{t('projects.all')} ({featured.length})</span>
-        <span class="todos-fechar">{t('projects.fewer')}</span>
-      </button>
-    )}
   </div>
 </section>
 
 <script>
-  // Ver todos / mostrar menos (sem JavaScript, todos aparecem: ver o <noscript> abaixo)
-  const botaoTodos = document.getElementById('projetosTodos');
-  const grade = document.getElementById('projetosGrade');
-  botaoTodos?.addEventListener('click', () => {
-    const aberto = grade!.classList.toggle('projects__grid--todos');
-    botaoTodos.setAttribute('aria-expanded', String(aberto));
-    if (!aberto) {
-      const top = grade!.getBoundingClientRect().top;
-      if (top < 0) window.scrollBy({ top: top - 80 });
-    }
-  });
-
   document.querySelectorAll<HTMLButtonElement>('.proj-card__close').forEach(btn => {
     btn.addEventListener('click', () => {
       btn.closest('details')!.open = false;
@@ -137,29 +115,7 @@ const visiveis = 3;
   });
 </script>
 
-<noscript><style>.proj-card--extra { display: block !important; } #projetosTodos { display: none; }</style></noscript>
-
 <style>
-.proj-card--extra { display: none; }
-.projects__grid--todos .proj-card--extra { display: block; }
-.projects__todos {
-  display: flex;
-  margin: 1.5rem auto 0;
-  background: none;
-  border: 1px solid var(--border-accent);
-  color: var(--accent);
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  padding: 0.8rem 1.4rem;
-  cursor: url('/cursors/pointer.svg') 16 16, pointer;
-  transition: background var(--transition), box-shadow var(--transition);
-}
-.projects__todos:hover { background: rgba(255, 140, 0, 0.08); box-shadow: var(--shadow-glow); }
-.projects__todos:focus-visible { outline: 1px solid var(--accent); outline-offset: 4px; }
-.todos-fechar, .projects__todos[aria-expanded="true"] .todos-abrir { display: none; }
-.projects__todos[aria-expanded="true"] .todos-fechar { display: inline; }
 .projects__grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));

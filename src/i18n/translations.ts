@@ -35,8 +35,6 @@ export const ui = {
 
     'projects.title': 'Projetos',
     'projects.sub': 'Projetos em que trabalhei nas empresas',
-    'projects.all': 'Ver todos os projetos',
-    'projects.fewer': 'Mostrar menos',
     'projects.more': 'Ver mais',
     'projects.less': 'Ver menos',
     'projects.problem': 'Problema',
@@ -92,8 +90,6 @@ export const ui = {
 
     'projects.title': 'Projects',
     'projects.sub': 'Projects I worked on at the companies I joined',
-    'projects.all': 'See all projects',
-    'projects.fewer': 'Show fewer',
     'projects.more': 'View more',
     'projects.less': 'View less',
     'projects.problem': 'Problem',
