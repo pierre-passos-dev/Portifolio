@@ -94,7 +94,10 @@ a, button, [role="button"] { cursor: url('/cursors/pointer.svg') 16 16, pointer;
 @media (max-width: 768px) { .container { padding: 0 1.25rem; } }
 
 /* ─── Section base ───────────────────────────────────────── */
-.section { padding: 7rem 0; position: relative; }
+/* Cada seção ocupa ao menos a tela inteira: ao clicar num item do menu, o
+   começo da seção seguinte não aparece embaixo (várias são mais baixas que
+   a tela). svh = altura da tela sem as barras do navegador no celular. */
+.section { padding: 7rem 0; position: relative; min-height: 100vh; min-height: 100svh; }
 
 .section-label {
   display: block;
