@@ -1,11 +1,15 @@
 ---
 // src/components/About.astro
 import { useTranslations, type Lang } from "../i18n/translations";
+import { projects } from "../data/projects";
+import { apps } from "../data/apps";
 interface Props {
   lang: Lang;
 }
 const { lang } = Astro.props;
 const t = useTranslations(lang);
+// Projetos profissionais + apps próprios.
+const totalProjetos = projects.length + apps.length;
 ---
 
 <section class="section about" id="about">
@@ -16,11 +20,14 @@ const t = useTranslations(lang);
     <div class="about__inner">
       <div class="about__text" data-reveal>
         <span class="section-label"
-          >// {lang === "pt" ? "01. sobre" : "01. about"}</span
+          >// {lang === "pt" ? "02. sobre" : "02. about"}</span
         >
         <h2 class="section-title">{t("about.title")}</h2>
         <p class="about__p">{t("about.p1")}</p>
         <p class="about__p">{t("about.p2")}</p>
+        <p class="about__p">
+          {t("about.p3")} <a class="about__link" href="#apps">{lang === "pt" ? "Ver meus apps →" : "See my apps →"}</a>
+        </p>
       </div>
 
       <div class="about__right" data-reveal>
@@ -47,7 +54,7 @@ const t = useTranslations(lang);
                 >4</span
               >,<br />
               &nbsp;&nbsp;<span class="t-key">"projects"</span>: <span
-                class="t-num">7</span
+                class="t-num">{totalProjetos}</span
               >,<br />
               &nbsp;&nbsp;<span class="t-key">"city"</span>: <span class="t-val"
                 >"Curitiba"</span
@@ -75,7 +82,7 @@ const t = useTranslations(lang);
           </div>
           <div class="stat-divider"></div>
           <div class="stat-block">
-            <span class="stat-num">7</span>
+            <span class="stat-num">{totalProjetos}</span>
             <span class="stat-label"
               >{lang === "pt" ? "Projetos" : "Projects"}</span
             >
@@ -83,7 +90,7 @@ const t = useTranslations(lang);
           <div class="stat-divider"></div>
           <div class="stat-block">
             <span class="stat-num">3</span>
-            <span class="stat-label">Web·Android·iOS</span>
+            <span class="stat-label">Web · Android · iOS</span>
           </div>
         </div>
         <!-- Education block -->
@@ -122,13 +129,15 @@ const t = useTranslations(lang);
 
   .about__inner {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    /* minmax(0, …): sem isso a coluna cresce com o conteúdo do terminal e
+       a página ganha rolagem lateral no celular */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 5rem;
     align-items: center;
   }
   @media (max-width: 768px) {
     .about__inner {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
       gap: 3rem;
     }
   }
@@ -239,6 +248,7 @@ const t = useTranslations(lang);
   }
   .stat-block {
     flex: 1;
+    min-width: 0;
     padding: 1.25rem;
     text-align: center;
   }
@@ -305,4 +315,14 @@ const t = useTranslations(lang);
     color: var(--text-muted);
     letter-spacing: 0.08em;
   }
+  /* "WEB·ANDROID·IOS" não cabe numa linha em telas de 390px */
+  @media (max-width: 480px) {
+    .stat-block { padding: 1rem 0.5rem; }
+    .stat-label { white-space: normal; }
+  }
+  .about__link {
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .about__link:hover { text-shadow: 0 0 8px var(--accent); }
 </style>

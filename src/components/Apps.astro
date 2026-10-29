@@ -1,0 +1,217 @@
+---
+// src/components/Apps.astro
+// Apps próprios (Campier). Vem logo depois do Hero: é o que eu crio e
+// publico sozinho, do código à loja. Dados em src/data/apps.ts.
+import { useTranslations, type Lang } from '../i18n/translations';
+import { apps, campier, type StatusApp } from '../data/apps';
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const pt = lang === 'pt';
+
+const textoStatus: Record<StatusApp, string> = pt
+  ? { 'em-breve': 'Em breve', 'teste-fechado': 'Em teste no Google Play', 'na-loja': 'No Google Play' }
+  : { 'em-breve': 'Coming soon', 'teste-fechado': 'In testing on Google Play', 'na-loja': 'On Google Play' };
+---
+
+<section class="section apps" id="apps">
+  <div class="container">
+    <span class="section-label">// {pt ? '01. apps próprios' : '01. my apps'}</span>
+    <h2 class="section-title">{t('apps.title')}</h2>
+    <p class="section-subtitle">&gt; {t('apps.sub')}</p>
+
+    <div class="apps__layout">
+      <!-- A marca: quem é a Campier -->
+      <a class="campier" href={campier.site} target="_blank" rel="noopener" data-reveal>
+        <svg class="campier__logo" viewBox="0 0 100 100" aria-hidden="true">
+          <path d="M50 14 A36 36 0 1 1 18.82 32" fill="none" stroke="currentColor" stroke-width="11" stroke-linecap="round"/>
+          <circle cx="32" cy="18.82" r="7.5" fill="#f5a524"/>
+        </svg>
+        <span class="campier__nome">campier</span>
+        <span class="campier__texto">{t('apps.campier')}</span>
+        <span class="campier__link">campier.app ↗</span>
+      </a>
+
+      <!-- Os apps -->
+      <div class="apps__lista">
+        {apps.map((app, i) => (
+          <article class="app" data-reveal style={`animation-delay: ${(i + 1) * 0.08}s`}>
+            <div class="app__topo">
+              {app.icone
+                ? <img class="app__icone" src={app.icone} alt="" width="56" height="56" loading="lazy" />
+                : <span class="app__icone app__icone--letra" aria-hidden="true">{app.nome[0]}</span>}
+              <div>
+                <h3 class="app__nome">{app.nome}</h3>
+                <span class={`app__status app__status--${app.status}`}>
+                  <span class="app__ponto" aria-hidden="true"></span>{textoStatus[app.status]}
+                </span>
+              </div>
+            </div>
+
+            <p class="app__desc">{pt ? app.descPt : app.descEn}</p>
+
+            <ul class="app__destaques">
+              {(pt ? app.destaquesPt : app.destaquesEn).map(d => <li>{d}</li>)}
+            </ul>
+
+            <div class="app__tags">
+              {app.tags.map(tag => <span class="tag">{tag}</span>)}
+            </div>
+
+            <div class="app__links">
+              {app.play && (
+                <a class="btn btn--primary" href={app.play} target="_blank" rel="noopener"><span>▶ Google Play</span></a>
+              )}
+              {app.site && (
+                <a class={`btn ${app.play ? 'btn--ghost' : 'btn--primary'}`} href={app.site} target="_blank" rel="noopener">
+                  <span>{t('apps.conhecer')} ↗</span>
+                </a>
+              )}
+            </div>
+          </article>
+        ))}
+
+        <!-- Lugar do próximo app (sai quando houver dois ou mais) -->
+        {apps.length < 2 && (
+          <div class="app app--vazio" data-reveal style="animation-delay: .24s">
+            <span class="app__icone app__icone--vazio" aria-hidden="true"></span>
+            <div>
+              <p class="app__vazio-titulo">{pt ? 'Em breve' : 'Coming soon'}</p>
+              <p class="app__vazio-texto">{pt ? 'Novos apps a caminho.' : 'New apps on the way.'}</p>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+.apps__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: stretch;
+}
+
+/* Cartão da marca */
+.campier {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 2rem 1.75rem;
+  border: 1px solid var(--border-accent);
+  background:
+    radial-gradient(circle at 20% 0%, rgba(245, 165, 36, 0.14), transparent 60%),
+    var(--bg-surface);
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.campier:hover { border-color: var(--accent); box-shadow: var(--shadow-glow); }
+.campier__logo { width: 44px; height: 44px; color: var(--text-primary); }
+.campier__nome {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+.campier__texto { color: var(--text-secondary); font-size: 1rem; line-height: 1.55; }
+.campier__link {
+  margin-top: auto;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+}
+
+/* Apps */
+.apps__lista {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 1.5rem;
+}
+.app {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 2rem 1.75rem;
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+}
+.app__topo { display: flex; align-items: center; gap: 1rem; }
+.app__icone {
+  width: 56px; height: 56px;
+  border-radius: 14px;
+  flex: none;
+  box-shadow: 0 6px 20px -6px rgba(0, 0, 0, 0.8);
+}
+.app__icone--letra {
+  display: grid; place-items: center;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-accent);
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  color: var(--accent);
+}
+.app__nome {
+  font-size: 1.15rem;
+  letter-spacing: 0.08em;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+.app__status {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: var(--accent-cool);
+}
+.app__ponto {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  animation: pisca 2s ease-in-out infinite;
+}
+.app__status--na-loja .app__ponto { background: #4ade80; box-shadow: 0 0 8px #4ade80; animation: none; }
+.app__status--em-breve .app__ponto { background: var(--text-muted); box-shadow: none; animation: none; }
+@keyframes pisca { 50% { opacity: 0.35; } }
+
+.app__desc { color: var(--text-secondary); font-size: 1rem; line-height: 1.6; }
+.app__destaques {
+  list-style: none;
+  display: grid;
+  gap: 0.4rem;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+.app__destaques li { position: relative; padding-left: 1.1rem; }
+.app__destaques li::before { content: '›'; position: absolute; left: 0; color: var(--accent); }
+.app__tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.app__links { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: auto; padding-top: 0.5rem; }
+
+/* Próximo app */
+.app--vazio {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-style: dashed;
+  background: transparent;
+}
+.app__icone--vazio { background: var(--bg-elevated); box-shadow: none; border: 1px dashed var(--border-accent); }
+.app__vazio-titulo { font-family: var(--font-display); letter-spacing: 0.08em; color: var(--text-secondary); }
+.app__vazio-texto { color: var(--text-muted); font-size: 0.95rem; margin-top: 0.4rem; }
+
+@media (max-width: 1000px) {
+  .apps__layout { grid-template-columns: 1fr; }
+  .campier { flex-direction: row; flex-wrap: wrap; align-items: center; padding: 1.5rem; }
+  .campier__texto { flex-basis: 100%; }
+  .campier__link { margin-top: 0; }
+}
+@media (max-width: 700px) {
+  .apps__lista { grid-template-columns: 1fr; }
+  .app--vazio { padding: 1.5rem; flex-direction: row; justify-content: flex-start; text-align: left; }
+}
+@media (prefers-reduced-motion: reduce) { .app__ponto { animation: none; } }
+</style>

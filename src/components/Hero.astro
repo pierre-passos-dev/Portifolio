@@ -1,9 +1,12 @@
 ---
 // src/components/Hero.astro
 import { useTranslations, type Lang } from '../i18n/translations';
+import { projects } from '../data/projects';
+import { apps } from '../data/apps';
 interface Props { lang: Lang; }
 const { lang } = Astro.props;
 const t = useTranslations(lang);
+const totalProjetos = String(projects.length + apps.length).padStart(2, '0');
 const cvHref = lang === 'pt' ? '/curriculo-pierre-passos.pdf' : '/resume-pierre-passos.pdf';
 ---
 
@@ -40,7 +43,7 @@ const cvHref = lang === 'pt' ? '/curriculo-pierre-passos.pdf' : '/resume-pierre-
   <div class="hud-data hud-data--right" aria-hidden="true">
     <span>BUILD: PROD</span>
     <span>UPTIME: 4Y+</span>
-    <span>PROJECTS: 07</span>
+    <span>PROJECTS: {totalProjetos}</span>
     <span>STATUS: AVAILABLE</span>
   </div>
 

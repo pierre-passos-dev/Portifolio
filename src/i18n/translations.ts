@@ -9,6 +9,7 @@ export const defaultLang: Lang = 'pt';
 
 export const ui = {
   pt: {
+    'nav.apps': 'Apps',
     'nav.about': 'Sobre',
     'nav.projects': 'Projetos',
     'nav.skills': 'Habilidades',
@@ -25,8 +26,17 @@ export const ui = {
     'about.title': 'Sobre mim',
     'about.p1': 'Sou desenvolvedor Full Stack há mais de 4 anos e minha especialidade é software que conversa com o mundo físico: sistemas de ponto e de controle de acesso integrados a relógios de ponto, catracas e leitores faciais, seguindo as regras trabalhistas brasileiras de jornada, hora extra, adicional noturno e banco de horas.',
     'about.p2': 'Hoje, na Topdata, participo de todas as etapas de uma plataforma multi-tenant na Azure que conecta relógios de ponto à nuvem, com sistema web, app Android e iOS (inclusive em modo quiosque), emissão do AFD, API de integração e observabilidade. Antes, na Bel, trabalhei em WMS e PWAs para operação logística. No backend uso Java e Spring Boot; no frontend e no mobile, Angular e Ionic.',
+    'about.p3': 'Fora do trabalho, crio e publico apps próprios com Flutter pela Campier, minha marca.',
+
+    'apps.title': 'Meus apps',
+    'apps.sub': 'Apps que eu crio e publico pela minha marca, a Campier',
+    'apps.campier': 'Minha marca de apps como desenvolvedor independente: cuido de cada um da ideia à publicação no Google Play.',
+    'apps.conhecer': 'Conhecer',
 
     'projects.title': 'Projetos',
+    'projects.sub': 'Projetos em que trabalhei nas empresas',
+    'projects.all': 'Ver todos os projetos',
+    'projects.fewer': 'Mostrar menos',
     'projects.more': 'Ver mais',
     'projects.less': 'Ver menos',
     'projects.problem': 'Problema',
@@ -56,6 +66,7 @@ export const ui = {
     '404.back': '← Voltar ao início',
   },
   en: {
+    'nav.apps': 'Apps',
     'nav.about': 'About',
     'nav.projects': 'Projects',
     'nav.skills': 'Skills',
@@ -72,8 +83,17 @@ export const ui = {
     'about.title': 'About me',
     'about.p1': 'I\'ve been a Full Stack developer for over 4 years, and my specialty is software that talks to the physical world: time tracking and access control systems integrated with time clocks, turnstiles and face readers, following Brazilian labor rules for work hours, overtime, night shift pay and hour banks.',
     'about.p2': 'Today at Topdata I take part in every stage of a multi-tenant platform on Azure that connects time clocks to the cloud, with a web system, Android and iOS apps (including kiosk mode), AFD file generation, an integration API and observability. Before that, at Bel, I worked on WMS and PWAs for logistics operations. I use Java and Spring Boot on the backend, and Angular and Ionic on the frontend and mobile.',
+    'about.p3': 'Outside work, I build and publish my own Flutter apps under Campier, my app brand.',
+
+    'apps.title': 'My apps',
+    'apps.sub': 'Apps I build and publish under my own brand, Campier',
+    'apps.campier': 'My app brand as an independent developer: I take each one from the idea to publishing on Google Play.',
+    'apps.conhecer': 'Learn more',
 
     'projects.title': 'Projects',
+    'projects.sub': 'Projects I worked on at the companies I joined',
+    'projects.all': 'See all projects',
+    'projects.fewer': 'Show fewer',
     'projects.more': 'View more',
     'projects.less': 'View less',
     'projects.problem': 'Problem',
