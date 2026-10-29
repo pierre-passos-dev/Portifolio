@@ -1,0 +1,4 @@
+# Lido pelo Cloudflare Pages. A política do Parcelas mudou para o site da
+# marca; as versões 1.0.0 e 1.0.1 do app ainda abrem o endereço antigo.
+/controle-de-parcelas/privacidade https://campier.app/parcelas/privacidade 301
+/controle-de-parcelas/privacidade/ https://campier.app/parcelas/privacidade 301
