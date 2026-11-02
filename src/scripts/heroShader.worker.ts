@@ -21,6 +21,8 @@ uniform float u_escala;  // pixels de desenho por pixel CSS
 uniform float u_t;       // tempo em segundos
 uniform vec3 u_mouse;    // x e y em pixels CSS (origem embaixo), z = força
 uniform float u_glitch;  // 1 no instante do glitch do nome, cai até 0
+uniform sampler2D u_nome;  // "PIERRE": vermelho = letras, verde = letras borradas
+uniform vec4 u_nomeCaixa;  // x, y, largura e altura em pixels CSS (origem embaixo)
 
 const vec3 FUNDO = vec3(0.0196, 0.0196, 0.0275); // --bg-base
 const vec3 AMBAR = vec3(1.0, 0.55, 0.0);         // --accent
@@ -60,6 +62,12 @@ float faiscas(vec2 uv, float aspecto, float camada) {
   return step(0.84, h) * brilho * (0.55 + 0.45 * sin(u_t * 2.6 + h * 40.0));
 }
 
+vec2 nomeEm(vec2 q) {
+  vec2 n = (q - u_nomeCaixa.xy) / u_nomeCaixa.zw;
+  if (n.x < 0.0 || n.x > 1.0 || n.y < 0.0 || n.y > 1.0) return vec2(0.0);
+  return texture2D(u_nome, vec2(n.x, 1.0 - n.y)).rg;
+}
+
 void main() {
   vec2 uv = gl_FragCoord.xy / u_res;
   float aspecto = u_res.x / u_res.y;
@@ -72,6 +80,8 @@ void main() {
   float sorteio = hash(vec2(faixa, passo));
   float rasgo = step(1.0 - u_glitch * 0.6, sorteio);
   q.x += rasgo * (sorteio - 0.5) * 260.0 * u_glitch;
+  // Sem as ondulações: o que depende do nome precisa ficar alinhado com as letras do HTML
+  vec2 qFixo = q;
 
   // Ondulação lenta o tempo todo
   q += vec2(sin(q.y * 0.006 + u_t * 0.35), cos(q.x * 0.005 - u_t * 0.28)) * 7.0;
@@ -82,6 +92,16 @@ void main() {
   float perto = exp(-rm * 0.0055) * u_mouse.z;
   // some no centro: sem isso, a grade forma um nó bem embaixo do cursor
   q += dm / max(rm, 1.0) * sin(rm * 0.045 - u_t * 3.5) * exp(-rm * 0.006) * smoothstep(0.0, 90.0, rm) * u_mouse.z * 14.0;
+
+  // A grade desvia das letras, como se o nome esquentasse o ar em volta
+  bool temNome = u_nomeCaixa.z > 0.0;
+  float halo = 0.0;
+  if (temNome) {
+    vec2 e = vec2(9.0, 0.0);
+    vec2 subida = vec2(nomeEm(qFixo + e.xy).g - nomeEm(qFixo - e.xy).g, nomeEm(qFixo + e.yx).g - nomeEm(qFixo - e.yx).g);
+    q -= subida * 26.0;
+    halo = nomeEm(qFixo).g;
+  }
 
   // A grade some nas bordas, como a máscara que o CSS usava
   float mascara = 1.0 - smoothstep(0.3, 1.0, length((uv - 0.5) / vec2(0.85, 0.8)));
@@ -112,6 +132,28 @@ void main() {
   float chao = 0.12 + pow(1.0 - uv.y, 1.6);
   cor += mix(AMBAR, BRASA, 0.35) * (faiscas(uv, aspecto, 0.0) + faiscas(uv, aspecto, 1.0) * 0.7) * chao * 0.75;
 
+  if (temNome) {
+    vec2 letras = nomeEm(qFixo);
+    float pertoNome = exp(-length(qFixo - u_mouse.xy) * 0.005) * u_mouse.z;
+
+    // Halo que respira e cresce com o cursor por perto
+    float respira = 0.78 + 0.22 * sin(u_t * 1.3 + sin(u_t * 0.37) * 2.0);
+    cor += mix(AMBAR, BRASA, 0.25) * letras.g * (0.17 * respira + 0.34 * pertoNome);
+
+    // Imagem fantasma: fica escondida atrás das letras e aparece quando o nome salta ou quebra
+    cor += AMBAR * letras.r * (0.2 + 0.08 * sin(u_t * 41.0));
+    if (u_glitch > 0.01) {
+      float abre = 34.0 * u_glitch;
+      cor += GLITCH_A * nomeEm(qFixo + vec2(abre, 0.0)).r * 0.55 * u_glitch;
+      cor += GLITCH_B * nomeEm(qFixo - vec2(abre, 0.0)).r * 0.55 * u_glitch;
+    }
+
+    // Faíscas que saem de cima das letras
+    float fonte = nomeEm(qFixo - vec2(0.0, 42.0)).g + nomeEm(qFixo - vec2(0.0, 84.0)).g * 0.6;
+    float saindo = faiscas(uv * 1.5, aspecto, 3.0);
+    cor += mix(AMBAR, GLITCH_A, 0.2) * saindo * fonte * (0.65 + 1.8 * pertoNome);
+  }
+
   // Termina na cor do fundo, para não marcar a divisa com a próxima seção
   cor *= smoothstep(0.0, 0.07, uv.y);
 
@@ -132,7 +174,7 @@ function compilar(gl: WebGLRenderingContext, tipo: number, fonte: string) {
 const SEM_GPU = /swiftshader|llvmpipe|softpipe|software|basic render/i;
 
 let gl: WebGLRenderingContext;
-let u: Record<'res' | 'escala' | 't' | 'mouse' | 'glitch', WebGLUniformLocation | null>;
+let u: Record<'res' | 'escala' | 't' | 'mouse' | 'glitch' | 'nomeCaixa', WebGLUniformLocation | null>;
 let canvas: OffscreenCanvas;
 
 // No celular: menos pixels e no máximo 30 quadros por segundo, para poupar bateria
@@ -259,7 +301,16 @@ function iniciar(destino: OffscreenCanvas, toque: boolean) {
     t: gl.getUniformLocation(programa, 'u_t'),
     mouse: gl.getUniformLocation(programa, 'u_mouse'),
     glitch: gl.getUniformLocation(programa, 'u_glitch'),
+    nomeCaixa: gl.getUniformLocation(programa, 'u_nomeCaixa'),
   };
+
+  // A imagem do nome chega depois, quando as fontes terminam de carregar
+  gl.bindTexture(gl.TEXTURE_2D, gl.createTexture());
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 0, 255]));
 
   canvas.addEventListener('webglcontextlost', falhar);
   medir();
@@ -282,6 +333,12 @@ self.addEventListener('message', (e: MessageEvent) => {
     alvo.ativo = 1.6; // segundos com força total depois do último movimento
   } else if (m.tipo === 'glitch') {
     glitch = 1;
+  } else if (m.tipo === 'nome') {
+    if (gl && !encerrado) {
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, m.imagem);
+      gl.uniform4fv(u.nomeCaixa, m.caixa);
+    }
+    m.imagem.close();
   } else if (m.tipo === 'visivel') {
     visivel = m.visivel;
     if (visivel && !quadro && !encerrado && gl) {
