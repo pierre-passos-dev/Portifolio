@@ -88,8 +88,10 @@ npm run curriculo
 - **Textos gerais:** `src/i18n/translations.ts`
 - **Email/links:** `src/components/Contact.astro`
 - **GitHub/LinkedIn:** `src/components/Contact.astro`
-- **Domínio:** `astro.config.mjs` → campo `site`, mais `public/robots.txt` e `public/sitemap.xml`
-- **Sitemap:** `public/sitemap.xml` é estático (o site tem duas páginas); página nova entra lá à mão
+- **Domínio:** `astro.config.mjs` → campo `site`, mais `public/robots.txt`
+- **Sitemap:** `src/pages/sitemap.xml.ts` gera o arquivo no build, com o `lastmod` do último commit; página nova entra na lista `paginas`
+- **Dados estruturados (JSON-LD):** `src/layouts/BaseLayout.astro`
+- **Fontes:** `public/fonts/`, declaradas no começo de `src/styles/global.css`
 
 ### Cores e tema
 

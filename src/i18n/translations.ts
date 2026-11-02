@@ -17,7 +17,7 @@ export const ui = {
     'nav.contact': 'Contato',
 
     'hero.greeting': 'Olá, eu sou',
-    'hero.role': 'Desenvolvedor Fullstack',
+    'hero.role': 'Desenvolvedor Full Stack',
     'hero.sub': 'Backend Java · Angular · Ionic · Cloud',
     'hero.cta': 'Ver projetos',
     'hero.contact': 'Entre em contato',
@@ -72,7 +72,7 @@ export const ui = {
     'nav.contact': 'Contact',
 
     'hero.greeting': 'Hi, I\'m',
-    'hero.role': 'Fullstack Developer',
+    'hero.role': 'Full Stack Developer',
     'hero.sub': 'Java Backend · Angular · Ionic · Cloud',
     'hero.cta': 'View projects',
     'hero.contact': 'Get in touch',

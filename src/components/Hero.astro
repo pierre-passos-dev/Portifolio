@@ -8,6 +8,9 @@ const { lang } = Astro.props;
 const t = useTranslations(lang);
 const totalProjetos = String(projects.length + apps.length).padStart(2, '0');
 const cvHref = lang === 'pt' ? '/curriculo-pierre-passos.pdf' : '/resume-pierre-passos.pdf';
+const roles = lang === 'pt'
+  ? [t('hero.role'), 'Desenvolvedor Java', 'Desenvolvedor Angular', 'Desenvolvedor Ionic', 'Software + Hardware']
+  : [t('hero.role'), 'Java Developer', 'Angular Developer', 'Ionic Developer', 'Software + Hardware'];
 ---
 
 <section class="hero" id="hero">
@@ -48,21 +51,23 @@ const cvHref = lang === 'pt' ? '/curriculo-pierre-passos.pdf' : '/resume-pierre-
   </div>
 
   <div class="container hero__content">
-    <p class="hero__sys">
+    <p class="hero__sys" aria-hidden="true">
       <span class="sys-icon">▶</span>
       <span id="sysText"></span>
       <span class="cursor-blink">_</span>
     </p>
 
-    <h1 class="hero__name glitch" data-text="PIERRE" data-glitch-idle data-glitch-jump data-glitch-break>
-      PIERRE
+    <!-- O h1 fica sempre com nome e cargo no HTML; o efeito de digitação é só visual.
+         Os {' '} seguram o espaço, porque o compressHTML cola spans em linhas separadas. -->
+    <h1 class="hero__heading">
+      <span class="hero__name glitch" data-text="PIERRE" data-glitch-idle data-glitch-jump data-glitch-break>PIERRE</span>{' '}
+      <span class="hero__surname">Passos</span>{' '}
+      <span class="hero__title-wrap">
+        <span class="hero__title-line" aria-hidden="true"></span>
+        <span class="hero__title" id="heroRole">{t('hero.role')}</span>
+        <span class="hero__title" id="typewriter" aria-hidden="true" data-roles={JSON.stringify(roles)} hidden></span>
+      </span>
     </h1>
-
-    <div class="hero__title-wrap">
-      <span class="hero__title-line"></span>
-      <span class="hero__title" id="typewriter"></span>
-      <span class="type-cursor">|</span>
-    </div>
 
     <p class="hero__sub">
       <span class="sub-item">Java</span>
@@ -215,6 +220,7 @@ const cvHref = lang === 'pt' ? '/curriculo-pierre-passos.pdf' : '/resume-pierre-
 
 /* Name */
 .hero__name {
+  display: block;
   font-size: clamp(5rem, 16vw, 11rem);
   font-weight: 900;
   letter-spacing: -0.02em;
@@ -240,6 +246,17 @@ const cvHref = lang === 'pt' ? '/curriculo-pierre-passos.pdf' : '/resume-pierre-
   background-clip: text;
 }
 
+.hero__surname {
+  display: block;
+  margin-top: 0.9rem;
+  font-size: clamp(1.5rem, 5vw, 3.4rem);
+  font-weight: 700;
+  letter-spacing: 0.42em;
+  line-height: 1;
+  color: var(--text-primary);
+  animation: fadeUp 0.6s 0.1s ease both;
+}
+
 /* Role typewriter */
 .hero__title-wrap {
   display: flex;
@@ -247,7 +264,20 @@ const cvHref = lang === 'pt' ? '/curriculo-pierre-passos.pdf' : '/resume-pierre-
   gap: 1rem;
   margin-top: 1.5rem;
   margin-bottom: 0.75rem;
+  /* dentro do h1: não herda o tamanho, o peso e a altura de linha do título */
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.6;
   animation: fadeUp 0.6s 0.2s ease both;
+}
+/* some da tela quando a digitação assume, mas continua no h1 */
+.hero__title.is-offscreen {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 .hero__title-line {
   display: block;
@@ -263,10 +293,19 @@ const cvHref = lang === 'pt' ? '/curriculo-pierre-passos.pdf' : '/resume-pierre-
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
-.type-cursor {
+/* Cursor no CSS: em um span, o "|" entraria no texto do h1 */
+.hero__title-wrap::after {
+  content: '|';
+  content: '|' / '';
   color: var(--accent);
   font-family: var(--font-mono);
   animation: blink 0.8s step-end infinite;
+}
+/* "Desenvolvedor Full Stack" precisa caber em uma linha até nas telas de 320px */
+@media (max-width: 480px) {
+  .hero__title-wrap { gap: 0.6rem; }
+  .hero__title-line { width: 1.25rem; }
+  .hero__title { font-size: 0.9rem; letter-spacing: 0.05em; }
 }
 
 /* Sub */
@@ -334,6 +373,8 @@ const cvHref = lang === 'pt' ? '/curriculo-pierre-passos.pdf' : '/resume-pierre-
   0% { top: -40%; }
   100% { top: 140%; }
 }
+/* Em tela baixa a indicação de rolagem ficaria em cima dos botões */
+@media (max-height: 700px) { .hero__scroll { display: none; } }
 
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(24px); }
@@ -343,15 +384,10 @@ const cvHref = lang === 'pt' ? '/curriculo-pierre-passos.pdf' : '/resume-pierre-
 
 <script>
   /* Typewriter effect */
-  const roles = [
-    'FULLSTACK DEVELOPER',
-    'JAVA DEVELOPER',
-    'ANGULAR DEVELOPER',
-    'IONIC DEVELOPER',
-    'SOFTWARE + HARDWARE',
-  ];
   const el = document.getElementById('typewriter')!;
-  let ri = 0, ci = 0, deleting = false;
+  const roleEl = document.getElementById('heroRole')!;
+  const roles: string[] = JSON.parse(el.dataset.roles!);
+  let ri = 0, ci = roles[0].length, deleting = true;
 
   function typeLoop() {
     const word = roles[ri];
@@ -360,7 +396,15 @@ const cvHref = lang === 'pt' ? '/curriculo-pierre-passos.pdf' : '/resume-pierre-
     if (deleting && ci < 0) { deleting = false; ri = (ri + 1) % roles.length; ci = 0; }
     setTimeout(typeLoop, deleting ? 40 : 80);
   }
-  setTimeout(typeLoop, 800);
+  // O cargo já vem escrito no HTML: fica na tela um tempo e só então a digitação assume
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    setTimeout(() => {
+      el.textContent = roles[0];
+      el.hidden = false;
+      roleEl.classList.add('is-offscreen');
+      typeLoop();
+    }, 2600);
+  }
 
   /* System text */
   const sysEl = document.getElementById('sysText')!;

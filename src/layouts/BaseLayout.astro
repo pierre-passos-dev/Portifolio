@@ -25,10 +25,41 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const ptURL = new URL('/', Astro.site);
 const enURL = new URL('/en/', Astro.site);
 const ogImage = new URL('/og-image.png', Astro.site);
+
+// Dados estruturados: dizem ao Google quem é a pessoa por trás do site
+const personId = new URL('/#person', Astro.site);
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': personId,
+      name: 'Pierre Passos',
+      url: ptURL,
+      jobTitle: lang === 'pt' ? 'Desenvolvedor Full Stack' : 'Full Stack Developer',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Curitiba',
+        addressRegion: 'PR',
+        addressCountry: 'BR',
+      },
+      knowsAbout: ['Java', 'Spring Boot', 'Angular', 'Ionic', 'TypeScript', 'Azure'],
+      sameAs: ['https://github.com/pierre-passos-dev', 'https://www.linkedin.com/in/pierre-passos'],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': new URL('/#website', Astro.site),
+      url: ptURL,
+      name: 'Pierre Passos',
+      inLanguage: ['pt-BR', 'en'],
+      author: { '@id': personId },
+    },
+  ],
+};
 ---
 
 <!DOCTYPE html>
-<html lang={lang} data-theme="dark">
+<html lang={lang === 'pt' ? 'pt-BR' : 'en'} data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -46,6 +77,7 @@ const ogImage = new URL('/og-image.png', Astro.site);
       <link rel="alternate" hreflang="pt-BR" href={ptURL} />
       <link rel="alternate" hreflang="en" href={enURL} />
       <link rel="alternate" hreflang="x-default" href={ptURL} />
+      <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     </>
   )}
 
@@ -66,13 +98,9 @@ const ogImage = new URL('/og-image.png', Astro.site);
   <meta name="twitter:description" content={description} />
   <meta name="twitter:image" content={ogImage} />
 
-  <!-- Fontes: link no head em vez de @import no CSS, que só baixava depois do CSS -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap"
-  />
+  <!-- Fontes do primeiro carregamento: baixam junto com a página, sem esperar o CSS -->
+  <link rel="preload" href="/fonts/orbitron-latin-var.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/share-tech-mono-latin-400.woff2" as="font" type="font/woff2" crossorigin />
 </head>
 <body>
   <!-- Particle canvas -->
@@ -85,6 +113,8 @@ const ogImage = new URL('/og-image.png', Astro.site);
   <Footer lang={lang} />
 
   <script>
+    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     /* ── Particles ── */
     const canvas = document.getElementById('particle-canvas') as HTMLCanvasElement;
     const ctx = canvas.getContext('2d')!;
@@ -93,8 +123,11 @@ const ogImage = new URL('/og-image.png', Astro.site);
       canvas.width  = window.innerWidth;
       canvas.height = window.innerHeight;
     }
-    resize();
-    window.addEventListener('resize', resize);
+
+    // A animação roda o tempo todo: fica de fora em aparelho fraco, com economia
+    // de dados ligada ou com "reduzir movimento"
+    const nav = navigator as Navigator & { deviceMemory?: number; connection?: { saveData?: boolean } };
+    const aparelhoFraco = (nav.deviceMemory ?? 8) <= 4 || (nav.hardwareConcurrency || 8) <= 4 || !!nav.connection?.saveData;
 
     interface Particle {
       x: number; y: number;
@@ -167,11 +200,13 @@ const ogImage = new URL('/og-image.png', Astro.site);
 
       requestAnimationFrame(animateParticles);
     }
-    animateParticles();
+    if (!reduceMotion && !aparelhoFraco) {
+      resize();
+      window.addEventListener('resize', resize);
+      animateParticles();
+    }
 
     /* ── Glitch ── */
-    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-
     function glitchBurst(el: HTMLElement) {
       el.classList.remove('is-glitching');
       void el.offsetWidth; // restart the CSS animation
@@ -206,6 +241,8 @@ const ogImage = new URL('/og-image.png', Astro.site);
     // word still looks like one continuous gradient while letters move independently.
     function splitChars(el: HTMLElement) {
       const text = el.textContent!.trim();
+      // span só aceita aria-label com um papel; as letras ficam escondidas do leitor de tela
+      el.setAttribute('role', 'img');
       el.setAttribute('aria-label', text);
       el.textContent = '';
       const chars = [...text].map(c => {

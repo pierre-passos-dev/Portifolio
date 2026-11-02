@@ -1,5 +1,28 @@
 /* src/styles/global.css — CYBERPUNK AMBER EDITION */
 
+/* ─── Fontes ─────────────────────────────────────────────── */
+/* Servidas pelo próprio site. O Orbitron é um arquivo só (fonte variável);
+   Rajdhani e Share Tech Mono só aparecem no peso 400. Só o subconjunto latino,
+   que cobre o português; ▶, → e afins vêm da fonte do sistema, como antes. */
+@font-face {
+  font-family: 'Orbitron';
+  src: url('/fonts/orbitron-latin-var.woff2') format('woff2');
+  font-weight: 400 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Rajdhani';
+  src: url('/fonts/rajdhani-latin-400.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Share Tech Mono';
+  src: url('/fonts/share-tech-mono-latin-400.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+
 /* ─── CSS Variables ─────────────────────────────────────── */
 :root {
   --bg-base:        #050507;
