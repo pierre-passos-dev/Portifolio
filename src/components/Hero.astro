@@ -28,6 +28,9 @@ const roles = lang === 'pt'
     <span class="hud-line-h"></span><span class="hud-line-v"></span>
   </div>
 
+  <!-- Fundo em WebGL; a grade e os orbes abaixo são o que aparece sem ele -->
+  <canvas class="hero__shader" aria-hidden="true"></canvas>
+
   <!-- Grid -->
   <div class="hero__grid" aria-hidden="true"></div>
 
@@ -107,6 +110,27 @@ const roles = lang === 'pt'
   align-items: center;
   overflow: hidden;
 }
+
+/* Fundo em WebGL: entra suave por cima do fundo em CSS, que depois sai de cena */
+.hero__shader {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.8s ease;
+}
+.hero.has-shader .hero__shader { opacity: 1; }
+.hero.has-shader .hero__grid,
+.hero.has-shader .orb {
+  animation: none;
+  visibility: hidden;
+  transition: visibility 0s 0.9s;
+}
+/* Sem shader por opção ou limitação do aparelho: fundo em CSS, parado */
+.hero.is-static .orb { animation: none; }
 
 /* Grid */
 .hero__grid {
@@ -270,6 +294,11 @@ const roles = lang === 'pt'
   line-height: 1.6;
   animation: fadeUp 0.6s 0.2s ease both;
 }
+/* O texto digitado fica no CSS: no HTML, entraria no texto do h1 */
+#typewriter::before {
+  content: attr(data-texto);
+  content: attr(data-texto) / '';
+}
 /* some da tela quando a digitação assume, mas continua no h1 */
 .hero__title.is-offscreen {
   position: absolute;
@@ -383,6 +412,8 @@ const roles = lang === 'pt'
 </style>
 
 <script>
+  import { semEfeitos } from '../scripts/aparelho';
+
   /* Typewriter effect */
   const el = document.getElementById('typewriter')!;
   const roleEl = document.getElementById('heroRole')!;
@@ -391,7 +422,7 @@ const roles = lang === 'pt'
 
   function typeLoop() {
     const word = roles[ri];
-    el.textContent = deleting ? word.slice(0, ci--) : word.slice(0, ci++);
+    el.dataset.texto = deleting ? word.slice(0, ci--) : word.slice(0, ci++);
     if (!deleting && ci > word.length) { setTimeout(() => { deleting = true; typeLoop(); }, 1800); return; }
     if (deleting && ci < 0) { deleting = false; ri = (ri + 1) % roles.length; ci = 0; }
     setTimeout(typeLoop, deleting ? 40 : 80);
@@ -399,7 +430,7 @@ const roles = lang === 'pt'
   // O cargo já vem escrito no HTML: fica na tela um tempo e só então a digitação assume
   if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
     setTimeout(() => {
-      el.textContent = roles[0];
+      el.dataset.texto = roles[0];
       el.hidden = false;
       roleEl.classList.add('is-offscreen');
       typeLoop();
@@ -416,16 +447,23 @@ const roles = lang === 'pt'
   }
   setTimeout(sysType, 200);
 
-  /* Parallax orbs on mouse move */
-  const orbs = document.querySelectorAll('.orb') as NodeListOf<HTMLElement>;
-  document.addEventListener('mousemove', (e) => {
-    const cx = window.innerWidth  / 2;
-    const cy = window.innerHeight / 2;
-    const dx = (e.clientX - cx) / cx;
-    const dy = (e.clientY - cy) / cy;
-    orbs.forEach((orb, i) => {
-      const strength = (i + 1) * 18;
-      orb.style.transform = `translate(${dx * strength}px, ${dy * strength}px)`;
-    });
-  }, { passive: true });
+  /* Fundo em WebGL: só depois que a página abrir, para não atrasar o carregamento */
+  const hero = document.getElementById('hero')!;
+  const fundoParado = () => hero.classList.add('is-static');
+
+  if (semEfeitos()) {
+    fundoParado();
+  } else {
+    const carregar = () => {
+      import('../scripts/heroShader')
+        .then(({ iniciarFundo }) => { if (!iniciarFundo(hero, fundoParado)) fundoParado(); })
+        .catch(fundoParado);
+    };
+    const quandoOcioso = () => {
+      if ('requestIdleCallback' in window) requestIdleCallback(carregar, { timeout: 1500 });
+      else setTimeout(carregar, 200);
+    };
+    if (document.readyState === 'complete') quandoOcioso();
+    else window.addEventListener('load', quandoOcioso, { once: true });
+  }
 </script>

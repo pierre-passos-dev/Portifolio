@@ -113,6 +113,8 @@ const jsonLd = {
   <Footer lang={lang} />
 
   <script>
+    import { aparelhoFraco } from '../scripts/aparelho';
+
     const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     /* ── Particles ── */
@@ -124,10 +126,7 @@ const jsonLd = {
       canvas.height = window.innerHeight;
     }
 
-    // A animação roda o tempo todo: fica de fora em aparelho fraco, com economia
-    // de dados ligada ou com "reduzir movimento"
-    const nav = navigator as Navigator & { deviceMemory?: number; connection?: { saveData?: boolean } };
-    const aparelhoFraco = (nav.deviceMemory ?? 8) <= 4 || (nav.hardwareConcurrency || 8) <= 4 || !!nav.connection?.saveData;
+    const heroComShader = document.getElementById('hero');
 
     interface Particle {
       x: number; y: number;
@@ -155,6 +154,16 @@ const jsonLd = {
     }
 
     function animateParticles() {
+      // Com o hero à vista o shader já desenha faíscas: aqui não haveria o que mostrar
+      if (heroComShader?.classList.contains('shader-em-foco')) {
+        if (particles.length) {
+          particles.length = 0;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        requestAnimationFrame(animateParticles);
+        return;
+      }
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       if (Math.random() < 0.4) spawn();
@@ -200,7 +209,9 @@ const jsonLd = {
 
       requestAnimationFrame(animateParticles);
     }
-    if (!reduceMotion && !aparelhoFraco) {
+    // A animação roda o tempo todo: fica de fora em aparelho fraco, com economia
+    // de dados ligada ou com "reduzir movimento"
+    if (!reduceMotion && !aparelhoFraco()) {
       resize();
       window.addEventListener('resize', resize);
       animateParticles();

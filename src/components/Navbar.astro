@@ -52,7 +52,7 @@ const otherPath = lang === "pt" ? "/en" : "/";
     </div>
   </div>
 
-  <nav class="mobile-nav" id="mobileNav" aria-hidden="true">
+  <nav class="mobile-nav" id="mobileNav" inert>
     <a href="#apps" class="mobile-nav__link">{t("nav.apps")}</a>
     <a href="#about" class="mobile-nav__link">{t("nav.about")}</a>
     <a href="#projects" class="mobile-nav__link">{t("nav.projects")}</a>
@@ -292,11 +292,12 @@ const otherPath = lang === "pt" ? "/en" : "/";
   menuBtn.addEventListener("click", () => {
     const open = mobileNav.classList.toggle("open");
     menuBtn.setAttribute("aria-expanded", String(open));
-    mobileNav.setAttribute("aria-hidden", String(!open));
+    mobileNav.inert = !open; // fechado, o Tab não pode cair nos links escondidos
   });
   mobileNav.querySelectorAll("a").forEach((a) =>
     a.addEventListener("click", () => {
       mobileNav.classList.remove("open");
+      mobileNav.inert = true;
       menuBtn.setAttribute("aria-expanded", "false");
     }),
   );
