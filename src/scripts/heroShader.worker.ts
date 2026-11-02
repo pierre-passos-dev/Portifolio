@@ -2,6 +2,7 @@
 // Desenha o fundo do hero em WebGL: grade âmbar que ondula perto do cursor, faíscas
 // subindo e interferência de sinal. Roda em um worker porque criar o contexto WebGL
 // pode travar a thread principal por centenas de milissegundos em aparelho sem GPU.
+// Roda em qualquer aparelho e desiste sozinho se os quadros ficarem lentos demais.
 // Avisa a página com 'pronto' ou 'falhou'; ver heroShader.ts.
 
 const VERTEX = `
@@ -173,9 +174,6 @@ function compilar(gl: WebGLRenderingContext, tipo: number, fonte: string) {
   return gl.getShaderParameter(shader, gl.COMPILE_STATUS) ? shader : null;
 }
 
-// Sem GPU o shader roda no processador: gasta bateria e não compensa
-const SEM_GPU = /swiftshader|llvmpipe|softpipe|software|basic render/i;
-
 let gl: WebGLRenderingContext;
 let u: Record<'res' | 'escala' | 't' | 'mouse' | 'glitch' | 'intenso' | 'nomeCaixa', WebGLUniformLocation | null>;
 let canvas: OffscreenCanvas;
@@ -278,13 +276,9 @@ function iniciar(destino: OffscreenCanvas, toque: boolean) {
     depth: false,
     stencil: false,
     powerPreference: 'low-power',
-    failIfMajorPerformanceCaveat: true,
   }) as WebGLRenderingContext | null;
   if (!contexto || typeof requestAnimationFrame !== 'function') return falhar();
   gl = contexto;
-
-  const info = gl.getExtension('WEBGL_debug_renderer_info');
-  if (info && SEM_GPU.test(String(gl.getParameter(info.UNMASKED_RENDERER_WEBGL)))) return falhar();
 
   const vs = compilar(gl, gl.VERTEX_SHADER, VERTEX);
   const fs = compilar(gl, gl.FRAGMENT_SHADER, FRAGMENT);

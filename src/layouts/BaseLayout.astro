@@ -115,8 +115,6 @@ const jsonLd = {
   {!noindex && <Terminal lang={lang} />}
 
   <script>
-    import { aparelhoFraco } from '../scripts/aparelho';
-
     const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     /* ── Particles ── */
@@ -155,7 +153,26 @@ const jsonLd = {
       });
     }
 
-    function animateParticles() {
+    // Mede os quadros e desiste se o aparelho não acompanhar (abaixo de 25 por segundo)
+    let ultimoQuadro = 0, somaQuadros = 0, quadrosMedidos = 0;
+    function lentoDemais(agora: number) {
+      const passou = agora - ultimoQuadro;
+      ultimoQuadro = agora;
+      // Aba em segundo plano não conta como lentidão
+      if (passou > 250) return false;
+      somaQuadros += passou;
+      if (++quadrosMedidos < 90) return false;
+      const media = somaQuadros / quadrosMedidos;
+      somaQuadros = quadrosMedidos = 0;
+      return media > 40;
+    }
+
+    function animateParticles(agora: number) {
+      if (lentoDemais(agora)) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        return;
+      }
+
       // Com o hero à vista o shader já desenha faíscas: aqui não haveria o que mostrar
       if (heroComShader?.classList.contains('shader-em-foco')) {
         if (particles.length) {
@@ -211,12 +228,12 @@ const jsonLd = {
 
       requestAnimationFrame(animateParticles);
     }
-    // A animação roda o tempo todo: fica de fora em aparelho fraco, com economia
-    // de dados ligada ou com "reduzir movimento"
-    if (!reduceMotion && !aparelhoFraco()) {
+    // Só "reduzir movimento" impede a animação de começar. Núcleos e memória não entram
+    // na decisão: o Brave informa valores falsos. Quem for lento de verdade cai em lentoDemais
+    if (!reduceMotion) {
       resize();
       window.addEventListener('resize', resize);
-      animateParticles();
+      requestAnimationFrame(animateParticles);
     }
 
     /* ── Glitch ── */

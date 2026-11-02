@@ -412,8 +412,6 @@ const roles = lang === 'pt'
 </style>
 
 <script>
-  import { semEfeitos } from '../scripts/aparelho';
-
   /* Typewriter effect */
   const el = document.getElementById('typewriter')!;
   const roleEl = document.getElementById('heroRole')!;
@@ -451,7 +449,7 @@ const roles = lang === 'pt'
   const hero = document.getElementById('hero')!;
   const fundoParado = () => hero.classList.add('is-static');
 
-  if (semEfeitos()) {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
     fundoParado();
   } else {
     const carregar = () => {

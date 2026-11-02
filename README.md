@@ -93,7 +93,7 @@ npm run curriculo
 - **Sitemap:** `src/pages/sitemap.xml.ts` gera o arquivo no build, com o `lastmod` do último commit; página nova entra na lista `paginas`
 - **Dados estruturados (JSON-LD):** `src/layouts/BaseLayout.astro`
 - **Fontes:** `public/fonts/`, declaradas no começo de `src/styles/global.css`
-- **Fundo do hero:** shader WebGL em `src/scripts/heroShader.worker.ts`, ligado por `heroShader.ts`; quem não pode rodar fica com a grade e os orbes em CSS (regra em `src/scripts/aparelho.ts`)
+- **Fundo do hero:** shader WebGL em `src/scripts/heroShader.worker.ts`, ligado por `heroShader.ts`; roda em qualquer aparelho e só fica de fora com "reduzir movimento", sem WebGL ou se os quadros ficarem lentos demais; nesses casos ficam a grade e os orbes em CSS. Não use núcleos nem memória para decidir: o Brave informa valores falsos
 - **Terminal escondido:** abre com `` ` `` ou `~`. Visual e atalho em `src/components/Terminal.astro`; comandos e textos em `src/scripts/terminal.ts`
 
 ### Cores e tema
