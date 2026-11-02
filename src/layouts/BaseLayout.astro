@@ -3,6 +3,7 @@
 import '../styles/global.css';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
+import Terminal from '../components/Terminal.astro';
 import { getLangFromUrl, useTranslations } from '../i18n/translations';
 
 interface Props {
@@ -111,6 +112,7 @@ const jsonLd = {
     <slot />
   </main>
   <Footer lang={lang} />
+  {!noindex && <Terminal lang={lang} />}
 
   <script>
     import { aparelhoFraco } from '../scripts/aparelho';
@@ -401,8 +403,17 @@ const jsonLd = {
             }
           }
           schedule();
-        }, 2500 + Math.random() * 4500);
+        }, (2500 + Math.random() * 4500) * (document.documentElement.dataset.modo === 'intenso' ? 0.35 : 1));
       })();
+    });
+
+    // Comando "glitch" do terminal: tudo o que está na tela treme de uma vez
+    window.addEventListener('site:glitch', () => {
+      if (reduceMotion) return;
+      document.querySelectorAll<HTMLElement>('.glitch').forEach(el => {
+        const r = el.getBoundingClientRect();
+        if (r.bottom > 0 && r.top < innerHeight) glitchBurst(el);
+      });
     });
 
     // Section titles decode from noise once, when scrolled into view

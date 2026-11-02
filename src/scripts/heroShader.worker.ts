@@ -21,6 +21,7 @@ uniform float u_escala;  // pixels de desenho por pixel CSS
 uniform float u_t;       // tempo em segundos
 uniform vec3 u_mouse;    // x e y em pixels CSS (origem embaixo), z = força
 uniform float u_glitch;  // 1 no instante do glitch do nome, cai até 0
+uniform float u_intenso;  // modo secreto: vai de 0 a 1
 uniform sampler2D u_nome;  // "PIERRE": vermelho = letras, verde = letras borradas
 uniform vec4 u_nomeCaixa;  // x, y, largura e altura em pixels CSS (origem embaixo)
 
@@ -84,7 +85,7 @@ void main() {
   vec2 qFixo = q;
 
   // Ondulação lenta o tempo todo
-  q += vec2(sin(q.y * 0.006 + u_t * 0.35), cos(q.x * 0.005 - u_t * 0.28)) * 7.0;
+  q += vec2(sin(q.y * 0.006 + u_t * 0.35), cos(q.x * 0.005 - u_t * 0.28)) * (7.0 + 18.0 * u_intenso);
 
   // Onda em volta do cursor
   vec2 dm = q - u_mouse.xy;
@@ -154,6 +155,8 @@ void main() {
     cor += mix(AMBAR, GLITCH_A, 0.2) * saindo * fonte * (0.65 + 1.8 * pertoNome);
   }
 
+  cor *= 1.0 + 0.9 * u_intenso;
+
   // Termina na cor do fundo, para não marcar a divisa com a próxima seção
   cor *= smoothstep(0.0, 0.07, uv.y);
 
@@ -174,7 +177,7 @@ function compilar(gl: WebGLRenderingContext, tipo: number, fonte: string) {
 const SEM_GPU = /swiftshader|llvmpipe|softpipe|software|basic render/i;
 
 let gl: WebGLRenderingContext;
-let u: Record<'res' | 'escala' | 't' | 'mouse' | 'glitch' | 'nomeCaixa', WebGLUniformLocation | null>;
+let u: Record<'res' | 'escala' | 't' | 'mouse' | 'glitch' | 'intenso' | 'nomeCaixa', WebGLUniformLocation | null>;
 let canvas: OffscreenCanvas;
 
 // No celular: menos pixels e no máximo 30 quadros por segundo, para poupar bateria
@@ -187,6 +190,7 @@ const tela = { largura: 0, altura: 0, dpr: 1 };
 const alvo = { x: 0, y: 0, ativo: 0 };
 const mouse = { x: 0, y: 0, forca: 0 };
 let glitch = 0;
+let intenso = 0, alvoIntenso = 0;
 
 let quadro = 0, ultimo = 0, tempo = Math.random() * 200;
 let somaMedida = 0, quadrosMedidos = 0, descartar = 20;
@@ -241,6 +245,8 @@ function desenhar(agora: number) {
   tempo = (tempo + dt) % 3600;
   alvo.ativo = Math.max(0, alvo.ativo - dt);
   glitch *= Math.exp(-dt * 6);
+  intenso += (alvoIntenso - intenso) * (1 - Math.exp(-dt * 1.5));
+  if (alvoIntenso && Math.random() < dt * 0.5) glitch = 1;
   const suave = 1 - Math.exp(-dt * 7);
   mouse.x += (alvo.x - mouse.x) * suave;
   mouse.y += (alvo.y - mouse.y) * suave;
@@ -249,6 +255,7 @@ function desenhar(agora: number) {
   gl.uniform1f(u.t, tempo);
   gl.uniform3f(u.mouse, mouse.x, mouse.y, mouse.forca);
   gl.uniform1f(u.glitch, glitch);
+  gl.uniform1f(u.intenso, intenso);
   gl.drawArrays(gl.TRIANGLES, 0, 3);
 
   if (!avisou) {
@@ -301,6 +308,7 @@ function iniciar(destino: OffscreenCanvas, toque: boolean) {
     t: gl.getUniformLocation(programa, 'u_t'),
     mouse: gl.getUniformLocation(programa, 'u_mouse'),
     glitch: gl.getUniformLocation(programa, 'u_glitch'),
+    intenso: gl.getUniformLocation(programa, 'u_intenso'),
     nomeCaixa: gl.getUniformLocation(programa, 'u_nomeCaixa'),
   };
 
@@ -333,6 +341,8 @@ self.addEventListener('message', (e: MessageEvent) => {
     alvo.ativo = 1.6; // segundos com força total depois do último movimento
   } else if (m.tipo === 'glitch') {
     glitch = 1;
+  } else if (m.tipo === 'intenso') {
+    alvoIntenso = 1;
   } else if (m.tipo === 'nome') {
     if (gl && !encerrado) {
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, m.imagem);

@@ -59,6 +59,13 @@ export const ui = {
 
     'footer.rights': 'Todos os direitos reservados.',
 
+    'terminal.abrir': 'Abrir terminal (tecla ~)',
+    'terminal.fechar': 'Fechar terminal',
+    'terminal.titulo': 'Terminal do site',
+    'terminal.entrada': 'Digite um comando',
+    'terminal.segredo': 'Modo secreto ligado. Recarregue a página para voltar ao normal.',
+    'terminal.segredoParado': 'Você achou o código! O modo secreto fica desligado com "reduzir movimento".',
+
     '404.title': 'Página não encontrada',
     '404.sub': 'O endereço que você abriu não existe ou mudou de lugar.',
     '404.back': '← Voltar ao início',
@@ -112,6 +119,13 @@ export const ui = {
     'contact.linkedin': 'LinkedIn',
 
     'footer.rights': 'All rights reserved.',
+
+    'terminal.abrir': 'Open terminal (~ key)',
+    'terminal.fechar': 'Close terminal',
+    'terminal.titulo': 'Site terminal',
+    'terminal.entrada': 'Type a command',
+    'terminal.segredo': 'Secret mode on. Reload the page to go back to normal.',
+    'terminal.segredoParado': 'You found the code! Secret mode stays off with "reduce motion".',
 
     '404.title': 'Page not found',
     '404.sub': 'The address you opened does not exist or has moved.',

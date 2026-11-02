@@ -1,0 +1,256 @@
+---
+// src/components/Terminal.astro
+// Terminal escondido: abre com ` ou ~ e pelo botão no canto da tela.
+// Os comandos ficam em scripts/terminal.ts, carregado só na primeira abertura.
+import { useTranslations, type Lang } from '../i18n/translations';
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<button class="term-abrir" id="termAbrir" type="button" aria-label={t('terminal.abrir')} title={t('terminal.abrir')} hidden>&gt;_</button>
+
+<dialog class="term" id="terminal" aria-label={t('terminal.titulo')} data-lang={lang}>
+  <header class="term__barra">
+    <span aria-hidden="true">pierre@passos:~</span>
+    <button class="term__fechar" id="termFechar" type="button" aria-label={t('terminal.fechar')}>×</button>
+  </header>
+  <div class="term__saida" id="termSaida" role="log" aria-live="polite" tabindex="0"></div>
+  <form class="term__linha" id="termForm">
+    <label for="termEntrada" aria-hidden="true">&gt;</label>
+    <input
+      id="termEntrada"
+      type="text"
+      aria-label={t('terminal.entrada')}
+      autocomplete="off"
+      autocapitalize="off"
+      autocorrect="off"
+      spellcheck="false"
+      enterkeyhint="send"
+    />
+  </form>
+</dialog>
+
+<p class="term-aviso" id="termAviso" role="status" data-ligado={t('terminal.segredo')} data-parado={t('terminal.segredoParado')} hidden></p>
+
+<style is:global>
+  .term-abrir {
+    position: fixed;
+    right: 1rem;
+    bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+    z-index: 90;
+    width: 2.75rem;
+    height: 2.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: var(--accent);
+    background: rgba(5, 5, 7, 0.85);
+    border: 1px solid var(--border-accent);
+    transition: all var(--transition);
+  }
+  .term-abrir:hover,
+  .term-abrir:focus-visible {
+    background: var(--accent);
+    color: var(--bg-base);
+    box-shadow: 0 0 15px rgba(255, 140, 0, 0.4);
+  }
+
+  .term {
+    width: min(820px, calc(100vw - 2rem));
+    height: min(620px, calc(100dvh - 2rem));
+    max-width: none;
+    max-height: none;
+    margin: auto;
+    padding: 0;
+    color: var(--text-primary);
+    background: rgba(5, 5, 7, 0.96);
+    border: 1px solid var(--border-accent);
+    box-shadow: var(--shadow-glow);
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    overflow: hidden;
+  }
+  .term[open] {
+    display: flex;
+    flex-direction: column;
+    animation: term-liga 0.22s step-end;
+  }
+  .term::backdrop { background: rgba(0, 0, 0, 0.45); }
+  @keyframes term-liga {
+    0%  { opacity: 0; transform: scaleY(0.02); }
+    35% { opacity: 1; transform: scaleY(0.04); }
+    65% { opacity: 0.7; transform: scaleY(1.01); }
+    100% { opacity: 1; transform: none; }
+  }
+  html:has(.term[open]) { overflow: hidden; }
+
+  .term__barra {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.35rem 0.5rem 0.35rem 1rem;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-accent);
+  }
+  .term__fechar {
+    width: 2.75rem;
+    height: 2.75rem;
+    font-family: var(--font-mono);
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    background: none;
+    border: 0;
+  }
+  .term__fechar:hover { color: var(--accent); }
+
+  .term__saida {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    padding: 1rem;
+    overflow-y: auto;
+    overflow-wrap: anywhere;
+  }
+  .term__saida:focus { outline: none; }
+  .term__bloco { margin-bottom: 0.9rem; }
+  .term__titulo { color: var(--accent-cool); }
+  .term__eco { color: var(--accent); margin-bottom: 0.5rem; }
+  .term__fraco { color: var(--text-secondary); }
+  .term__erro { color: #ff7a59; }
+  .term__saida a { color: var(--accent); text-decoration: underline; text-underline-offset: 0.2em; }
+
+  .term__opcao {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 0.75rem;
+  }
+  .term__opcao button {
+    min-height: 2rem;
+    padding: 0 0.25rem;
+    font: inherit;
+    color: var(--accent);
+    background: none;
+    border: 0;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  .term__opcao button:hover { color: var(--accent-cool); }
+  .term__opcao span { color: var(--text-secondary); }
+
+  .term__linha {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem 1rem calc(0.5rem + env(safe-area-inset-bottom, 0px));
+    color: var(--accent);
+    border-top: 1px solid var(--border-accent);
+  }
+  .term__linha input {
+    flex: 1;
+    min-width: 0;
+    min-height: 2.5rem;
+    /* 16px: abaixo disso o iPhone dá zoom na página ao focar no campo */
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    color: var(--text-primary);
+    caret-color: var(--accent);
+    background: none;
+    border: 0;
+    outline: none;
+    cursor: text;
+  }
+  .term__linha:focus-within { box-shadow: inset 0 1px 0 var(--accent); }
+
+  .term-aviso {
+    position: fixed;
+    left: 50%;
+    bottom: 1.25rem;
+    z-index: 95;
+    max-width: calc(100vw - 2rem);
+    padding: 0.5rem 1rem;
+    transform: translateX(-50%);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--accent);
+    background: rgba(5, 5, 7, 0.95);
+    border: 1px solid var(--accent);
+  }
+
+  @media (max-width: 600px) {
+    .term {
+      width: 100vw;
+      height: 100dvh;
+      border: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .term[open] { animation: none; }
+  }
+</style>
+
+<script>
+  const dialogo = document.getElementById('terminal') as HTMLDialogElement;
+  const botao = document.getElementById('termAbrir')!;
+  const saida = document.getElementById('termSaida')!;
+  const entrada = document.getElementById('termEntrada')!;
+  const aviso = document.getElementById('termAviso')!;
+
+  // Sem JavaScript o botão não faria nada: só aparece quando funciona
+  botao.hidden = false;
+
+  let carregado = false;
+  function abrir() {
+    if (dialogo.open) return;
+    dialogo.showModal();
+    // No celular o teclado cobriria a lista de comandos: só abre se a pessoa tocar no campo
+    (matchMedia('(pointer: coarse)').matches ? saida : entrada).focus();
+    if (carregado) return;
+    carregado = true;
+    import('../scripts/terminal')
+      .then(({ iniciar }) => iniciar(dialogo))
+      .catch(() => { carregado = false; });
+  }
+
+  botao.addEventListener('click', abrir);
+  document.getElementById('termFechar')!.addEventListener('click', () => dialogo.close());
+  // Clique fora da janela: no fundo escurecido, o alvo é o próprio dialog
+  dialogo.addEventListener('click', e => { if (e.target === dialogo) dialogo.close(); });
+  document.getElementById('termForm')!.addEventListener('submit', e => e.preventDefault());
+
+  function modoSecreto() {
+    const raiz = document.documentElement;
+    if (raiz.dataset.modo === 'intenso') return;
+    const parado = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!parado) {
+      raiz.dataset.modo = 'intenso';
+      window.dispatchEvent(new CustomEvent('site:intenso'));
+    }
+    aviso.textContent = parado ? aviso.dataset.parado! : aviso.dataset.ligado!;
+    aviso.hidden = false;
+    setTimeout(() => { aviso.hidden = true; }, 4000);
+  }
+
+  const KONAMI = ['arrowup', 'arrowup', 'arrowdown', 'arrowdown', 'arrowleft', 'arrowright', 'arrowleft', 'arrowright', 'b', 'a'];
+  let acertos = 0;
+
+  document.addEventListener('keydown', e => {
+    const tecla = e.key.toLowerCase();
+    acertos = tecla === KONAMI[acertos] ? acertos + 1 : tecla === KONAMI[0] ? 1 : 0;
+    if (acertos === KONAMI.length) {
+      acertos = 0;
+      modoSecreto();
+    }
+
+    if (e.ctrlKey || e.metaKey || e.altKey || dialogo.open) return;
+    const alvo = e.target as HTMLElement;
+    if (alvo.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(alvo.tagName)) return;
+    // No teclado brasileiro, ` e ~ são teclas mortas: o navegador informa "Dead"
+    const teclaMorta = e.key === 'Dead' && ['Quote', 'BracketLeft', 'Backquote'].includes(e.code);
+    if (e.key === '`' || e.key === '~' || teclaMorta) {
+      e.preventDefault();
+      abrir();
+    }
+  });
+</script>

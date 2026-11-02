@@ -111,6 +111,11 @@ export function iniciarFundo(hero: HTMLElement, aoFalhar: () => void) {
   };
   nome?.addEventListener('animationstart', aoGlitch);
 
+  // Modo secreto do terminal (Konami code)
+  const aoIntenso = () => worker.postMessage({ tipo: 'intenso' });
+  window.addEventListener('site:intenso', aoIntenso);
+  if (document.documentElement.dataset.modo === 'intenso') aoIntenso();
+
   // Só desenha com o hero na tela; com mais da metade dele à vista, as partículas
   // do BaseLayout descansam, porque ficariam escondidas atrás do shader
   let naTela = true;
@@ -129,6 +134,7 @@ export function iniciarFundo(hero: HTMLElement, aoFalhar: () => void) {
     observador.disconnect();
     redimensionar.disconnect();
     window.removeEventListener('pointermove', aoMover);
+    window.removeEventListener('site:intenso', aoIntenso);
     nome?.removeEventListener('animationstart', aoGlitch);
     document.removeEventListener('visibilitychange', avisarVisivel);
     hero.classList.remove('has-shader', 'shader-em-foco');
