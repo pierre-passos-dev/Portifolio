@@ -88,6 +88,7 @@ npm run curriculo
 - **Textos gerais:** `src/i18n/translations.ts`
 - **Email/links:** `src/components/Contact.astro`
 - **GitHub/LinkedIn:** `src/components/Contact.astro`
+- **E-mail em página nova:** colocar o link entre `<!--email_off-->` e `<!--/email_off-->`. Sem isso, o Cloudflare troca o endereço por um link que só funciona com JavaScript
 - **Domínio:** `astro.config.mjs` → campo `site`, mais `public/robots.txt`
 - **Sitemap:** `src/pages/sitemap.xml.ts` gera o arquivo no build, com o `lastmod` do último commit; página nova entra na lista `paginas`
 - **Dados estruturados (JSON-LD):** `src/layouts/BaseLayout.astro`

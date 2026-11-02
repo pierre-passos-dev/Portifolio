@@ -10,6 +10,8 @@ const emailBody    = lang === 'pt'
   ? 'Olá,\n\nVi seu portfólio e gostaria de conversar.'
   : 'Hi,\n\nI saw your portfolio and would like to connect.';
 const cvHref = lang === 'pt' ? '/curriculo-pierre-passos.pdf' : '/resume-pierre-passos.pdf';
+// No HTML, este link fica entre os comentários email_off: sem eles, o Cloudflare
+// troca o mailto por um link que só funciona com JavaScript
 const emailHref = `mailto:pierre.passos.dev@gmail.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
 ---
 
@@ -29,6 +31,7 @@ const emailHref = `mailto:pierre.passos.dev@gmail.com?subject=${encodeURICompone
       </div>
 
       <div class="contact__links">
+        <!--email_off-->
         <a href={emailHref} class="contact-card contact-card--primary">
           <div class="contact-card__icon">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -42,6 +45,7 @@ const emailHref = `mailto:pierre.passos.dev@gmail.com?subject=${encodeURICompone
           </div>
           <div class="contact-card__arrow">▶</div>
         </a>
+        <!--/email_off-->
 
         <a href="https://github.com/pierre-passos-dev" target="_blank" rel="noopener" class="contact-card">
           <div class="contact-card__icon">
