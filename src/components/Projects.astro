@@ -6,6 +6,10 @@ interface Props { lang: Lang; }
 const { lang } = Astro.props;
 const t = useTranslations(lang);
 const featured = projects.filter(p => p.featured);
+// o projeto principal vem à parte, na largura toda; os outros seguem na grade
+const cases = featured.filter(p => p.kind === 'case');
+const cards = featured.filter(p => p.kind !== 'case');
+const pt = lang === 'pt';
 ---
 
 <section class="section projects" id="projects">
@@ -16,15 +20,65 @@ const featured = projects.filter(p => p.featured);
       &gt; {t('projects.sub')}
     </p>
 
+    {cases.map((p, i) => (
+      <article class="proj-case" data-reveal>
+        <div class="proj-card__index">{String(i + 1).padStart(2, '0')}</div>
+        <span class="proj-case__label">// {t('projects.case')}</span>
+        <h3 class="proj-card__title proj-case__title">{pt ? p.titlePt : p.titleEn}</h3>
+        <p class="proj-case__desc">{pt ? p.shortDescPt : p.shortDescEn}</p>
+        {p.metaPt && <p class="proj-case__meta">{pt ? p.metaPt : p.metaEn}</p>}
+        <!-- stack logo abaixo do título: é o que o recrutador procura primeiro -->
+        <div class="proj-card__tags proj-case__tags">
+          {p.tags.map(tag => <span class="tag">{tag}</span>)}
+        </div>
+
+        <dl class="proj-card__story proj-case__story">
+          <div>
+            <dt>{t('projects.problem')}</dt>
+            <dd>{pt ? p.problemPt : p.problemEn}</dd>
+          </div>
+          <div>
+            <dt>{t('projects.built')}</dt>
+            <dd>
+              {pt ? p.builtPt : p.builtEn}
+              {p.builtListPt && <ul class="proj-list">{(pt ? p.builtListPt : p.builtListEn!).map(item => <li>{item}</li>)}</ul>}
+            </dd>
+          </div>
+          {p.resultPt && (
+            <div>
+              <dt>{t('projects.impact')}</dt>
+              <dd>{pt ? p.resultPt : p.resultEn}</dd>
+            </div>
+          )}
+        </dl>
+
+        {p.highlights && (
+          <div class="proj-case__decisions">
+            <h4 class="proj-case__subtitle">{t('projects.decisions')}</h4>
+            <div class="proj-case__grid">
+              {p.highlights.map(h => (
+                <div class="proj-case__item">
+                  <h5>{pt ? h.titlePt : h.titleEn}</h5>
+                  <p>{pt ? h.textPt : h.textEn}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div class="proj-card__glow-line" aria-hidden="true"></div>
+      </article>
+    ))}
+
     <div class="projects__grid">
-      {featured.map((p, i) => (
+      {cards.map((p, i) => (
         <article
           class="proj-card"
           data-reveal
           style={`animation-delay: ${i * 0.08}s`}
         >
           <!-- Card index -->
-          <div class="proj-card__index">{String(i + 1).padStart(2, '0')}</div>
+          <div class="proj-card__index">{String(cases.length + i + 1).padStart(2, '0')}</div>
 
           <!-- Header bar -->
           <div class="proj-card__header">
@@ -56,6 +110,8 @@ const featured = projects.filter(p => p.featured);
             {lang === 'pt' ? p.titlePt : p.titleEn}
           </h3>
 
+          {p.metaPt && <p class="proj-case__meta proj-card__meta">{pt ? p.metaPt : p.metaEn}</p>}
+
           <p class="proj-card__desc">
             {lang === 'pt' ? p.shortDescPt : p.shortDescEn}
           </p>
@@ -77,7 +133,10 @@ const featured = projects.filter(p => p.featured);
               </div>
               <div>
                 <dt>{t('projects.built')}</dt>
-                <dd>{lang === 'pt' ? p.builtPt : p.builtEn}</dd>
+                <dd>
+                  {pt ? p.builtPt : p.builtEn}
+                  {p.builtListPt && <ul class="proj-list">{(pt ? p.builtListPt : p.builtListEn!).map(item => <li>{item}</li>)}</ul>}
+                </dd>
               </div>
               {p.resultPt && (
                 <div>
@@ -118,7 +177,8 @@ const featured = projects.filter(p => p.featured);
 <style>
 .projects__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+  /* 2 colunas no computador: com 4 cartões, a grade fecha sem célula vazia */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 460px), 1fr));
   gap: 1px;
   border: 1px solid rgba(255,140,0,0.1);
 }
@@ -258,6 +318,94 @@ const featured = projects.filter(p => p.featured);
   line-height: 1.6;
   margin-top: 0.3rem;
 }
+
+/* Projeto principal: largura toda, acima da grade, com as decisões técnicas à vista */
+.proj-case {
+  position: relative;
+  background: var(--bg-base);
+  border: 1px solid rgba(255,140,0,0.18);
+  border-bottom: none;
+  padding: 2.5rem 2.25rem;
+  overflow: hidden;
+}
+.proj-case::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--gradient-card);
+  opacity: 0.5;
+}
+.proj-case:hover .proj-card__glow-line { opacity: 1; }
+.proj-case__label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--accent-cool);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.proj-case__title { font-size: 1.15rem; margin: 0.75rem 0; }
+.proj-case__desc {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 70ch;
+}
+.proj-case__meta {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  margin-top: 0.75rem;
+}
+.proj-card__meta { margin-top: -0.25rem; margin-bottom: 0.75rem; }
+.proj-case__tags { margin-top: 1rem; }
+.proj-case__story { margin: 2rem 0 0; }
+.proj-case__decisions { margin: 2.25rem 0 0; }
+.proj-case__subtitle {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--accent-cool);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+.proj-case__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 1px;
+  border: 1px solid rgba(255,140,0,0.1);
+}
+.proj-case__item {
+  outline: 1px solid rgba(255,140,0,0.1);
+  padding: 1.25rem 1.25rem 1.4rem;
+  background: rgba(0,0,0,0.15);
+}
+.proj-case__item h5 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.06em;
+  margin-bottom: 0.5rem;
+}
+.proj-case__item p {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+@media (max-width: 640px) {
+  .proj-case { padding: 2rem 1.25rem; }
+  .proj-case__item { padding: 1.1rem 1rem 1.2rem; }
+}
+
+/* Lista do "O que fiz" */
+.proj-list { margin: 0.5rem 0 0; padding: 0; list-style: none; }
+.proj-list li { position: relative; padding-left: 1.1rem; margin-top: 0.35rem; }
+.proj-list li::before { content: '›'; position: absolute; left: 0; color: var(--accent); }
 
 /* Glow line on hover */
 .proj-card__glow-line {
