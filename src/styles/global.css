@@ -117,10 +117,17 @@ a, button, [role="button"] { cursor: url('/cursors/pointer.svg') 16 16, pointer;
 @media (max-width: 768px) { .container { padding: 0 1.25rem; } }
 
 /* ─── Section base ───────────────────────────────────────── */
-/* Cada seção ocupa ao menos a tela inteira: ao clicar num item do menu, o
-   começo da seção seguinte não aparece embaixo (várias são mais baixas que
-   a tela). svh = altura da tela sem as barras do navegador no celular. */
-.section { padding: 7rem 0; position: relative; min-height: 100vh; min-height: 100svh; }
+/* Ao clicar num item do menu, o conteúdo da seção seguinte não pode aparecer
+   embaixo (várias seções são mais baixas que a tela). Basta a seção somada ao
+   espaço do topo da seguinte (7rem) dar uma tela: com a tela inteira, esse
+   espaço sobrava em dobro e a rolagem até a próxima seção ficava longa.
+   svh = altura da tela sem as barras do navegador no celular. */
+.section {
+  padding: 7rem 0;
+  position: relative;
+  min-height: calc(100vh - 7rem);
+  min-height: calc(100svh - 7rem);
+}
 
 .section-label {
   display: block;

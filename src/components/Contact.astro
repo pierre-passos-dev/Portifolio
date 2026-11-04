@@ -95,6 +95,17 @@ const emailHref = `mailto:pierre.passos.dev@gmail.com?subject=${encodeURICompone
 .contact {
   position: relative;
   overflow: hidden;
+  /* última seção: ela mais o rodapé (4rem de margem + 146px) dão uma tela,
+     para o clique em "Contato" mostrar tudo até o fim da página */
+  min-height: calc(100vh - 4rem - 146px);
+  min-height: calc(100svh - 4rem - 146px);
+  /* embaixo já vem a margem do rodapé; o espaço padrão da seção dobrava o vão
+     e, em telas baixas, empurrava o fim da página para fora da tela */
+  padding-bottom: 0;
+}
+@media (max-width: 600px) {
+  /* no celular o rodapé empilha e fica com 223px */
+  .contact { min-height: calc(100svh - 4rem - 223px); }
 }
 .contact__bg {
   position: absolute;
