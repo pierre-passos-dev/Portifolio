@@ -395,12 +395,14 @@ const roles = lang === 'pt'
   background: var(--accent);
   box-shadow: 0 0 6px var(--accent);
   position: absolute;
-  top: -40%;
+  top: 0;
+  /* move pelo transform (a % é da própria barrinha): mesmo trajeto de antes, de -40% a 140% da trilha */
+  transform: translateY(-100%);
   animation: scrollThumb 2s ease-in-out infinite;
 }
 @keyframes scrollThumb {
-  0% { top: -40%; }
-  100% { top: 140%; }
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(350%); }
 }
 /* Em tela baixa a indicação de rolagem ficaria em cima dos botões */
 @media (max-height: 700px) { .hero__scroll { display: none; } }
@@ -437,13 +439,15 @@ const roles = lang === 'pt'
 
   /* System text */
   const sysEl = document.getElementById('sysText')!;
-  const sysMsg = '> INITIALIZING SYSTEM... PIERREPASSOS.DEV';
+  const sysMsg = '> INITIALIZING SYSTEM… PIERREPASSOS.DEV';
   let si = 0;
   function sysType() {
     sysEl.textContent = sysMsg.slice(0, si++);
     if (si <= sysMsg.length) setTimeout(sysType, 35);
   }
-  setTimeout(sysType, 200);
+  // Com "reduzir movimento" a linha já aparece inteira, sem a digitação
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) sysEl.textContent = sysMsg;
+  else setTimeout(sysType, 200);
 
   /* Fundo em WebGL: só depois que a página abrir, para não atrasar o carregamento */
   const hero = document.getElementById('hero')!;

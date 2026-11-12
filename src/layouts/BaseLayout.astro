@@ -64,6 +64,8 @@ const jsonLd = {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Barra do navegador no celular na cor do fundo do site -->
+  <meta name="theme-color" content="#050507" />
   <title>{title}</title>
   <meta name="description" content={description} />
   <meta name="author" content="Pierre Passos" />
@@ -104,11 +106,13 @@ const jsonLd = {
   <link rel="preload" href="/fonts/share-tech-mono-latin-400.woff2" as="font" type="font/woff2" crossorigin />
 </head>
 <body>
+  <a class="pular" href="#conteudo">{lang === 'pt' ? 'Pular para o conteúdo' : 'Skip to content'}</a>
+
   <!-- Particle canvas -->
   <canvas id="particle-canvas" style="position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0.5;"></canvas>
 
   <Navbar lang={lang} />
-  <main style="position:relative;z-index:1;">
+  <main id="conteudo" style="position:relative;z-index:1;">
     <slot />
   </main>
   <Footer lang={lang} />
@@ -283,12 +287,16 @@ const jsonLd = {
         el.appendChild(span);
         return span;
       });
+      // Lê todas as medidas antes de gravar: ler e gravar alternados obrigavam o
+      // navegador a recalcular a página a cada letra
       const sync = () => {
-        el.style.setProperty('--gw', el.offsetWidth + 'px');
-        el.style.setProperty('--gh', el.offsetHeight + 'px');
-        chars.forEach(c => {
-          c.style.setProperty('--gx', -c.offsetLeft + 'px');
-          c.style.setProperty('--gy', -c.offsetTop + 'px');
+        const largura = el.offsetWidth, altura = el.offsetHeight;
+        const posicoes = chars.map(c => [c.offsetLeft, c.offsetTop]);
+        el.style.setProperty('--gw', largura + 'px');
+        el.style.setProperty('--gh', altura + 'px');
+        chars.forEach((c, i) => {
+          c.style.setProperty('--gx', -posicoes[i][0] + 'px');
+          c.style.setProperty('--gy', -posicoes[i][1] + 'px');
         });
       };
       el.classList.add('is-split');

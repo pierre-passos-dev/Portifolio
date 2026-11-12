@@ -18,7 +18,7 @@ const t = useTranslations(lang);
     <p class="section-subtitle">
       {
         lang === "pt"
-          ? "> Principais Tecnologias e Arquiteturas"
+          ? "> Principais tecnologias e arquiteturas"
           : "> Core Technologies & Architecture"
       }
     </p>
@@ -192,7 +192,11 @@ const t = useTranslations(lang);
     color: var(--text-secondary);
     letter-spacing: 0.06em;
     background: transparent;
-    transition: all 0.2s;
+    transition:
+      border-color 0.2s,
+      color 0.2s,
+      background-color 0.2s,
+      box-shadow 0.2s;
   }
   .skill-pill:hover {
     border-color: var(--accent);
@@ -266,19 +270,21 @@ const t = useTranslations(lang);
   .l-progress__bar {
     position: absolute;
     top: 0;
-    left: -40%;
+    left: 0;
     width: 40%;
     height: 100%;
     background: linear-gradient(90deg, transparent, #00b4ff, transparent);
+    /* move pelo transform (a % é da própria barra): mesmo trajeto de antes, de -40% a 110% da linha */
+    transform: translateX(-100%);
     animation: progress-scan 2.4s ease-in-out infinite;
   }
 
   @keyframes progress-scan {
     0% {
-      left: -40%;
+      transform: translateX(-100%);
     }
     100% {
-      left: 110%;
+      transform: translateX(275%);
     }
   }
 </style>

@@ -25,6 +25,9 @@
 
 /* ─── CSS Variables ─────────────────────────────────────── */
 :root {
+  /* Avisa o navegador que o site é escuro: barras de rolagem e campos ficam escuros */
+  color-scheme: dark;
+
   --bg-base:        #050507;
   --bg-surface:     #080810;
   --bg-elevated:    #0c0c18;
@@ -106,6 +109,25 @@ h1, h2, h3, h4, h5, h6 {
 }
 a { color: inherit; text-decoration: none; }
 a, button, [role="button"] { cursor: url('/cursors/pointer.svg') 16 16, pointer; }
+/* Ao navegar com Tab, o item focado não fica escondido atrás da navbar fixa.
+   Vale só para o que recebe foco: o clique no menu leva às seções, que não mudam */
+a, button, summary, input { scroll-margin-top: 5rem; }
+
+/* Link "Pular para o conteúdo": só aparece para quem navega pelo teclado */
+.pular {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 10000;
+  padding: 0.6em 1em;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  color: var(--bg-base);
+  background: var(--accent);
+  transform: translateY(-200%);
+}
+.pular:focus { transform: none; }
 
 /* ─── Container ──────────────────────────────────────────── */
 .container {
@@ -231,7 +253,7 @@ a, button, [role="button"] { cursor: url('/cursors/pointer.svg') 16 16, pointer;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   background: rgba(255, 140, 0, 0.05);
-  transition: all var(--transition);
+  transition: background-color var(--transition), border-color var(--transition), box-shadow var(--transition);
 }
 .tag:hover {
   background: rgba(255, 140, 0, 0.12);
@@ -268,7 +290,12 @@ a, button, [role="button"] { cursor: url('/cursors/pointer.svg') 16 16, pointer;
   text-transform: uppercase;
   position: relative;
   overflow: hidden;
-  transition: all var(--transition);
+  transition:
+    background-color var(--transition),
+    border-color var(--transition),
+    box-shadow var(--transition),
+    color var(--transition),
+    transform var(--transition);
 }
 .btn::before {
   content: '';
@@ -323,4 +350,15 @@ a, button, [role="button"] { cursor: url('/cursors/pointer.svg') 16 16, pointer;
   .btn:hover span,
   .proj-card:hover .proj-card__title,
   .contact-card:hover .contact-card__label { animation: none; }
+
+  /* O resto (pulsos, cursores piscando, barras que correm, entradas do topo)
+     termina no último quadro de uma vez, e o clique no menu pula sem deslizar */
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+  }
+  html { scroll-behavior: auto; }
 }
