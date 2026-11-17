@@ -1,0 +1,73 @@
+---
+// src/components/ArquiteturaReferencia.astro
+// Seção própria para o diagrama: é um padrão genérico de arquitetura (tempo real, mensageria,
+// processamento assíncrono, multi-tenant, observabilidade), não o desenho de um sistema específico.
+import type { Lang } from '../i18n/translations';
+import Arquitetura from './Arquitetura.astro';
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const pt = lang === 'pt';
+// Como o código chega até lá: duas trilhas, o backend (imagem no registry da Azure) e os apps (faixas da loja)
+const entrega = [
+  { nome: pt ? 'Backend' : 'Backend', passos: pt
+    ? ['Código', 'Imagem Docker', 'Container Registry (Azure)', 'Execução na Azure']
+    : ['Code', 'Docker image', 'Container Registry (Azure)', 'Running on Azure'] },
+  { nome: pt ? 'Apps' : 'Apps', passos: pt
+    ? ['Build do app', 'Teste interno', 'Teste fechado', 'Produção (Play Console)']
+    : ['App build', 'Internal testing', 'Closed testing', 'Production (Play Console)'] },
+];
+---
+
+<section class="section" id="arquitetura">
+  <div class="container">
+    <span class="section-label">// {pt ? '04. arquitetura' : '04. architecture'}</span>
+    <h2 class="section-title">{pt ? 'Arquitetura de referência' : 'Reference architecture'}</h2>
+    <p class="section-subtitle">&gt; {pt
+      ? 'O padrão que uso em plataformas multi-tenant na nuvem: dispositivos em tempo real, mensageria, processamento assíncrono e observabilidade.'
+      : 'The pattern I use on multi-tenant cloud platforms: real-time devices, messaging, asynchronous processing and observability.'}</p>
+
+    <div class="panel painel">
+      <Arquitetura lang={lang} />
+      <div class="entrega">
+        <span class="entrega__titulo">{pt ? 'ENTREGA' : 'DELIVERY'}</span>
+        {entrega.map(e => (
+          <div class="entrega__linha">
+            <span class="entrega__nome">{e.nome}</span>
+            <ol class="entrega__passos">
+              {e.passos.map(x => <li>{x}</li>)}
+            </ol>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+.entrega { margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--fio); display: grid; gap: 0.75rem; }
+.entrega__titulo { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; color: var(--text-muted); }
+.entrega__linha { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1rem; }
+.entrega__nome { font-family: var(--font-mono); font-size: 0.8125rem; color: var(--accent-cool); min-width: 4.5rem; }
+.entrega__passos { list-style: none; display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.entrega__passos li {
+  font-size: 0.875rem; color: var(--text-primary);
+  padding: 0.3rem 0.7rem; border-radius: 8px;
+  background: var(--bg-card); box-shadow: inset 0 0 0 1px var(--fio);
+}
+.entrega__passos li + li::before { content: '→'; color: var(--accent); margin-right: 0.5rem; margin-left: -0.15rem; }
+/* O painel da arquitetura: um degrau mais claro que a página, sem moldura dentro de moldura */
+.painel {
+  margin-top: 2.5rem;
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(ellipse 60% 70% at 50% 50%, rgba(255, 140, 0, 0.05), transparent 70%),
+    var(--bg-elevated);
+  box-shadow: inset 0 0 0 1px var(--fio), inset 0 1px 0 rgb(255 255 255 / 0.05);
+  overflow: hidden;
+}
+
+@media (max-width: 639px) {
+  .painel { padding: 1rem; }
+}
+</style>

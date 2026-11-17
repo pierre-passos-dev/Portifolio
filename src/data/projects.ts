@@ -11,6 +11,14 @@ export interface Highlight {
   textEn: string;
 }
 
+/** Um número real do projeto, mostrado em destaque. Só números que já estão nos textos. */
+export interface Stat {
+  valorPt: string;
+  valorEn: string;
+  rotuloPt: string;
+  rotuloEn: string;
+}
+
 export interface Project {
   slug: string;
   /** 'case' = projeto principal, em destaque; sem valor = cartão comum */
@@ -33,6 +41,7 @@ export interface Project {
   resultPt?: string;
   resultEn?: string;
   highlights?: Highlight[];
+  stats?: Stat[];
   tags: string[];
   github?: string;
   demo?: string;
@@ -109,6 +118,9 @@ export const projects: Project[] = [
         textEn: 'The browser can\'t reach a USB reader. So the system opens a C# desktop program through its own link, with a short-lived, single-use ticket. The program trades the ticket for access limited to that employee, captures two fingers and returns the fingerprint in the device\'s format. It works with three families of readers.',
       },
     ],
+    stats: [
+      { valorPt: '40 → 540', valorEn: '40 → 540', rotuloPt: 'confirmações de marcação por minuto no teste de carga', rotuloEn: 'punch confirmations per minute in the load test' },
+    ],
     tags: ['Java', 'Spring Boot', 'Angular', 'Azure', 'SQL Server', 'Kafka', 'Redis', 'Ionic', 'Capacitor', 'C#', 'Multi-tenant', 'Virtual Threads'],
     featured: true,
   },
@@ -136,6 +148,10 @@ export const projects: Project[] = [
       'in the clock-in app, worked on kiosk mode: closed a flaw that exposed the password and built automatic login, pending command sync and switching between QR Code and PIN;',
       'on slow queries, I replace entities loaded with every relation by DTOs with only the needed fields, review indexes, filter by id instead of LIKE and limit the result.',
     ],
+    stats: [
+      { valorPt: '~8 mil', valorEn: '~8,000', rotuloPt: 'clientes', rotuloEn: 'customers' },
+      { valorPt: '12 mil+', valorEn: '12,000+', rotuloPt: 'equipamentos conectados', rotuloEn: 'connected devices' },
+    ],
     tags: ['Java', 'Spring Boot', 'SQL Server', 'Ionic', 'Kafka', 'Redis', 'WebSockets', 'AngularJS'],
     featured: true,
   },
@@ -161,6 +177,9 @@ export const projects: Project[] = [
     ],
     resultPt: 'Uma atualização que levava de 1h30 a 2h em 4 mil bases hoje roda em 8 mil bases em cerca de 3 minutos, com a trilha de sucessos e falhas de cada uma.',
     resultEn: 'An update that took 1.5 to 2 hours on 4,000 databases now runs on 8,000 databases in about 3 minutes, with a trail of each one\'s successes and failures.',
+    stats: [
+      { valorPt: '~3 min', valorEn: '~3 min', rotuloPt: 'para atualizar 8 mil bases; antes, 1h30 a 2h para 4 mil', rotuloEn: 'to update 8,000 databases; before, 1.5 to 2 hours for 4,000' },
+    ],
     tags: ['Python', 'SQL Server', 'Redis', 'Docker', 'Dash', 'Plotly', 'pandas'],
     featured: true,
   },

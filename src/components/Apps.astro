@@ -2,6 +2,8 @@
 // src/components/Apps.astro
 // Apps próprios (Campier). Vem logo depois do Hero: é o que eu crio e
 // publico sozinho, do código à loja. Dados em src/data/apps.ts.
+// Versão taste-skill: texto à esquerda e, à direita, o app de verdade: telas reais do
+// Parcelas (as capturas da Play Store, recortadas em public/apps/parcelas-tela-*.webp).
 import { useTranslations, type Lang } from '../i18n/translations';
 import { apps, campier, type StatusApp } from '../data/apps';
 interface Props { lang: Lang; }
@@ -12,6 +14,22 @@ const pt = lang === 'pt';
 const textoStatus: Record<StatusApp, string> = pt
   ? { 'em-breve': 'Em breve', 'teste-fechado': 'Em teste no Google Play', 'na-loja': 'No Google Play' }
   : { 'em-breve': 'Coming soon', 'teste-fechado': 'In testing on Google Play', 'na-loja': 'On Google Play' };
+
+// Telas reais do app em destaque (por enquanto só o Parcelas tem)
+const telas: Record<string, { src: string; altPt: string; altEn: string }[]> = {
+  parcelas: [
+    {
+      src: '/apps/parcelas-tela-1.webp',
+      altPt: 'Tela do Parcelas com um financiamento de carro: saldo devedor, parcelas pagas, data de quitação, juros e a próxima parcela.',
+      altEn: 'Parcelas screen with a car loan: balance due, installments paid, payoff date, interest and the next installment.',
+    },
+    {
+      src: '/apps/parcelas-tela-4.webp',
+      altPt: 'Tela do Parcelas com o gráfico do saldo devedor caindo ao longo do tempo e quanto foi para juros e amortização.',
+      altEn: 'Parcelas screen with a chart of the balance falling over time and how much went to interest and principal.',
+    },
+  ],
+};
 ---
 
 <section class="section apps" id="apps">
@@ -20,133 +38,90 @@ const textoStatus: Record<StatusApp, string> = pt
     <h2 class="section-title">{t('apps.title')}</h2>
     <p class="section-subtitle">&gt; {t('apps.sub')}</p>
 
-    <div class="apps__layout">
-      <!-- A marca: quem é a Campier -->
-      <a class="campier" href={campier.site} target="_blank" rel="noopener" data-reveal>
-        <svg class="campier__logo" viewBox="0 0 100 100" aria-hidden="true">
-          <path d="M50 14 A36 36 0 1 1 18.82 32" fill="none" stroke="currentColor" stroke-width="11" stroke-linecap="round"/>
-          <circle cx="32" cy="18.82" r="7.5" fill="#f5a524"/>
-        </svg>
-        <span class="campier__nome">campier</span>
-        <span class="campier__texto">{t('apps.campier')}</span>
-        <span class="campier__link">campier.app ↗</span>
-      </a>
+    {apps.map(app => (
+      <article class="grade app">
+        <div class="grade__esq app__texto">
+          <!-- A marca: quem publica o app -->
+          <a class="marca" href={campier.site} target="_blank" rel="noopener">
+            <svg class="marca__logo" viewBox="0 0 100 100" aria-hidden="true">
+              <path d="M50 14 A36 36 0 1 1 18.82 32" fill="none" stroke="currentColor" stroke-width="11" stroke-linecap="round"/>
+              <circle cx="32" cy="18.82" r="7.5" fill="#f5a524"/>
+            </svg>
+            <span class="marca__nome" translate="no">campier</span>
+            <span class="marca__link" translate="no">campier.app ↗</span>
+          </a>
+          <p class="marca__texto">{t('apps.campier')}</p>
 
-      <!-- Os apps -->
-      <div class="apps__lista">
-        {apps.map((app, i) => (
-          <article class="app" data-reveal style={`animation-delay: ${(i + 1) * 0.08}s`}>
-            <div class="app__topo">
-              {app.icone
-                ? <img class="app__icone" src={app.icone} alt="" width="56" height="56" loading="lazy" />
-                : <span class="app__icone app__icone--letra" aria-hidden="true">{app.nome[0]}</span>}
-              <div>
-                <h3 class="app__nome">{app.nome}</h3>
-                <span class={`app__status app__status--${app.status}`}>
-                  <span class="app__ponto" aria-hidden="true"></span>{textoStatus[app.status]}
-                </span>
-              </div>
-            </div>
-
-            <p class="app__desc">{pt ? app.descPt : app.descEn}</p>
-
-            <ul class="app__destaques">
-              {(pt ? app.destaquesPt : app.destaquesEn).map(d => <li>{d}</li>)}
-            </ul>
-
-            <div class="app__tags">
-              {app.tags.map(tag => <span class="tag">{tag}</span>)}
-            </div>
-
-            <div class="app__links">
-              {app.play && (
-                <a class="btn btn--primary" href={app.play} target="_blank" rel="noopener"><span>▶ Google Play</span></a>
-              )}
-              {app.site && (
-                <a class={`btn ${app.play ? 'btn--ghost' : 'btn--primary'}`} href={app.site} target="_blank" rel="noopener">
-                  <span>{t('apps.conhecer')} ↗</span>
-                </a>
-              )}
-            </div>
-          </article>
-        ))}
-
-        <!-- Lugar do próximo app (sai quando houver dois ou mais) -->
-        {apps.length < 2 && (
-          <div class="app app--vazio" data-reveal style="animation-delay: .24s">
-            <span class="app__icone app__icone--vazio" aria-hidden="true"></span>
+          <div class="app__topo">
+            {app.icone
+              ? <img class="app__icone" src={app.icone} alt="" width="56" height="56" loading="lazy" />
+              : <span class="app__icone app__icone--letra" aria-hidden="true">{app.nome[0]}</span>}
             <div>
-              <p class="app__vazio-titulo">{pt ? 'Em breve' : 'Coming soon'}</p>
-              <p class="app__vazio-texto">{pt ? 'Novos apps a caminho.' : 'New apps on the way.'}</p>
+              <h3 class="app__nome" translate="no">{app.nome}</h3>
+              <span class={`app__status app__status--${app.status}`}>
+                <span class="app__ponto" aria-hidden="true"></span>{textoStatus[app.status]}
+              </span>
             </div>
           </div>
+
+          <p class="app__desc">{pt ? app.descPt : app.descEn}</p>
+
+          <ul class="app__destaques">
+            {(pt ? app.destaquesPt : app.destaquesEn).map(d => <li>{d}</li>)}
+          </ul>
+
+          <ul class="app__tags">
+            {app.tags.map(tag => <li class="tag">{tag}</li>)}
+          </ul>
+
+          <div class="app__links">
+            {app.play && (
+              <a class="btn btn--primary" href={app.play} target="_blank" rel="noopener"><span>▶ Google Play</span></a>
+            )}
+            {app.site && (
+              <a class={`btn ${app.play ? 'btn--ghost' : 'btn--primary'}`} href={app.site} target="_blank" rel="noopener">
+                <span>{t('apps.conhecer')} {app.nome} ↗</span>
+              </a>
+            )}
+          </div>
+        </div>
+
+        {telas[app.slug] && (
+          <div class="grade__dir app__painel">
+            {telas[app.slug].map((tela, i) => (
+              <figure class={`celular celular--${i + 1}`}>
+                <img src={tela.src} alt={pt ? tela.altPt : tela.altEn} width="480" height="912" loading="lazy" decoding="async" />
+              </figure>
+            ))}
+          </div>
         )}
-      </div>
-    </div>
+      </article>
+    ))}
   </div>
 </section>
 
 <style>
-.apps__layout {
-  display: grid;
-  grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
-  gap: 1.5rem;
-  align-items: stretch;
-}
+.app { align-items: stretch; row-gap: 2.5rem; }
+.app__texto { display: flex; flex-direction: column; gap: 1.25rem; }
 
-/* Cartão da marca */
-.campier {
-  display: flex;
-  flex-direction: column;
-  gap: 0.9rem;
-  padding: 2rem 1.75rem;
-  border: 1px solid var(--border-accent);
-  background:
-    radial-gradient(circle at 20% 0%, rgba(245, 165, 36, 0.14), transparent 60%),
-    var(--bg-surface);
+/* Marca */
+.marca {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  align-self: flex-start;
+  min-height: 44px;
   color: var(--text-primary);
-  text-decoration: none;
-  transition: border-color var(--transition), box-shadow var(--transition);
 }
-.campier:hover { border-color: var(--accent); box-shadow: var(--shadow-glow); }
-.campier__logo { width: 44px; height: 44px; color: var(--text-primary); }
-.campier__nome {
-  font-family: var(--font-display);
-  font-size: 1.5rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-}
-.campier__texto { color: var(--text-secondary); font-size: 1rem; line-height: 1.55; }
-.campier__link {
-  margin-top: auto;
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  letter-spacing: 0.1em;
-  color: var(--accent);
-}
+.marca__logo { width: 32px; height: 32px; }
+.marca__nome { font-family: var(--font-display); font-size: 1.25rem; font-weight: 500; letter-spacing: 0.08em; }
+.marca__link { font-family: var(--font-mono); font-size: 0.8125rem; letter-spacing: 0.1em; color: var(--accent); }
+.marca:hover .marca__link { text-decoration: underline; text-underline-offset: 0.2em; }
+.marca__texto { font-size: 1rem; line-height: 1.625; color: var(--tinta); max-width: 62ch; margin-top: -0.5rem; }
 
-/* Apps */
-.apps__lista {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-  gap: 1.5rem;
-}
-.app {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  padding: 2rem 1.75rem;
-  border: 1px solid var(--border);
-  background: var(--bg-surface);
-}
-.app__topo { display: flex; align-items: center; gap: 1rem; }
-.app__icone {
-  width: 56px; height: 56px;
-  border-radius: 14px;
-  flex: none;
-  box-shadow: 0 6px 20px -6px rgba(0, 0, 0, 0.8);
-}
+/* App */
+.app__topo { display: flex; align-items: center; gap: 1rem; margin-top: 0.75rem; }
+.app__icone { width: 56px; height: 56px; border-radius: 14px; flex: none; box-shadow: 0 6px 20px -6px rgba(0, 0, 0, 0.8); }
 .app__icone--letra {
   display: grid; place-items: center;
   background: var(--bg-elevated);
@@ -155,63 +130,68 @@ const textoStatus: Record<StatusApp, string> = pt
   font-size: 1.4rem;
   color: var(--accent);
 }
-.app__nome {
-  font-size: 1.15rem;
-  letter-spacing: 0.08em;
-  color: var(--text-primary);
-  margin-bottom: 0.25rem;
-}
+.app__nome { font-size: 1.25rem; letter-spacing: 0.08em; color: var(--text-primary); margin-bottom: 0.3rem; }
 .app__status {
   display: inline-flex; align-items: center; gap: 0.5rem;
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   letter-spacing: 0.08em;
   color: var(--accent-cool);
 }
-.app__ponto {
-  width: 7px; height: 7px; border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 8px var(--accent);
-  animation: pisca 2s ease-in-out infinite;
-}
-.app__status--na-loja .app__ponto { background: #4ade80; box-shadow: 0 0 8px #4ade80; animation: none; }
-.app__status--em-breve .app__ponto { background: var(--text-muted); box-shadow: none; animation: none; }
-@keyframes pisca { 50% { opacity: 0.35; } }
+/* ponto parado: estado, não animação */
+.app__ponto { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+.app__status--na-loja .app__ponto { background: #4ade80; }
+.app__status--em-breve .app__ponto { background: var(--text-muted); }
 
-.app__desc { color: var(--text-secondary); font-size: 1rem; line-height: 1.6; }
-.app__destaques {
-  list-style: none;
-  display: grid;
-  gap: 0.4rem;
-  color: var(--text-secondary);
-  font-size: 0.95rem;
-}
-.app__destaques li { position: relative; padding-left: 1.1rem; }
-.app__destaques li::before { content: '›'; position: absolute; left: 0; color: var(--accent); }
-.app__tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.app__desc { color: var(--tinta); font-size: 1rem; line-height: 1.625; max-width: 62ch; }
+.app__destaques { list-style: none; display: grid; gap: 0.4rem; color: var(--tinta); font-size: 1rem; line-height: 1.5; }
+/* o "›" pendurado para fora: o texto alinha com o resto da coluna */
+.app__destaques li { position: relative; }
+.app__destaques li::before { content: '›'; position: absolute; left: -1rem; color: var(--accent); }
+.app__tags { list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; }
 .app__links { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: auto; padding-top: 0.5rem; }
 
-/* Próximo app */
-.app--vazio {
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  border-style: dashed;
-  background: transparent;
+/* O painel com o app: um campo âmbar aceso, as telas no tamanho de leitura, cortadas embaixo */
+.app__painel {
+  position: relative;
+  min-height: 560px;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(ellipse 70% 60% at 30% 20%, rgba(255, 179, 71, 0.30), transparent 70%),
+    radial-gradient(ellipse 60% 70% at 85% 90%, rgba(255, 69, 0, 0.22), transparent 70%),
+    linear-gradient(160deg, #2a1a0a 0%, #120c08 100%);
+  box-shadow: inset 0 0 0 1px var(--fio), inset 0 1px 0 rgb(255 255 255 / 0.06);
 }
-.app__icone--vazio { background: var(--bg-elevated); box-shadow: none; border: 1px dashed var(--border-accent); }
-.app__vazio-titulo { font-family: var(--font-display); letter-spacing: 0.08em; color: var(--text-secondary); }
-.app__vazio-texto { color: var(--text-muted); font-size: 0.95rem; margin-top: 0.4rem; }
+/* Larguras em % da coluna e presos ao fundo: em qualquer tela os dois cabem lado a lado
+   e a borda de baixo do painel sempre corta as telas (40px e 110px) */
+.celular {
+  position: absolute;
+  width: 44%;
+  margin: 0;
+  border: 7px solid #15151b;
+  border-bottom: 0;
+  border-radius: 34px 34px 0 0;
+  overflow: hidden;
+  background: #15151b;
+  box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+.celular img { display: block; width: 100%; height: auto; border-radius: 27px 27px 0 0; }
+.celular--1 { left: 4%; bottom: -40px; }
+.celular--2 { right: 4%; bottom: -110px; }
 
-@media (max-width: 1000px) {
-  .apps__layout { grid-template-columns: 1fr; }
-  .campier { flex-direction: row; flex-wrap: wrap; align-items: center; padding: 1.5rem; }
-  .campier__texto { flex-basis: 100%; }
-  .campier__link { margin-top: 0; }
+@media (max-width: 1023px) {
+  .app__painel { min-height: 520px; }
+  .celular { width: 36%; }
+  .celular--1 { left: 12%; }
+  .celular--2 { right: 12%; }
 }
-@media (max-width: 700px) {
-  .apps__lista { grid-template-columns: 1fr; }
-  .app--vazio { padding: 1.5rem; flex-direction: row; justify-content: flex-start; text-align: left; }
+/* Celular: uma tela só, no centro, grande o bastante para ler */
+@media (max-width: 639px) {
+  .app__painel { min-height: 440px; }
+  .celular { width: 64%; border-width: 5px; border-radius: 26px 26px 0 0; }
+  .celular img { border-radius: 21px 21px 0 0; }
+  .celular--1 { left: 18%; bottom: -60px; }
+  .celular--2 { display: none; }
 }
-@media (prefers-reduced-motion: reduce) { .app__ponto { animation: none; } }
 </style>

@@ -26,7 +26,7 @@ const year = new Date().getFullYear();
 
     <div class="footer__center">
       <span class="footer__status">
-        <span class="status-dot"></span>
+        <span class="status-dot" aria-hidden="true"></span>
         {lang === "pt" ? "Disponível para projetos" : "Available for projects"}
       </span>
     </div>
@@ -127,21 +127,8 @@ const year = new Date().getFullYear();
     height: 6px;
     border-radius: 50%;
     background: #44ff88;
-    box-shadow:
-      0 0 8px #44ff88,
-      0 0 16px rgba(68, 255, 136, 0.4);
-    animation: statusPulse 2.5s ease-in-out infinite;
-  }
-  @keyframes statusPulse {
-    0%,
-    100% {
-      opacity: 1;
-      transform: scale(1);
-    }
-    50% {
-      opacity: 0.5;
-      transform: scale(0.8);
-    }
+    /* ponto parado: é um estado, não precisa piscar */
+    box-shadow: 0 0 8px rgba(68, 255, 136, 0.5);
   }
 
   /* Right */
@@ -161,9 +148,14 @@ const year = new Date().getFullYear();
   }
   .footer__line-text {
     font-family: var(--font-mono);
-    font-size: 0.55rem;
+    font-size: 0.6875rem;
     color: var(--text-muted);
     letter-spacing: 0.2em;
     text-transform: uppercase;
+  }
+  /* no celular, com 0.2em a linha quebrava em duas */
+  @media (max-width: 600px) {
+    .footer__bottom { padding-inline: 1.25rem; }
+    .footer__line-text { letter-spacing: 0.08em; }
   }
 </style>

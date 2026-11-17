@@ -1,5 +1,9 @@
 ---
 // src/components/Skills.astro
+// Versão taste-skill: à esquerda (colunas 1 a 6) as principais, em lista, com o logo de verdade
+// de cada tecnologia; à direita (a partir da 7) tudo o que uso, por área, e o que estou estudando.
+// As tags não reagem ao mouse (não são botões) e nada se move sozinho.
+// Logos em public/assets/icons (créditos em icons-credits.json).
 import { useTranslations, type Lang } from "../i18n/translations";
 import { coreSkills, currentSkills, learningSkills } from "../data/skills";
 interface Props {
@@ -7,284 +11,159 @@ interface Props {
 }
 const { lang } = Astro.props;
 const t = useTranslations(lang);
+const pt = lang === "pt";
+
+// Logo de cada principal (pelo nome em skills.ts). Java + Spring Boot leva o Spring de selo.
+const logos: Record<string, { src: string; selo?: string }> = {
+  "Java + Spring Boot": { src: "/assets/icons/java.svg", selo: "/assets/icons/spring.svg" },
+  Angular: { src: "/assets/icons/angular.svg" },
+  Ionic: { src: "/assets/icons/ionic-icon.svg" },
+  TypeScript: { src: "/assets/icons/typescript.svg" },
+  Azure: { src: "/assets/icons/azure.svg" },
+};
 ---
 
 <section class="section skills" id="skills">
   <div class="container">
-    <span class="section-label"
-      >// {lang === "pt" ? "04. habilidades" : "04. skills"}</span
-    >
+    <span class="section-label">// {pt ? "05. habilidades" : "05. skills"}</span>
     <h2 class="section-title">{t("skills.title")}</h2>
     <p class="section-subtitle">
-      {
-        lang === "pt"
-          ? "> Principais tecnologias e arquiteturas"
-          : "> Core Technologies & Architecture"
-      }
+      {pt ? "> Principais tecnologias e arquiteturas" : "> Core technologies and architecture"}
     </p>
 
-    <ul class="skills__core" data-reveal>
-      {
-        coreSkills.map((skill) => (
-          <li class="core-skill">
-            <span class="core-skill__name">{skill.name}</span>
-            <span class="core-skill__note">
-              {lang === "pt" ? skill.notePt : skill.noteEn}
-            </span>
-          </li>
-        ))
-      }
-    </ul>
-
-    <div class="skills__grid">
-      {
-        currentSkills.map((group, i) => (
-          <div
-            class="skill-group"
-            data-reveal
-            style={`animation-delay: ${i * 0.07}s`}
-          >
-            <div class="skill-group__header">
-              <span class="skill-group__bracket">[</span>
-              <span class="skill-group__name">{group.key}</span>
-              <span class="skill-group__bracket">]</span>
-            </div>
-            <div class="skill-group__items">
-              {group.items.map((item) => (
-                <span class="skill-pill">{item}</span>
-              ))}
-            </div>
-          </div>
-        ))
-      }
-    </div>
-
-    <!-- Learning section -->
-    <div class="learning-section" data-reveal>
-      <div class="learning-label">
-        <span class="l-icon">▶</span>
-        <span class="l-text"
-          >{lang === "pt" ? "Em desenvolvimento" : "Learning now"}</span
-        >
-        <div class="l-progress">
-          <div class="l-progress__bar"></div>
-        </div>
+    <div class="grade skills__grade">
+      <!-- As principais -->
+      <div class="grade__esq">
+        <h3 class="skills__rotulo">{pt ? "Principais" : "Core"}</h3>
+        <ul class="principais">
+          {coreSkills.map((skill) => (
+            <li class="principal">
+              <span class="principal__logo">
+                <span class="logo">
+                  <img src={logos[skill.name]?.src} alt="" width="26" height="26" loading="lazy" />
+                </span>
+                {logos[skill.name]?.selo && (
+                  <span class="logo principal__selo">
+                    <img src={logos[skill.name].selo} alt="" width="14" height="14" loading="lazy" />
+                  </span>
+                )}
+              </span>
+              <span class="principal__texto">
+                <span class="principal__nome">{skill.name}</span>
+                <span class="principal__nota">{pt ? skill.notePt : skill.noteEn}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
       </div>
-      <div class="learning__grid">
-        {
-          learningSkills.map((group) => (
-            <div class="learning-group">
-              <span class="learning-group__name">{group.key}</span>
-              <div class="skill-group__items">
-                {group.items.map((item) => (
-                  <span class="skill-pill skill-pill--learning">{item}</span>
-                ))}
-              </div>
+
+      <!-- Tudo o que uso, por área, e o que estou estudando -->
+      <div class="grade__dir">
+        <h3 class="skills__rotulo">{pt ? "Por área" : "By area"}</h3>
+        <dl class="areas">
+          {currentSkills.map((group) => (
+            <div class="area">
+              <dt class="area__nome">{group.key}</dt>
+              <dd>
+                <ul class="area__tags">
+                  {group.items.map((item) => <li class="tag">{item}</li>)}
+                </ul>
+              </dd>
             </div>
-          ))
-        }
+          ))}
+        </dl>
+
+        <h3 class="skills__rotulo skills__rotulo--estudo">{pt ? "Estudando agora" : "Learning now"}</h3>
+        <dl class="areas">
+          {learningSkills.map((group) => (
+            <div class="area">
+              <dt class="area__nome">{group.key}</dt>
+              <dd>
+                <ul class="area__tags">
+                  {group.items.map((item) => <li class="tag tag--estudo">{item}</li>)}
+                </ul>
+              </dd>
+            </div>
+          ))}
+        </dl>
       </div>
     </div>
   </div>
 </section>
 
 <style>
-  .skills__core {
-    list-style: none;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr));
-    gap: 1px;
-    background: rgba(255, 140, 0, 0.25);
-    border: 1px solid rgba(255, 140, 0, 0.35);
-    margin-bottom: 2rem;
-  }
-  .core-skill {
-    background: var(--bg-base);
-    padding: 1.25rem 1.25rem 1.1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-  }
-  .core-skill__name {
-    font-family: var(--font-display);
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: var(--accent);
-    letter-spacing: 0.06em;
-    text-shadow: 0 0 16px rgba(255, 140, 0, 0.3);
-  }
-  .core-skill__note {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-    line-height: 1.4;
-  }
+  .skills__grade { row-gap: 3rem; align-items: start; }
 
-  .skills__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
-    gap: 1.5rem;
-    margin-bottom: 3rem;
+  .skills__rotulo {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    font-weight: 400;
+    color: var(--accent-cool);
+    letter-spacing: 0.12em;
+    margin-bottom: 0.5rem;
   }
+  .skills__rotulo--estudo { margin-top: 2.5rem; }
 
-  .skill-group {
-    border: 1px solid rgba(255, 140, 0, 0.15);
-    background: rgba(10, 10, 15, 0.8);
-    padding: 1.5rem;
-    position: relative;
-    transition:
-      border-color 0.3s,
-      box-shadow 0.3s;
-  }
-  .skill-group::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(255, 140, 0, 0.4),
-      transparent
-    );
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  .skill-group:hover {
-    border-color: rgba(255, 140, 0, 0.35);
-    box-shadow: 0 0 20px rgba(255, 140, 0, 0.05);
-  }
-  .skill-group:hover::before {
-    opacity: 1;
-  }
-
-  .skill-group__header {
+  /* As principais: logo, nome e nota, uma por linha, com fio entre elas */
+  .principais { list-style: none; }
+  .principal {
     display: flex;
     align-items: center;
-    gap: 0.2rem;
-    margin-bottom: 1rem;
-  }
-  .skill-group__bracket {
-    color: rgba(255, 140, 0, 0.4);
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-  }
-  .skill-group__name {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: var(--accent);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-
-  .skill-group__items {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-  }
-
-  .skill-pill {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    padding: 0.25em 0.65em;
-    border: 1px solid rgba(255, 140, 0, 0.2);
-    color: var(--text-secondary);
-    letter-spacing: 0.06em;
-    background: transparent;
-    transition:
-      border-color 0.2s,
-      color 0.2s,
-      background-color 0.2s,
-      box-shadow 0.2s;
-  }
-  .skill-pill:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-    background: rgba(255, 140, 0, 0.08);
-    box-shadow: 0 0 8px rgba(255, 140, 0, 0.15);
-  }
-  .skill-pill--learning {
-    border-color: rgba(0, 180, 255, 0.2);
-    color: rgba(0, 180, 255, 0.85);
-  }
-  .skill-pill--learning:hover {
-    border-color: #00b4ff;
-    color: #00b4ff;
-    background: rgba(0, 180, 255, 0.05);
-    box-shadow: 0 0 8px rgba(0, 180, 255, 0.2);
-  }
-
-  /* Learning section */
-  .learning-section {
-    border-top: 1px solid rgba(255, 140, 0, 0.1);
-    padding-top: 2rem;
-  }
-  .learning-label {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 1.25rem;
-  }
-  .l-icon {
-    color: #00b4ff;
-    font-size: 0.6rem;
-  }
-  .l-text {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: rgba(0, 180, 255, 0.85);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-  .l-line {
-    flex: 1;
-    height: 1px;
-    background: rgba(0, 180, 255, 0.15);
-  }
-  .learning__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
     gap: 1.25rem;
+    padding: 1.125rem 0;
+    border-top: 1px solid var(--fio);
   }
-  .learning-group {
-  }
-  .learning-group__name {
-    display: block;
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: rgba(0, 180, 255, 0.8);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    margin-bottom: 0.6rem;
-  }
-
-  .l-progress {
-    flex: 1;
-    height: 2px;
-    background: transparent;
-    overflow: hidden;
-    position: relative;
-  }
-
-  .l-progress__bar {
+  .principal:last-child { border-bottom: 1px solid var(--fio); }
+  .principal__logo { position: relative; flex: none; }
+  /* o Spring no canto do Java, como um selo */
+  .logo.principal__selo {
+    --logo: 24px;
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 40%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, #00b4ff, transparent);
-    /* move pelo transform (a % é da própria barra): mesmo trajeto de antes, de -40% a 110% da linha */
-    transform: translateX(-100%);
-    animation: progress-scan 2.4s ease-in-out infinite;
+    right: -10px;
+    bottom: -8px;
+    border-radius: 7px;
+    box-shadow: 0 0 0 2px var(--bg-base);
+  }
+  .logo.principal__selo img { width: 64%; height: 64%; }
+  .principal__texto { display: grid; gap: 0.15rem; min-width: 0; }
+  .principal__nome {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-primary);
+  }
+  .principal__nota { font-size: 1rem; line-height: 1.5; color: var(--tinta); }
+
+  /* Por área: o nome da área numa coluna estreita e as tags ao lado */
+  .area {
+    display: grid;
+    grid-template-columns: 7.5rem minmax(0, 1fr);
+    gap: 0.5rem 1rem;
+    padding: 1rem 0;
+    border-top: 1px solid var(--fio);
+  }
+  .areas > .area:last-child { border-bottom: 1px solid var(--fio); }
+  .area__nome {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding-top: 0.2rem;
+  }
+  .area__tags { list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  /* estudando: a mesma tag, num tom mais baixo e com borda tracejada */
+  .tag.tag--estudo {
+    color: var(--tinta);
+    border-style: dashed;
+    border-color: color-mix(in oklab, var(--text-primary) 28%, transparent);
+    background: transparent;
   }
 
-  @keyframes progress-scan {
-    0% {
-      transform: translateX(-100%);
-    }
-    100% {
-      transform: translateX(275%);
-    }
+  /* Celular: o nome da área vai para cima das tags */
+  @media (max-width: 479px) {
+    .area { grid-template-columns: minmax(0, 1fr); }
   }
 </style>

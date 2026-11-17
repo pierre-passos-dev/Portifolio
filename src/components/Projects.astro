@@ -1,161 +1,158 @@
 ---
 // src/components/Projects.astro
+// Versão de teste com o taste-skill (ramo teste-taste-projetos). Três blocos, cada um com o
+// próprio título e cabendo em uma ou duas telas:
+//   1. o projeto principal: o que é, um número real e a história (o diagrama virou a seção própria
+//      "Arquitetura de referência", em ArquiteturaReferencia.astro);
+//   2. as decisões técnicas do projeto principal, em lista;
+//   3. os outros projetos, em cards de dois em dois.
+// Os textos são os de src/data/projects.ts, sem reescrita (a reescrita depende da entrevista).
 import { useTranslations, type Lang } from '../i18n/translations';
 import { projects } from '../data/projects';
 interface Props { lang: Lang; }
 const { lang } = Astro.props;
 const t = useTranslations(lang);
-const featured = projects.filter(p => p.featured);
-// o projeto principal vem à parte, na largura toda; os outros seguem na grade
-const cases = featured.filter(p => p.kind === 'case');
-const cards = featured.filter(p => p.kind !== 'case');
 const pt = lang === 'pt';
+
+const featured = projects.filter(p => p.featured);
+const caso = featured.find(p => p.kind === 'case')!;
+const outros = featured.filter(p => p.kind !== 'case');
+
 ---
 
-<section class="section projects" id="projects">
+<!-- 1. Projeto principal -->
+<section class="section projetos" id="projects">
   <div class="container">
-    <span class="section-label">// {lang === 'pt' ? '03. projetos' : '03. projects'}</span>
+    <span class="section-label">// {pt ? '03. projetos' : '03. projects'}</span>
     <h2 class="section-title">{t('projects.title')}</h2>
-    <p class="section-subtitle">
-      &gt; {t('projects.sub')}
-    </p>
+    <p class="section-subtitle">&gt; {t('projects.sub')}</p>
 
-    {cases.map((p, i) => (
-      <article class="proj-case" data-reveal>
-        <div class="proj-card__index">{String(i + 1).padStart(2, '0')}</div>
-        <span class="proj-case__label">// {t('projects.case')}</span>
-        <h3 class="proj-card__title proj-case__title">{pt ? p.titlePt : p.titleEn}</h3>
-        <p class="proj-case__desc">{pt ? p.shortDescPt : p.shortDescEn}</p>
-        {p.metaPt && <p class="proj-case__meta">{pt ? p.metaPt : p.metaEn}</p>}
-        <!-- stack logo abaixo do título: é o que o recrutador procura primeiro -->
-        <div class="proj-card__tags proj-case__tags">
-          {p.tags.map(tag => <span class="tag">{tag}</span>)}
+    <article class="caso">
+      <div class="grade caso__topo">
+        <div class="grade__esq caso__texto">
+          <span class="rotulo">// {t('projects.case')}</span>
+          <h3 class="caso__titulo">{pt ? caso.titlePt : caso.titleEn}</h3>
+          <p class="texto caso__desc">{pt ? caso.shortDescPt : caso.shortDescEn}</p>
+          {caso.metaPt && <p class="meta">{pt ? caso.metaPt : caso.metaEn}</p>}
+          <p class="caso__arq"><a href="#arquitetura">{pt ? 'Ver a arquitetura de referência ↓' : 'See the reference architecture ↓'}</a></p>
         </div>
+        <div class="grade__dir caso__lado">
+          {caso.stats?.map(s => (
+            <p class="numero">
+              <span class="numero__valor">{pt ? s.valorPt : s.valorEn}</span>
+              <span class="numero__rotulo">{pt ? s.rotuloPt : s.rotuloEn}</span>
+            </p>
+          ))}
+          <ul class="chips" aria-label="Stack">
+            {caso.tags.map(tag => <li class="tag">{tag}</li>)}
+          </ul>
+        </div>
+      </div>
 
-        <dl class="proj-card__story proj-case__story">
+      <dl class="historia">
+        <div>
+          <dt>{t('projects.problem')}</dt>
+          <dd>{pt ? caso.problemPt : caso.problemEn}</dd>
+        </div>
+        <div>
+          <dt>{t('projects.built')}</dt>
+          <dd>
+            {pt ? caso.builtPt : caso.builtEn}
+            {caso.builtListPt && <ul class="lista">{(pt ? caso.builtListPt : caso.builtListEn!).map(item => <li>{item}</li>)}</ul>}
+          </dd>
+        </div>
+        {caso.resultPt && (
           <div>
-            <dt>{t('projects.problem')}</dt>
-            <dd>{pt ? p.problemPt : p.problemEn}</dd>
-          </div>
-          <div>
-            <dt>{t('projects.built')}</dt>
-            <dd>
-              {pt ? p.builtPt : p.builtEn}
-              {p.builtListPt && <ul class="proj-list">{(pt ? p.builtListPt : p.builtListEn!).map(item => <li>{item}</li>)}</ul>}
-            </dd>
-          </div>
-          {p.resultPt && (
-            <div>
-              <dt>{t('projects.impact')}</dt>
-              <dd>{pt ? p.resultPt : p.resultEn}</dd>
-            </div>
-          )}
-        </dl>
-
-        {p.highlights && (
-          <div class="proj-case__decisions">
-            <h4 class="proj-case__subtitle">{t('projects.decisions')}</h4>
-            <div class="proj-case__grid">
-              {p.highlights.map(h => (
-                <div class="proj-case__item">
-                  <h5>{pt ? h.titlePt : h.titleEn}</h5>
-                  <p>{pt ? h.textPt : h.textEn}</p>
-                </div>
-              ))}
-            </div>
+            <dt>{t('projects.impact')}</dt>
+            <dd>{pt ? caso.resultPt : caso.resultEn}</dd>
           </div>
         )}
+      </dl>
+    </article>
+  </div>
+</section>
 
-        <div class="proj-card__glow-line" aria-hidden="true"></div>
-      </article>
-    ))}
+<!-- 2. Decisões técnicas do projeto principal -->
+{caso.highlights && (
+  <section class="section projetos" id="decisoes">
+    <div class="container">
+      <span class="section-label">// {t('projects.case')}</span>
+      <h2 class="section-title">{t('projects.decisions')}</h2>
+      <ol class="decisoes">
+        {caso.highlights.map(h => (
+          <li class="grade decisao">
+            <h3 class="decisao__titulo">{pt ? h.titlePt : h.titleEn}</h3>
+            <p class="texto decisao__texto">{pt ? h.textPt : h.textEn}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+)}
 
-    <div class="projects__grid">
-      {cards.map((p, i) => (
-        <article
-          class="proj-card"
-          data-reveal
-          style={`animation-delay: ${i * 0.08}s`}
-        >
-          <!-- Card index -->
-          <div class="proj-card__index">{String(cases.length + i + 1).padStart(2, '0')}</div>
+<!-- 3. Outros projetos -->
+<section class="section projetos" id="outros-projetos">
+  <div class="container">
+    <span class="section-label">// {pt ? '03. projetos' : '03. projects'}</span>
+    <h2 class="section-title">{pt ? 'Outros projetos' : 'Other projects'}</h2>
 
-          <!-- Header bar -->
-          <div class="proj-card__header">
-            <div class="proj-card__icon" aria-hidden="true">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
-              </svg>
+    <div class="cards">
+      {outros.map(p => (
+        <article class="card">
+          <h3 class="card__titulo">{pt ? p.titlePt : p.titleEn}</h3>
+          {p.metaPt && <p class="meta">{pt ? p.metaPt : p.metaEn}</p>}
+          <p class="texto card__desc">{pt ? p.shortDescPt : p.shortDescEn}</p>
+
+          {p.stats && (
+            <div class="card__numeros">
+              {p.stats.map(s => (
+                <p class="numero numero--card">
+                  <span class="numero__valor">{pt ? s.valorPt : s.valorEn}</span>
+                  <span class="numero__rotulo">{pt ? s.rotuloPt : s.rotuloEn}</span>
+                </p>
+              ))}
             </div>
-            <div class="proj-card__links">
-              {p.github && (
-                <a href={p.github} target="_blank" rel="noopener" class="proj-link" aria-label="GitHub">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.1.82-.26.82-.57v-2c-3.34.72-4.04-1.6-4.04-1.6-.54-1.38-1.33-1.75-1.33-1.75-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.48 1 .1-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.13 3 .4 2.28-1.55 3.28-1.23 3.28-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.6-2.8 5.62-5.48 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.22.69.83.57C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/>
-                  </svg>
-                </a>
-              )}
-              {p.demo && (
-                <a href={p.demo} target="_blank" rel="noopener" class="proj-link" aria-label="Demo">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-                    <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
-                  </svg>
-                </a>
-              )}
-            </div>
-          </div>
+          )}
 
-          <h3 class="proj-card__title">
-            {lang === 'pt' ? p.titlePt : p.titleEn}
-          </h3>
+          <ul class="chips" aria-label="Stack">
+            {p.tags.map(tag => <li class="tag">{tag}</li>)}
+          </ul>
 
-          {p.metaPt && <p class="proj-case__meta proj-card__meta">{pt ? p.metaPt : p.metaEn}</p>}
+          {(p.github || p.demo) && (
+            <p class="card__links">
+              {p.github && <a href={p.github} target="_blank" rel="noopener">GitHub ↗</a>}
+              {p.demo && <a href={p.demo} target="_blank" rel="noopener">Demo ↗</a>}
+            </p>
+          )}
 
-          <p class="proj-card__desc">
-            {lang === 'pt' ? p.shortDescPt : p.shortDescEn}
-          </p>
-
-          <div class="proj-card__tags">
-            {p.tags.slice(0, 4).map(tag => <span class="tag">{tag}</span>)}
-          </div>
-
-          <!-- Detalhes: problema, o que fiz, resultado -->
-          <details class="proj-card__details">
-            <summary class="proj-card__more">
-              <span class="more-open">{t('projects.more')}</span>
-              <span class="more-close">{t('projects.less')}</span>
+          <!-- Problema, o que fiz e resultado ficam guardados até a pessoa pedir -->
+          <details class="card__detalhes">
+            <summary class="mais">
+              <span class="mais__abrir">{t('projects.more')}</span>
+              <span class="mais__fechar">{t('projects.less')}</span>
             </summary>
-            <dl class="proj-card__story">
+            <dl class="historia historia--card">
               <div>
                 <dt>{t('projects.problem')}</dt>
-                <dd>{lang === 'pt' ? p.problemPt : p.problemEn}</dd>
+                <dd>{pt ? p.problemPt : p.problemEn}</dd>
               </div>
               <div>
                 <dt>{t('projects.built')}</dt>
                 <dd>
                   {pt ? p.builtPt : p.builtEn}
-                  {p.builtListPt && <ul class="proj-list">{(pt ? p.builtListPt : p.builtListEn!).map(item => <li>{item}</li>)}</ul>}
+                  {p.builtListPt && <ul class="lista">{(pt ? p.builtListPt : p.builtListEn!).map(item => <li>{item}</li>)}</ul>}
                 </dd>
               </div>
               {p.resultPt && (
                 <div>
                   <dt>{t('projects.result')}</dt>
-                  <dd>{lang === 'pt' ? p.resultPt : p.resultEn}</dd>
+                  <dd>{pt ? p.resultPt : p.resultEn}</dd>
                 </div>
               )}
             </dl>
-            {p.tags.length > 4 && (
-              <div class="proj-card__tags">
-                {p.tags.slice(4).map(tag => <span class="tag">{tag}</span>)}
-              </div>
-            )}
             <!-- Fechar no fim do texto: o "Ver menos" do topo já saiu da tela depois de ler -->
-            <button type="button" class="proj-card__more proj-card__close">{t('projects.less')}</button>
+            <button type="button" class="mais mais--fim">{t('projects.less')}</button>
           </details>
-
-          <!-- Hover glow line -->
-          <div class="proj-card__glow-line" aria-hidden="true"></div>
         </article>
       ))}
     </div>
@@ -163,258 +160,178 @@ const pt = lang === 'pt';
 </section>
 
 <script>
-  document.querySelectorAll<HTMLButtonElement>('.proj-card__close').forEach(btn => {
+  document.querySelectorAll<HTMLButtonElement>('.mais--fim').forEach(btn => {
     btn.addEventListener('click', () => {
-      btn.closest('details')!.open = false;
+      const detalhes = btn.closest('details')!;
+      detalhes.open = false;
       // Fechado, o card encolhe; se o topo dele ficou acima da tela, volta até ele,
-      // descontando a navbar fixa (o scrollIntoView ignorava o scroll-margin aqui)
-      const top = btn.closest<HTMLElement>('.proj-card')!.getBoundingClientRect().top;
+      // descontando a navbar fixa
+      const top = btn.closest<HTMLElement>('.card')!.getBoundingClientRect().top;
       if (top < 0) window.scrollBy({ top: top - 80 });
+      detalhes.querySelector('summary')!.focus({ preventScroll: true });
     });
   });
 </script>
 
 <style>
-.projects__grid {
-  display: grid;
-  /* 2 colunas no computador: com 4 cartões, a grade fecha sem célula vazia */
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 460px), 1fr));
-  gap: 1px;
-  border: 1px solid rgba(255,140,0,0.1);
-}
+/* As divisões em duas colunas usam a .grade do global.css: texto nas colunas 1 a 6,
+   o resto a partir da 7, como nas outras seções */
 
-/* As linhas entre os cards vêm do outline de cada um (e não do fundo da grade),
-   para uma célula vazia na última linha não aparecer como bloco colorido */
-.proj-card {
-  position: relative;
-  background: var(--bg-base);
-  outline: 1px solid rgba(255,140,0,0.1);
-  padding: 2rem 1.75rem;
-  overflow: hidden;
-  transition: background 0.25s;
+.rotulo {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--accent-cool);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
-.proj-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: var(--gradient-card);
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-.proj-card:hover { background: var(--bg-surface); }
-.proj-card:hover::before { opacity: 1; }
-.proj-card:hover .proj-card__glow-line { opacity: 1; }
-.proj-card:hover .proj-card__title { color: var(--accent); text-shadow: 0 0 20px rgba(255,140,0,0.3); }
-
-/* Index */
-.proj-card__index {
-  position: absolute;
-  top: 1.5rem; right: 1.5rem;
-  font-family: var(--font-display);
-  font-size: 0.55rem;
-  color: rgba(255,140,0,0.2);
-  letter-spacing: 0.1em;
-}
-
-/* Header */
-.proj-card__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1.25rem;
-}
-.proj-card__icon {
-  color: var(--accent);
-  opacity: 0.6;
-}
-.proj-card__links { display: flex; gap: 0.75rem; }
-.proj-link {
+.meta {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
   color: var(--text-muted);
-  transition: color 0.2s, text-shadow 0.2s;
-}
-.proj-link:hover {
-  color: var(--accent);
-  text-shadow: 0 0 8px var(--accent);
+  letter-spacing: 0.06em;
 }
 
-/* Title */
-.proj-card__title {
-  font-size: 0.9rem;
-  font-weight: 700;
+/* 1. Projeto principal */
+.caso__lado { display: grid; gap: 1.5rem; align-content: start; }
+.caso__titulo {
+  font-size: 1.25rem;
+  font-weight: 500;
   color: var(--text-primary);
-  letter-spacing: 0.1em;
-  margin-bottom: 0.75rem;
-  transition: color 0.2s, text-shadow 0.2s;
+  margin: 0.75rem 0 1rem;
+  text-wrap: balance;
 }
+.caso__desc { margin-bottom: 0.75rem; }
+.caso__arq { margin-top: 0.75rem; font-family: var(--font-mono); font-size: 0.8125rem; }
+.caso__arq a { color: var(--accent); }
+.caso__arq a:hover { text-decoration: underline; }
 
-/* Desc */
-.proj-card__desc {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  line-height: 1.6;
-  margin-bottom: 1.25rem;
-  font-family: var(--font-body);
+.chips { list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+
+/* Problema, o que fiz, o que muda: três colunas nas linhas da grade */
+.historia {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2rem 24px;
+  margin-top: 3rem;
 }
+.historia dt {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--accent-cool);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.historia dd {
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  line-height: 1.625;
+  color: var(--tinta);
+}
+.lista { list-style: none; margin-top: 0.5rem; }
+/* o "›" fica pendurado para fora: o texto da lista alinha com o título da coluna */
+.lista li { position: relative; margin-top: 0.35rem; }
+.lista li::before { content: '›'; position: absolute; left: -1rem; color: var(--accent); }
 
-/* Tags */
-.proj-card__tags {
+/* 2. Decisões técnicas: título à esquerda, texto a partir da coluna 7, um fio entre as linhas */
+.decisoes { list-style: none; margin-top: 2rem; }
+.decisao {
+  padding: 1.5rem 0;
+  border-top: 1px solid var(--fio);
+}
+.decisao:last-child { border-bottom: 1px solid var(--fio); }
+.decisao__titulo {
+  grid-column: 1 / span 6;
+  padding-right: 2rem;
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--text-primary);
+  text-wrap: balance;
+}
+.decisao__texto { grid-column: 7 / -1; }
+
+/* 3. Outros projetos: cards de dois em dois, mesma altura por linha */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin-top: 2rem;
+}
+.card {
   display: flex;
-  gap: 0.4rem;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 2rem;
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  box-shadow: inset 0 0 0 1px var(--fio), inset 0 1px 0 rgb(255 255 255 / 0.05);
 }
-
-/* Details */
-.proj-card__details { position: relative; margin-top: 1.25rem; }
 /* Aberto, o card ocupa a linha toda e as três partes ficam lado a lado */
-.proj-card:has(> .proj-card__details[open]) { grid-column: 1 / -1; }
-.proj-card__more {
+.card:has(> .card__detalhes[open]) { grid-column: 1 / -1; }
+.card__titulo {
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--text-primary);
+}
+.card__titulo + .meta { margin-top: -0.5rem; }
+.card__numeros { display: flex; flex-wrap: wrap; gap: 1rem 2.5rem; }
+.numero--card .numero__valor { font-size: 1.75rem; }
+.card__links { display: flex; gap: 1.25rem; font-family: var(--font-mono); font-size: 0.8125rem; }
+.card__links a { color: var(--accent); }
+.card__links a:hover { text-decoration: underline; text-underline-offset: 0.2em; }
+
+.card__detalhes { margin-top: auto; }
+.mais {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  min-height: 2.75rem;
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   color: var(--accent);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   list-style: none;
+  background: none;
+  border: 0;
+  padding: 0;
   cursor: url('/cursors/pointer.svg') 16 16, pointer;
 }
-.proj-card__more::-webkit-details-marker { display: none; }
-.proj-card__more::before {
-  content: '▶';
-  font-size: 0.6rem;
-  transition: transform 0.2s;
-}
-.proj-card__details[open] .proj-card__more::before { transform: rotate(90deg); }
-.proj-card__more:hover { text-shadow: 0 0 8px var(--accent); }
-.proj-card__more:focus-visible { outline: 1px solid var(--accent); outline-offset: 4px; }
-.proj-card__close {
-  background: none;
-  border: none;
-  padding: 0;
-  margin-top: 1.25rem;
-}
-.proj-card__details[open] .proj-card__close::before { transform: rotate(-90deg); }
-.more-close, .proj-card__details[open] .more-open { display: none; }
-.proj-card__details[open] .more-close { display: inline; }
+.mais::-webkit-details-marker { display: none; }
+.mais::before { content: '▶'; font-size: 0.6rem; transition: transform 0.2s; }
+.card__detalhes[open] > .mais::before { transform: rotate(90deg); }
+.mais--fim::before { transform: rotate(-90deg); }
+.mais:hover { text-shadow: 0 0 8px var(--accent); }
+.mais:focus-visible { outline: 1px solid var(--accent); outline-offset: 4px; }
+.mais__fechar, .card__detalhes[open] .mais__abrir { display: none; }
+.card__detalhes[open] .mais__fechar { display: inline; }
+.historia--card { margin: 1rem 0 0.5rem; }
 
-.proj-card__story {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
-  gap: 1.25rem 2.5rem;
-  margin: 1.5rem 0 1.25rem;
-}
-.proj-card__story dt {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--accent-cool);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-.proj-card__story dd {
-  font-size: 0.95rem;
-  color: var(--text-secondary);
-  line-height: 1.6;
-  margin-top: 0.3rem;
+/* No computador, as decisões dão duas telas cheias (com os 7rem do topo da seção seguinte, a mesma
+   conta do .section): rolando, a seção de baixo não aparece no fim da tela. O projeto principal
+   não entra mais: sem o diagrama ele não enche duas telas e deixava um vazio de ~500px */
+@media (min-width: 1024px) {
+  #decisoes {
+    min-height: calc(200vh - 7rem);
+    min-height: calc(200svh - 7rem);
+  }
 }
 
-/* Projeto principal: largura toda, acima da grade, com as decisões técnicas à vista */
-.proj-case {
-  position: relative;
-  background: var(--bg-base);
-  border: 1px solid rgba(255,140,0,0.18);
-  border-bottom: none;
-  padding: 2.5rem 2.25rem;
-  overflow: hidden;
+/* Tablet: o texto do topo e o número empilham; as decisões também */
+@media (max-width: 1023px) {
+  .decisao__titulo, .decisao__texto { grid-column: 1 / -1; padding-right: 0; }
+  .caso__lado { margin-top: 1.5rem; }
+  .decisao__texto { margin-top: 0.5rem; }
+  .historia { grid-template-columns: minmax(0, 1fr); }
 }
-.proj-case::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: var(--gradient-card);
-  opacity: 0.5;
+/* Celular: uma coluna, cards com 24px de respiro */
+@media (max-width: 639px) {
+  .cards { grid-template-columns: minmax(0, 1fr); }
+  .card { padding: 1.5rem; }
 }
-.proj-case:hover .proj-card__glow-line { opacity: 1; }
-.proj-case__label {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--accent-cool);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-.proj-case__title { font-size: 1.15rem; margin: 0.75rem 0; }
-.proj-case__desc {
-  font-family: var(--font-body);
-  font-size: 1rem;
-  color: var(--text-secondary);
-  line-height: 1.6;
-  max-width: 70ch;
-}
-.proj-case__meta {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  letter-spacing: 0.06em;
-  margin-top: 0.75rem;
-}
-.proj-card__meta { margin-top: -0.25rem; margin-bottom: 0.75rem; }
-.proj-case__tags { margin-top: 1rem; }
-.proj-case__story { margin: 2rem 0 0; }
-.proj-case__decisions { margin: 2.25rem 0 0; }
-.proj-case__subtitle {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  font-weight: 400;
-  color: var(--accent-cool);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  margin-bottom: 1rem;
-}
-.proj-case__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
-  gap: 1px;
-  border: 1px solid rgba(255,140,0,0.1);
-}
-.proj-case__item {
-  outline: 1px solid rgba(255,140,0,0.1);
-  padding: 1.25rem 1.25rem 1.4rem;
-  background: rgba(0,0,0,0.15);
-}
-.proj-case__item h5 {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--accent);
-  letter-spacing: 0.06em;
-  margin-bottom: 0.5rem;
-}
-.proj-case__item p {
-  font-family: var(--font-body);
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  line-height: 1.6;
-}
-
-@media (max-width: 640px) {
-  .proj-case { padding: 2rem 1.25rem; }
-  .proj-case__item { padding: 1.1rem 1rem 1.2rem; }
-}
-
-/* Lista do "O que fiz" */
-.proj-list { margin: 0.5rem 0 0; padding: 0; list-style: none; }
-.proj-list li { position: relative; padding-left: 1.1rem; margin-top: 0.35rem; }
-.proj-list li::before { content: '›'; position: absolute; left: 0; color: var(--accent); }
-
-/* Glow line on hover */
-.proj-card__glow-line {
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--accent), transparent);
-  opacity: 0;
-  transition: opacity 0.3s;
-  box-shadow: 0 0 10px var(--accent);
+@media (min-width: 640px) and (max-width: 1023px) {
+  .card { padding: 1.75rem; }
 }
 </style>

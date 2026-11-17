@@ -24,6 +24,7 @@ const otherPath = lang === "pt" ? "/en" : "/";
       <a href="#apps" class="nav-link">{t("nav.apps")}</a>
       <a href="#about" class="nav-link">{t("nav.about")}</a>
       <a href="#projects" class="nav-link">{t("nav.projects")}</a>
+      <a href="#arquitetura" class="nav-link">{t("nav.architecture")}</a>
       <a href="#skills" class="nav-link">{t("nav.skills")}</a>
       <a href="#experience" class="nav-link">{t("nav.experience")}</a>
       <a href="#contact" class="nav-link">{t("nav.contact")}</a>
@@ -56,6 +57,7 @@ const otherPath = lang === "pt" ? "/en" : "/";
     <a href="#apps" class="mobile-nav__link">{t("nav.apps")}</a>
     <a href="#about" class="mobile-nav__link">{t("nav.about")}</a>
     <a href="#projects" class="mobile-nav__link">{t("nav.projects")}</a>
+      <a href="#arquitetura" class="mobile-nav__link">{t("nav.architecture")}</a>
     <a href="#skills" class="mobile-nav__link">{t("nav.skills")}</a>
     <a href="#experience" class="mobile-nav__link">{t("nav.experience")}</a>
     <a href="#contact" class="mobile-nav__link">{t("nav.contact")}</a>
@@ -217,13 +219,18 @@ const otherPath = lang === "pt" ? "/en" : "/";
     user-select: none;
   }
 
+  /* 44px: o tamanho de um dedo */
   .menu-toggle {
     display: none;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
     gap: 5px;
+    width: 44px;
+    height: 44px;
     background: none;
     border: none;
-    padding: 4px;
+    padding: 0;
   }
   .menu-toggle span {
     display: block;
@@ -236,34 +243,36 @@ const otherPath = lang === "pt" ? "/en" : "/";
       opacity 0.25s;
   }
 
-  /* Mobile nav */
+  /* Mobile nav: aberto, ocupa a tela inteira abaixo da barra */
   .mobile-nav {
     display: none;
     flex-direction: column;
-    background: rgba(5, 5, 7, 0.97);
+    background: rgba(5, 5, 7, 0.98);
     border-top: 1px solid var(--border-accent);
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.35s ease;
   }
   .mobile-nav.open {
-    max-height: 400px;
+    max-height: calc(100vh - 60px);
+    max-height: calc(100svh - 60px);
+    height: calc(100svh - 60px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
+  :global(html:has(.mobile-nav.open)) { overflow: hidden; }
   .mobile-nav__link {
-    padding: 1rem 1.5rem;
+    padding: 1.25rem 1.25rem;
     font-family: var(--font-mono);
-    font-size: 0.75rem;
+    font-size: 0.9375rem;
     color: var(--text-secondary);
     letter-spacing: 0.12em;
     text-transform: uppercase;
     border-bottom: 1px solid var(--border);
-    transition:
-      color 0.2s,
-      padding-left 0.2s;
+    transition: color 0.2s;
   }
   .mobile-nav__link:hover {
     color: var(--accent);
-    padding-left: 2rem;
   }
 
   @media (max-width: 768px) {
@@ -275,6 +284,16 @@ const otherPath = lang === "pt" ? "/en" : "/";
     }
     .mobile-nav {
       display: flex;
+    }
+    /* idioma do tamanho de um dedo no celular */
+    .lang-toggle {
+      padding: 0 2px;
+    }
+    .lang-btn {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 0 10px;
     }
   }
 </style>
@@ -291,16 +310,22 @@ const otherPath = lang === "pt" ? "/en" : "/";
 
   const menuBtn = document.getElementById("menuToggle")!;
   const mobileNav = document.getElementById("mobileNav")!;
+  const fechar = () => {
+    mobileNav.classList.remove("open");
+    mobileNav.inert = true; // fechado, o Tab não pode cair nos links escondidos
+    menuBtn.setAttribute("aria-expanded", "false");
+  };
   menuBtn.addEventListener("click", () => {
     const open = mobileNav.classList.toggle("open");
     menuBtn.setAttribute("aria-expanded", String(open));
-    mobileNav.inert = !open; // fechado, o Tab não pode cair nos links escondidos
+    mobileNav.inert = !open;
   });
-  mobileNav.querySelectorAll("a").forEach((a) =>
-    a.addEventListener("click", () => {
-      mobileNav.classList.remove("open");
-      mobileNav.inert = true;
-      menuBtn.setAttribute("aria-expanded", "false");
-    }),
-  );
+  mobileNav.querySelectorAll("a").forEach((a) => a.addEventListener("click", fechar));
+  // Esc fecha o menu e devolve o foco ao botão
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && mobileNav.classList.contains("open")) {
+      fechar();
+      menuBtn.focus();
+    }
+  });
 </script>

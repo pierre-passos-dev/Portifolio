@@ -1,164 +1,137 @@
 ---
 // src/components/Experience.astro
+// Versão taste-skill: uma lista com fio entre os empregos, como as Decisões dos projetos.
+// Nas colunas 1 a 6: período, empresa, cargo, os resultados e a stack; a partir da 7, o que
+// eu fazia. Sem linha do tempo com anel pulsando e sem entrada animada ao rolar.
+// O texto em src/data/experience.ts é corrido (o currículo usa assim); aqui ele é separado
+// em parágrafo, tópicos e "Resultados" para virar lista de verdade.
 import { useTranslations, type Lang } from '../i18n/translations';
 import { experiences } from '../data/experience';
 interface Props { lang: Lang; }
 const { lang } = Astro.props;
 const t = useTranslations(lang);
+const pt = lang === 'pt';
+
+type Bloco = { titulo?: string; paragrafo?: string; itens?: string[] };
+
+// Cada bloco é separado por linha em branco. Um bloco pode ter um título ("Resultados:")
+// na primeira linha; as linhas que começam com "•" viram itens de lista.
+function separar(desc: string): Bloco[] {
+  return desc.split('\n\n').map(bloco => {
+    const linhas = bloco.split('\n').map(l => l.trim()).filter(Boolean);
+    const itens = linhas.filter(l => l.startsWith('•')).map(l => l.replace(/^•\s*/, ''));
+    const resto = linhas.filter(l => !l.startsWith('•'));
+    if (!itens.length) return { paragrafo: resto.join(' ') };
+    return { titulo: resto[0]?.replace(/:$/, ''), itens };
+  });
+}
+
+const empregos = experiences.map(exp => ({ ...exp, blocos: separar(pt ? exp.descPt : exp.descEn) }));
 ---
 
 <section class="section experience" id="experience">
   <div class="container">
-    <span class="section-label">// {lang === 'pt' ? '05. experiência' : '05. experience'}</span>
+    <span class="section-label">// {pt ? '06. experiência' : '06. experience'}</span>
     <h2 class="section-title">{t('exp.title')}</h2>
 
-    <div class="timeline">
-      {experiences.map((exp, i) => (
-        <div class="timeline__item" data-reveal style={`animation-delay: ${i * 0.12}s`}>
-
-          <!-- Left: period + line -->
-          <div class="timeline__left">
-            <span class="timeline__period">{lang === 'pt' ? exp.periodPt : exp.periodEn}</span>
-            <div class="timeline__track">
-              <div class="timeline__node">
-                <div class="timeline__node-inner"></div>
-                <div class="timeline__node-ring"></div>
+    <ol class="empregos">
+      {empregos.map(exp => (
+        <li class="grade emprego">
+          <div class="grade__esq emprego__topo">
+            <p class="emprego__periodo">{pt ? exp.periodPt : exp.periodEn}</p>
+            <h3 class="emprego__empresa">{exp.company}</h3>
+            <p class="emprego__cargo">{pt ? exp.rolePt : exp.roleEn}</p>
+            <!-- Os blocos com título ("Resultados") ficam aqui, embaixo do cargo -->
+            {exp.blocos.filter(b => b.titulo).map(b => (
+              <div class="emprego__bloco">
+                <h4 class="emprego__titulo">{b.titulo}</h4>
+                <ul class="emprego__lista">
+                  {b.itens!.map(item => <li>{item}</li>)}
+                </ul>
               </div>
-              {i < experiences.length - 1 && <div class="timeline__line"></div>}
-            </div>
+            ))}
+            <ul class="emprego__tags" aria-label="Stack">
+              {exp.tags.slice(0, 6).map(tag => <li class="tag">{tag}</li>)}
+            </ul>
           </div>
 
-          <!-- Right: content -->
-          <div class="timeline__content">
-            <div class="timeline__company-row">
-              <span class="timeline__company">{exp.company}</span>
-              <span class="timeline__sep">/</span>
-            </div>
-            <h3 class="timeline__role">
-              {lang === 'pt' ? exp.rolePt : exp.roleEn}
-            </h3>
-            <p class="timeline__desc">
-              {lang === 'pt' ? exp.descPt : exp.descEn}
-            </p>
-            <div class="timeline__tags">
-              {exp.tags.slice(0, 6).map(tag => <span class="tag">{tag}</span>)}
-            </div>
+          <div class="grade__dir emprego__texto">
+            {exp.blocos.filter(b => !b.titulo).map(b => (
+              b.itens
+                ? <ul class="emprego__lista">{b.itens.map(item => <li>{item}</li>)}</ul>
+                : <p class="texto">{b.paragrafo}</p>
+            ))}
           </div>
-        </div>
+        </li>
       ))}
-    </div>
+    </ol>
   </div>
 </section>
 
 <style>
-.timeline {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  max-width: 800px;
+.empregos { list-style: none; margin-top: 2rem; }
+.emprego {
+  row-gap: 1rem;
+  align-items: start;
+  padding: 2rem 0 2.25rem;
+  border-top: 1px solid var(--fio);
 }
+.emprego:last-child { border-bottom: 1px solid var(--fio); }
 
-.timeline__item {
-  display: grid;
-  grid-template-columns: 160px 1fr;
-  gap: 2rem;
-  padding-bottom: 3rem;
-}
-@media (max-width: 600px) {
-  .timeline__item { grid-template-columns: 100px 1fr; gap: 1rem; }
-}
-
-/* Left */
-.timeline__left {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0;
-}
-.timeline__period {
+/* Esquerda: período, empresa, cargo, resultados e stack */
+.emprego__topo { display: grid; gap: 0.5rem; align-content: start; padding-right: 2rem; }
+.emprego__topo .emprego__bloco { margin-top: 1.25rem; }
+.emprego__periodo {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: rgba(255,140,0,0.8);
-  letter-spacing: 0.08em;
-  text-align: right;
-  margin-bottom: 0.5rem;
-  white-space: nowrap;
-}
-.timeline__track {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex: 1;
-}
-.timeline__node {
-  position: relative;
-  width: 14px; height: 14px;
-  flex-shrink: 0;
-}
-.timeline__node-inner {
-  position: absolute;
-  inset: 3px;
-  background: var(--accent);
-  border-radius: 50%;
-  box-shadow: 0 0 8px var(--accent), 0 0 16px rgba(255,140,0,0.4);
-}
-.timeline__node-ring {
-  position: absolute;
-  inset: 0;
-  border: 1px solid rgba(255,140,0,0.5);
-  border-radius: 50%;
-  animation: nodeRing 2s ease-in-out infinite;
-}
-@keyframes nodeRing {
-  0%, 100% { transform: scale(1); opacity: 0.5; }
-  50% { transform: scale(1.5); opacity: 0; }
-}
-.timeline__line {
-  flex: 1;
-  width: 1px;
-  background: linear-gradient(to bottom, rgba(255,140,0,0.4), rgba(255,140,0,0.05));
-  margin-top: 4px;
-}
-
-/* Content */
-.timeline__content {
-  padding-top: 0;
-}
-.timeline__company-row {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.35rem;
-}
-.timeline__company {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--accent);
-  letter-spacing: 0.12em;
+  font-size: 0.8125rem;
+  color: var(--accent-cool);
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
-.timeline__sep {
-  color: rgba(255,140,0,0.3);
-  font-family: var(--font-mono);
-}
-.timeline__role {
-  font-size: 1rem;
-  font-weight: 700;
+.emprego__empresa {
+  font-size: 1.5rem;
+  font-weight: 500;
   color: var(--text-primary);
-  letter-spacing: 0.08em;
-  margin-bottom: 0.75rem;
 }
-.timeline__desc {
-  white-space: pre-line;
-  font-size: 0.95rem;
-  color: var(--text-secondary);
-  line-height: 1.7;
-  margin-bottom: 1rem;
-  font-family: var(--font-body);
+.emprego__cargo { font-size: 1rem; line-height: 1.5; color: var(--tinta); }
+
+/* Direita: parágrafo, tópicos e resultados */
+.emprego__texto { display: grid; gap: 1.25rem; align-content: start; }
+.emprego__titulo {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: var(--accent-cool);
+  letter-spacing: 0.12em;
+  margin-bottom: 0.5rem;
 }
-.timeline__tags {
-  display: flex;
+.emprego__lista {
+  list-style: none;
+  display: grid;
   gap: 0.4rem;
-  flex-wrap: wrap;
+  max-width: 62ch;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--tinta);
+}
+/* o "›" fica pendurado para fora: o texto da lista alinha com o parágrafo de cima */
+.emprego__lista li { position: relative; }
+.emprego__lista li::before { content: '›'; position: absolute; left: -1rem; color: var(--accent); }
+.emprego__tags { list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1.25rem; }
+
+/* Tablet e celular: uma coluna só. As duas colunas se desfazem para reordenar:
+   período, empresa e cargo; depois o que eu fazia; por fim resultados e stack */
+@media (max-width: 1023px) {
+  .emprego__topo, .emprego__texto { display: contents; }
+  .emprego__topo > *, .emprego__texto > * { grid-column: 1 / -1; }
+  .emprego__periodo, .emprego__empresa, .emprego__cargo { order: 0; }
+  .emprego__empresa, .emprego__cargo { margin-top: -0.5rem; }
+  .emprego__texto > * { order: 1; }
+  .emprego__topo .emprego__bloco, .emprego__tags { order: 2; margin-top: 0.5rem; }
+  .emprego__texto > :first-child { margin-top: 0.5rem; }
+}
+/* Celular: o "›" pendurado sairia da tela; entra um pouco */
+@media (max-width: 479px) {
+  .emprego__lista { padding-left: 1rem; }
 }
 </style>

@@ -1,0 +1,390 @@
+---
+// src/components/Arquitetura.astro
+// Diagrama da arquitetura do projeto principal, em versão genérica (padrão de arquitetura, não o
+// sistema real): cada caixa é uma função, cada ligação é um tipo de comunicação. Desenhado à mão
+// em SVG: as ligações têm seta no sentido real (as de ida e volta têm seta nas duas pontas) e a
+// área da nuvem fica marcada. A animação mostra um fluxo de cada vez, na direção certa.
+// Sem nome de serviço interno, de produto ou de regulamento.
+//
+// As posições estão numa grade de 1080 x 560. Abaixo de 900px de largura o desenho mantém 900px
+// e o painel rola para o lado (um diagrama de arquitetura não fica legível encolhido).
+// "Reduzir movimento": os pulsos somem e fica o desenho parado, com as setas.
+import fs from 'node:fs';
+import path from 'node:path';
+import type { Lang } from '../i18n/translations';
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const pt = lang === 'pt';
+const L = (p: string, e: string) => (pt ? p : e);
+
+type Rect = [number, number, number, number];
+type P = [number, number];
+type Lado = 'l' | 'r' | 't' | 'b';
+type Ponta = [string, Lado, (number | { x?: number; y?: number })?];
+
+// ─── Ícones ───────────────────────────────────────────────────
+// Os glifos de linha (ui-*.svg) entram no próprio SVG, para pegar a cor do texto;
+// os logos coloridos entram como imagem.
+const pasta = path.join(process.cwd(), 'public/assets/icons');
+function glifo(nome: string) {
+  const s = fs.readFileSync(path.join(pasta, nome + '.svg'), 'utf8');
+  const vb = s.match(/viewBox="([^"]+)"/)?.[1] ?? '0 0 24 24';
+  const dentro = s.replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '');
+  return { vb, dentro };
+}
+
+// ─── Caixas ───────────────────────────────────────────────────
+type No = { t: string; s?: string; glifo?: string; logo?: string; tinta?: boolean };
+const nos: Record<string, No> = {
+  dispositivos: { t: L('Dispositivos', 'Devices'), s: L('Equipamentos em campo', 'Field equipment'), glifo: 'ui-smartphone' },
+  apps: { t: L('Aplicações', 'Applications'), s: L('Web e mobile', 'Web and mobile'), glifo: 'ui-monitor' },
+  tempo_real: { t: L('Tempo real', 'Real time'), s: L('Conexões persistentes', 'Persistent connections'), glifo: 'ui-radio-tower' },
+  kafka: { t: 'Kafka', logo: '/assets/icons/kafka.svg', tinta: true },
+  processamento: { t: L('Processamento', 'Processing'), s: L('Assíncrono, em fila', 'Async, queue-based'), glifo: 'ui-inbox' },
+  sql: { t: 'SQL Server', s: L('Banco por tenant', 'DB per tenant'), glifo: 'ui-database' },
+  gateway: { t: 'Gateway', s: L('Roteamento', 'Routing'), glifo: 'ui-route' },
+  notificacoes: { t: L('Notificações', 'Notifications'), s: L('Push e e-mail', 'Push and email'), glifo: 'ui-bell' },
+  grafana: { t: 'Grafana', s: L('Logs e métricas', 'Logs and metrics'), logo: '/assets/icons/grafana.svg' },
+  redis: { t: 'Redis', s: 'Cache', logo: '/assets/icons/redis.svg' },
+  blob: { t: 'Azure Blob', s: L('Arquivos', 'Files'), glifo: 'ui-folder' },
+  externos: { t: L('Terceiros', 'Third parties'), s: 'Webhook · API', glifo: 'ui-building-2' },
+};
+const chips: Record<string, string> = {
+  autenticacao: L('Autenticação', 'Authentication'),
+  cadastros: L('Cadastros', 'Records'),
+  relatorios: L('Relatórios', 'Reports'),
+  integracoes: L('Integrações', 'Integrations'),
+};
+
+const R: Record<string, Rect> = {
+  // no cliente
+  dispositivos: [0, 82, 200, 56],
+  apps: [0, 342, 200, 56],
+  // na nuvem: o caminho dos eventos em cima
+  tempo_real: [270, 82, 190, 56],
+  kafka: [510, 82, 110, 56],
+  processamento: [670, 82, 200, 56],
+  sql: [690, 182, 180, 56],
+  notificacoes: [270, 190, 160, 56],
+  // as chamadas das aplicações no meio
+  gateway: [270, 319, 160, 56],
+  servicos: [460, 280, 410, 134],
+  // embaixo, o que apoia tudo
+  grafana: [270, 466, 170, 56],
+  redis: [490, 466, 160, 56],
+  blob: [690, 466, 180, 56],
+  // fora da nuvem
+  externos: [912, 350, 168, 56],
+  // serviços (2 x 2 dentro do grupo)
+  autenticacao: [474, 308, 180, 40],
+  cadastros: [676, 308, 180, 40],
+  relatorios: [474, 358, 180, 40],
+  integracoes: [676, 358, 180, 40],
+};
+const AZURE: Rect = [240, 40, 660, 510];
+const LARGURA = 1080, ALTURA = 560;
+
+// ─── Ligações ─────────────────────────────────────────────────
+// ponte: ponto onde a linha cruza outra; ali a de baixo ganha um vão, para não parecerem ligadas
+type Ligacao = { id: string; de: Ponta; para: Ponta; via?: P[]; duplo?: boolean; rotulo?: string; rotuloEm?: P; ponte?: P };
+const ligacoes: Ligacao[] = [
+  { id: 'ws', de: ['dispositivos', 'r'], para: ['tempo_real', 'l', { y: 110 }], duplo: true, rotulo: L('tempo real', 'real time'), rotuloEm: [235, 96] },
+  { id: 'c_k', de: ['tempo_real', 'r'], para: ['kafka', 'l'] },
+  { id: 'k_p', de: ['kafka', 'r'], para: ['processamento', 'l'] },
+  { id: 'p_s', de: ['processamento', 'b', { x: 780 }], para: ['sql', 't', { x: 780 }] },
+  { id: 'gw', de: ['gateway', 'r'], para: ['servicos', 'l', { y: 347 }] },
+  { id: 'app', de: ['apps', 'r'], para: ['gateway', 'l', { y: 347 }], via: [[248, 370], [248, 347]], duplo: true },
+  { id: 'g_sql', de: ['servicos', 't', { x: 780 }], para: ['sql', 'b', { x: 780 }], duplo: true },
+  { id: 'g_redis', de: ['servicos', 'b', { x: 570 }], para: ['redis', 't', { x: 570 }], duplo: true },
+  { id: 'g_blob', de: ['servicos', 'b', { x: 780 }], para: ['blob', 't', { x: 780 }], duplo: true },
+  { id: 's_n', de: ['servicos', 't', { x: 560 }], para: ['notificacoes', 'r'] },
+  { id: 'n_app', de: ['notificacoes', 'l'], para: ['apps', 't'], rotulo: 'push', rotuloEm: [160, 218] },
+  { id: 'int', de: ['integracoes', 'r'], para: ['externos', 'l', { y: 378 }], duplo: true },
+];
+
+function porta([id, lado, f]: Ponta): P {
+  const [x, y, w, h] = R[id];
+  const frac = typeof f === 'number' ? f : 0.5;
+  const abs = typeof f === 'object' ? f : {};
+  if (lado === 'l' || lado === 'r') return [lado === 'l' ? x : x + w, abs.y ?? y + h * frac];
+  return [abs.x ?? x + w * frac, lado === 't' ? y : y + h];
+}
+// Caminho em ângulos retos, com cantos arredondados
+function rota(a: P, la: Lado, b: P, lb: Lado, via?: P[]): P[] {
+  if (via) return [a, ...via, b];
+  const hA = la === 'l' || la === 'r', hB = lb === 'l' || lb === 'r';
+  if (hA && hB) return a[1] === b[1] ? [a, b] : [a, [(a[0] + b[0]) / 2, a[1]], [(a[0] + b[0]) / 2, b[1]], b];
+  if (!hA && !hB) return a[0] === b[0] ? [a, b] : [a, [a[0], (a[1] + b[1]) / 2], [b[0], (a[1] + b[1]) / 2], b];
+  return hA ? [a, [b[0], a[1]], b] : [a, [a[0], b[1]], b];
+}
+const r1 = (v: number) => Math.round(v * 10) / 10;
+function caminho(pts: P[], raio = 8) {
+  let s = `M${r1(pts[0][0])},${r1(pts[0][1])}`;
+  for (let i = 1; i < pts.length - 1; i++) {
+    const [p0, p1, p2] = [pts[i - 1], pts[i], pts[i + 1]];
+    const l1 = Math.hypot(p1[0] - p0[0], p1[1] - p0[1]), l2 = Math.hypot(p2[0] - p1[0], p2[1] - p1[1]);
+    const r = Math.min(raio, l1 / 2, l2 / 2);
+    const a = [p1[0] - ((p1[0] - p0[0]) / l1) * r, p1[1] - ((p1[1] - p0[1]) / l1) * r];
+    const b = [p1[0] + ((p2[0] - p1[0]) / l2) * r, p1[1] + ((p2[1] - p1[1]) / l2) * r];
+    s += ` L${r1(a[0])},${r1(a[1])} Q${p1[0]},${p1[1]} ${r1(b[0])},${r1(b[1])}`;
+  }
+  const z = pts[pts.length - 1];
+  return s + ` L${r1(z[0])},${r1(z[1])}`;
+}
+const linhas = ligacoes.map(l => ({
+  ...l,
+  d: caminho(rota(porta(l.de), l.de[1], porta(l.para), l.para[1], l.via)),
+}));
+const porId = Object.fromEntries(linhas.map(l => [l.id, l]));
+
+// ─── Fluxos animados ──────────────────────────────────────────
+// Cada passo é uma lista de ligações que andam juntas: [id, sentido, caixas que acendem na chegada].
+// Sentido 1 = de "de" para "para"; -1 = o contrário, na mesma linha.
+type Passo = [string, 1 | -1, string[]?][];
+const fluxos: { nome: string; passos: Passo[] }[] = [
+  {
+    nome: L('Evento de um dispositivo', 'An event from a device'),
+    passos: [[['ws', 1]], [['c_k', 1]], [['k_p', 1]], [['p_s', 1]], [['ws', -1]]],
+  },
+  {
+    nome: L('Requisição de uma aplicação', 'A request from an application'),
+    passos: [
+      [['app', 1, ['gateway']]], [['gw', 1, ['cadastros']]], [['g_sql', 1]], [['g_sql', -1]], [['gw', -1]], [['app', -1]],
+    ],
+  },
+  {
+    nome: L('Integração externa', 'External integration'),
+    passos: [[['app', 1]], [['gw', 1, ['integracoes']]], [['int', 1]], [['int', -1]]],
+  },
+  {
+    nome: L('Aviso ao usuário', 'A notice to the user'),
+    passos: [[['gw', 1, ['cadastros']]], [['s_n', 1]], [['n_app', 1]]],
+  },
+];
+const VIAGEM = 0.75;   // segundos de cada passo
+const INTERVALO = 1.1; // entre um fluxo e outro
+type Pulso = { d: string; sentido: 1 | -1; ini: number; fim: number };
+type Aceso = { id: string; ini: number };
+const pulsos: Pulso[] = [];
+const acesos: Aceso[] = [];
+const janelas: { nome: string; ini: number; fim: number }[] = [];
+let t = 0.4;
+for (const f of fluxos) {
+  const ini = t;
+  for (const passo of f.passos) {
+    for (const [id, sentido, extra] of passo) {
+      const l = porId[id];
+      pulsos.push({ d: l.d, sentido, ini: t, fim: t + VIAGEM });
+      const alvo = sentido === 1 ? l.para[0] : l.de[0];
+      for (const a of extra ?? [alvo]) acesos.push({ id: a, ini: t + VIAGEM });
+    }
+    t += VIAGEM + 0.05;
+  }
+  janelas.push({ nome: f.nome, ini, fim: t + 0.5 });
+  t += INTERVALO;
+}
+const T = r1(t);
+// keyTimes (0 a 1) a partir de segundos
+const k = (s: number) => Math.min(1, Math.max(0, s / T)).toFixed(4);
+
+const alt = L(
+  'Arquitetura genérica de uma plataforma na nuvem. Dispositivos mantêm uma conexão persistente com o serviço de tempo real. Cada evento vai para o Kafka, é tratado pelo processamento assíncrono e gravado no banco relacional. Aplicações web e mobile passam pelo Gateway, que roteia as chamadas, até os serviços (autenticação, cadastros, relatórios e integrações), que leem e gravam no banco, no cache Redis e nos arquivos do Azure Blob, com um banco por tenant. Os serviços também acionam as notificações, que chegam às aplicações por push e e-mail. As integrações falam com terceiros por webhook e API, e o Grafana mostra logs e métricas.',
+  'Generic cloud platform architecture. Devices keep a persistent connection to the real-time service. Each event goes to Kafka, is handled by asynchronous processing and saved in the relational database. Web and mobile applications go through the Gateway, which routes the calls, to the services (authentication, records, reports and integrations), which read and write the database, the Redis cache and Azure Blob files, with one database per tenant. Services also trigger notifications, which reach the applications by push and email. Integrations talk to third parties through webhooks and an API, and Grafana shows logs and metrics.'
+);
+const sufixo = lang; // ids únicos por página
+---
+
+<div class="arq" role="img" aria-label={alt}>
+  <div class="arq__rolagem">
+    <svg class="arq__svg" viewBox={`0 0 ${LARGURA} ${ALTURA}`} aria-hidden="true" focusable="false">
+      <defs>
+        <marker id={`seta-${sufixo}`} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,1.5 L9,5 L0,8.5 z" class="arq__ponta" />
+        </marker>
+        <!-- Vãos: onde uma linha cruza outra, a de baixo é cortada (máscara), sem pintar por cima -->
+        <mask id={`vaos-${sufixo}`} maskUnits="userSpaceOnUse" x="0" y="0" width={LARGURA} height={ALTURA}>
+          <rect width={LARGURA} height={ALTURA} fill="white" />
+          {linhas.filter(l => l.ponte).map(l => (
+            <rect x={l.ponte![0] - 7} y={l.ponte![1] - 4} width="14" height="8" fill="black" />
+          ))}
+        </mask>
+        <radialGradient id={`brilho-${sufixo}`}>
+          <stop offset="0" stop-color="#ffd08a" stop-opacity="0.55" />
+          <stop offset="1" stop-color="#ff8c00" stop-opacity="0" />
+        </radialGradient>
+      </defs>
+
+      <!-- Zonas -->
+      <text class="arq__zona" x="0" y="64">{L('NO CLIENTE', 'ON SITE')}</text>
+      <rect class="arq__azure" x={AZURE[0]} y={AZURE[1]} width={AZURE[2]} height={AZURE[3]} rx="14" />
+      <image href="/assets/icons/azure.svg" x={AZURE[0] + 16} y={AZURE[1] + 12} width="16" height="16" />
+      <text class="arq__zona arq__zona--azure" x={AZURE[0] + 40} y={AZURE[1] + 25}>AZURE</text>
+
+      <!-- Grupo dos serviços -->
+      <rect class="arq__grupo" x={R.servicos[0]} y={R.servicos[1]} width={R.servicos[2]} height={R.servicos[3]} rx="12" />
+      <text class="arq__zona" x={R.servicos[0] + 14} y={R.servicos[1] + 19}>{L('SERVIÇOS', 'SERVICES')}</text>
+
+      <!-- Ligações (embaixo das caixas) -->
+      <g class="arq__linhas" mask={`url(#vaos-${sufixo})`}>
+        {linhas.filter(l => !l.ponte).map(l => (
+          <path d={l.d} class="arq__linha" marker-end={`url(#seta-${sufixo})`} marker-start={l.duplo ? `url(#seta-${sufixo})` : undefined} />
+        ))}
+      </g>
+      <!-- As linhas que cruzam outra ficam por cima, fora da máscara -->
+      <g class="arq__linhas">
+        {linhas.filter(l => l.ponte).map(l => (
+          <path d={l.d} class="arq__linha" marker-end={`url(#seta-${sufixo})`} marker-start={l.duplo ? `url(#seta-${sufixo})` : undefined} />
+        ))}
+      </g>
+
+      <!-- Rastros acesos dos pulsos -->
+      <g class="arq__anim">
+        {pulsos.map(p => {
+          const fade = 0.5;
+          return (
+            <path d={p.d} class="arq__rastro" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset={p.sentido}>
+              <animate attributeName="stroke-dashoffset" dur={`${T}s`} repeatCount="indefinite"
+                values={`${p.sentido};${p.sentido};0;0`} keyTimes={`0;${k(p.ini)};${k(p.fim)};1`} />
+              <animate attributeName="opacity" dur={`${T}s`} repeatCount="indefinite"
+                values="0;0;1;1;0;0" keyTimes={`0;${k(p.ini)};${k(p.ini + 0.05)};${k(p.fim + fade)};${k(p.fim + fade * 2)};1`} />
+            </path>
+          );
+        })}
+      </g>
+
+      <!-- Caixas -->
+      {Object.entries(nos).map(([id, n]) => {
+        const [x, y, w, h] = R[id];
+        const g = n.glifo ? glifo(n.glifo) : null;
+        return (
+          <g class="arq__no">
+            <rect x={x} y={y} width={w} height={h} rx="10" class="arq__caixa" />
+            <rect x={x + 12} y={y + (h - 32) / 2} width="32" height="32" rx="8" class="arq__icone" />
+            {g && (
+              <svg x={x + 19} y={y + (h - 18) / 2} width="18" height="18" viewBox={g.vb} class="arq__glifo" set:html={g.dentro} />
+            )}
+            {n.logo && (
+              <image href={n.logo} x={x + 18} y={y + (h - 20) / 2} width="20" height="20" class={n.tinta ? 'arq__logo--tinta' : undefined} />
+            )}
+            <text x={x + 54} y={y + (n.s ? 25 : 32)} class="arq__titulo">{n.t}</text>
+            {n.s && <text x={x + 54} y={y + 43} class="arq__sub">{n.s}</text>}
+          </g>
+        );
+      })}
+      {Object.entries(chips).map(([id, nome]) => {
+        const [x, y, w, h] = R[id];
+        return (
+          <g class="arq__no">
+            <rect x={x} y={y} width={w} height={h} rx="8" class="arq__chip" />
+            <text x={x + w / 2} y={y + h / 2 + 5} class="arq__chip-texto" text-anchor="middle">{nome}</text>
+          </g>
+        );
+      })}
+
+      <!-- Rótulos das ligações, com fundo para cobrir a linha -->
+      {linhas.filter(l => l.rotulo).map(l => {
+        const largura = l.rotulo!.length * 6.1 + 10;
+        return (
+          <g class="arq__rotulo">
+            <rect x={l.rotuloEm![0] - largura / 2} y={l.rotuloEm![1] - 8} width={largura} height="16" rx="8" />
+            <text x={l.rotuloEm![0]} y={l.rotuloEm![1] + 3.5} text-anchor="middle">{l.rotulo}</text>
+          </g>
+        );
+      })}
+
+      <!-- Animação: as caixas acendem quando o pulso chega, e o pulso anda pela linha -->
+      <g class="arq__anim">
+        {acesos.map(a => {
+          const [x, y, w, h] = R[a.id];
+          const raio = chips[a.id] ? 8 : 10;
+          return (
+            <rect x={x} y={y} width={w} height={h} rx={raio} class="arq__acesa" opacity="0">
+              <animate attributeName="opacity" dur={`${T}s`} repeatCount="indefinite"
+                values="0;0;1;1;0;0" keyTimes={`0;${k(a.ini - 0.05)};${k(a.ini)};${k(a.ini + 0.5)};${k(a.ini + 1)};1`} />
+            </rect>
+          );
+        })}
+        {pulsos.map(p => (
+          <g opacity="0">
+            <circle r="9" fill={`url(#brilho-${sufixo})`} />
+            <circle r="3.2" class="arq__pulso" />
+            <animateMotion dur={`${T}s`} repeatCount="indefinite" calcMode="linear" path={p.d}
+              keyPoints={p.sentido === 1 ? '0;0;1;1' : '1;1;0;0'} keyTimes={`0;${k(p.ini)};${k(p.fim)};1`} />
+            <animate attributeName="opacity" dur={`${T}s`} repeatCount="indefinite"
+              values="0;0;1;1;0;0" keyTimes={`0;${k(p.ini)};${k(p.ini + 0.05)};${k(p.fim - 0.05)};${k(p.fim)};1`} />
+          </g>
+        ))}
+        <!-- Nome do fluxo que está passando -->
+        {janelas.map(j => (
+          <text x={LARGURA} y="22" text-anchor="end" class="arq__fluxo" opacity="0">
+            {j.nome.toUpperCase()}
+            <animate attributeName="opacity" dur={`${T}s`} repeatCount="indefinite"
+              values="0;0;1;1;0;0" keyTimes={`0;${k(j.ini - 0.2)};${k(j.ini)};${k(j.fim)};${k(j.fim + 0.3)};1`} />
+          </text>
+        ))}
+      </g>
+    </svg>
+  </div>
+</div>
+
+<script>
+  // A animação só roda com o diagrama na tela; com "reduzir movimento" ela nem começa
+  const reduzir = matchMedia('(prefers-reduced-motion: reduce)');
+  document.querySelectorAll<SVGSVGElement>('.arq__svg').forEach(svg => {
+    if (reduzir.matches) { svg.pauseAnimations(); return; }
+    new IntersectionObserver(([e]) => (e.isIntersecting ? svg.unpauseAnimations() : svg.pauseAnimations()))
+      .observe(svg);
+  });
+</script>
+
+<style>
+  /* Abaixo de 900px o desenho mantém 900px e o painel rola para o lado */
+  .arq__rolagem { overflow-x: auto; overscroll-behavior-x: contain; }
+  .arq__svg { display: block; width: 100%; min-width: 900px; height: auto; }
+
+  .arq__zona {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    fill: var(--text-muted);
+  }
+  .arq__zona--azure { fill: #7fb6ff; }
+  .arq__azure {
+    fill: rgba(0, 120, 212, 0.035);
+    stroke: rgba(80, 160, 255, 0.4);
+    stroke-dasharray: 5 5;
+  }
+  .arq__grupo {
+    fill: rgba(255, 232, 192, 0.02);
+    stroke: color-mix(in oklab, var(--text-primary) 16%, transparent);
+  }
+
+  .arq__linha {
+    fill: none;
+    stroke: color-mix(in oklab, var(--text-primary) 34%, transparent);
+    stroke-width: 1.25;
+  }
+  .arq__ponta { fill: color-mix(in oklab, var(--text-primary) 55%, transparent); }
+
+  .arq__caixa { fill: var(--bg-card); stroke: color-mix(in oklab, var(--text-primary) 16%, transparent); }
+  .arq__icone { fill: color-mix(in oklab, var(--text-primary) 7%, transparent); }
+  .arq__glifo { color: var(--accent-cool); }
+  .arq__logo--tinta { filter: invert(1); }
+  .arq__titulo { font-family: var(--font-mono); font-size: 13px; fill: var(--text-primary); letter-spacing: 0.02em; }
+  .arq__sub { font-family: var(--font-body); font-size: 13px; fill: var(--text-secondary); }
+  .arq__chip { fill: var(--bg-elevated); stroke: color-mix(in oklab, var(--text-primary) 14%, transparent); }
+  .arq__chip-texto { font-family: var(--font-body); font-size: 14px; fill: var(--text-primary); }
+
+  .arq__rotulo rect { fill: var(--bg-elevated); stroke: color-mix(in oklab, var(--text-primary) 12%, transparent); }
+  .arq__rotulo text { font-family: var(--font-mono); font-size: 10px; fill: var(--accent-cool); letter-spacing: 0.04em; }
+
+  /* Animação */
+  .arq__rastro { fill: none; stroke: var(--accent); stroke-width: 2; opacity: 0; }
+  .arq__pulso { fill: #ffe3b3; }
+  .arq__acesa { fill: none; stroke: var(--accent); stroke-width: 1.5; }
+  .arq__fluxo { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.1em; fill: var(--accent); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .arq__anim { display: none; }
+  }
+</style>

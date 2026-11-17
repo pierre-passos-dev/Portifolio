@@ -49,6 +49,11 @@
 
   --scanline:       rgba(0, 0, 0, 0.08);
 
+  /* Texto corrido: a tinta do site a 84% (o taste não usa texto pequeno e apagado em conteúdo) */
+  --tinta:          color-mix(in oklab, var(--text-primary) 84%, transparent);
+  /* Fio de 1px de cards, painéis e linhas de lista */
+  --fio:            color-mix(in oklab, var(--text-primary) 10%, transparent);
+
   --glitch-a:       #ff3b1f;
   --glitch-b:       #2fd6e0;
 
@@ -100,9 +105,10 @@ body::before {
 }
 
 /* ─── Typography ─────────────────────────────────────────── */
+/* Peso 500: o tamanho carrega o título, não o negrito (o nome do topo tem o peso dele) */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
-  font-weight: 700;
+  font-weight: 500;
   letter-spacing: 0.05em;
   line-height: 1.1;
   text-transform: uppercase;
@@ -137,6 +143,62 @@ a, button, summary, input { scroll-margin-top: 5rem; }
   padding: 0 2rem;
 }
 @media (max-width: 768px) { .container { padding: 0 1.25rem; } }
+
+/* Grade de 12 colunas. Toda divisão em duas colunas usa a mesma linha:
+   texto nas colunas 1 a 6, o conteúdo da direita a partir da 7 */
+.grade {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: 24px;
+}
+.grade__esq { grid-column: 1 / span 6; min-width: 0; }
+.grade__dir { grid-column: 7 / -1; min-width: 0; }
+/* Tablet e celular: empilha, o texto primeiro */
+@media (max-width: 1023px) {
+  .grade__esq, .grade__dir { grid-column: 1 / -1; }
+}
+
+/* Card: um degrau acima da página, fio de 1px e um brilho fino no topo */
+.cartao {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: inset 0 0 0 1px var(--fio), inset 0 1px 0 rgb(255 255 255 / 0.05);
+}
+
+/* Texto corrido: 16px, linha folgada, no máximo 62 caracteres por linha */
+.texto {
+  font-size: 1rem;
+  line-height: 1.625;
+  color: var(--tinta);
+  max-width: 62ch;
+}
+
+/* Número em destaque (anos, projetos, tempos): o valor grande em âmbar e o que ele mede embaixo */
+.numero { display: grid; gap: 0.25rem; }
+.numero__valor {
+  font-family: var(--font-display);
+  font-size: 2.375rem;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+.numero__rotulo { font-size: 1rem; line-height: 1.5; color: var(--tinta); }
+
+/* Logo de verdade de uma ferramenta, nas cores dela, num quadrinho claro: no fundo escuro,
+   as marcas azuis e pretas (Java, GitHub) sumiam num quadrinho escuro */
+.logo {
+  --logo: 44px;
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: var(--logo);
+  height: var(--logo);
+  border-radius: 10px;
+  background: #f6f1e9;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.6);
+}
+.logo img { width: 60%; height: 60%; object-fit: contain; }
 
 /* ─── Section base ───────────────────────────────────────── */
 /* Ao clicar num item do menu, o conteúdo da seção seguinte não pode aparecer
@@ -231,7 +293,6 @@ a, button, summary, input { scroll-margin-top: 5rem; }
 .lang-btn:hover,
 .navbar__logo:hover .logo-name,
 .btn:hover span,
-.proj-card:hover .proj-card__title,
 .contact-card:hover .contact-card__label {
   animation: glitch-text 0.3s step-end;
 }
@@ -253,29 +314,9 @@ a, button, summary, input { scroll-margin-top: 5rem; }
   letter-spacing: 0.08em;
   text-transform: uppercase;
   background: rgba(255, 140, 0, 0.05);
-  transition: background-color var(--transition), border-color var(--transition), box-shadow var(--transition);
 }
-.tag:hover {
-  background: rgba(255, 140, 0, 0.12);
-  border-color: var(--accent);
-  box-shadow: 0 0 8px rgba(255, 140, 0, 0.2);
-}
-
-/* ─── Reveal animation ───────────────────────────────────── */
-/* Blocks flicker in sliced, like a bad signal locking on */
-[data-reveal] { opacity: 0; }
-[data-reveal].visible {
-  opacity: 1;
-  animation: glitch-in 0.5s step-end backwards;
-}
-@keyframes glitch-in {
-  0%  { opacity: 0;   transform: translate(-12px, 8px); clip-path: inset(0 0 70% 0); }
-  15% { opacity: 0.7; transform: translate(8px, 6px);   clip-path: inset(40% 0 20% 0); }
-  30% { opacity: 0.3; transform: translate(-4px, 4px);  clip-path: inset(10% 0 55% 0); }
-  45% { opacity: 1;   transform: translate(3px, 2px);   clip-path: inset(0); }
-  60% { opacity: 0.6; transform: translate(-2px, 0);    clip-path: inset(0); }
-  75%, 100% { opacity: 1; transform: none; clip-path: inset(0); }
-}
+/* (as tags não são clicáveis: sem efeito ao passar o mouse, para não parecerem botão) */
+/* (sem animação de entrada ao rolar: o conteúdo já está na tela quando a seção chega) */
 
 /* ─── Buttons ────────────────────────────────────────────── */
 .btn {
@@ -288,6 +329,7 @@ a, button, summary, input { scroll-margin-top: 5rem; }
   font-weight: 700;
   letter-spacing: 0.15em;
   text-transform: uppercase;
+  min-height: 44px;
   position: relative;
   overflow: hidden;
   transition:
@@ -328,6 +370,8 @@ a, button, summary, input { scroll-margin-top: 5rem; }
   box-shadow: 0 0 15px rgba(255,140,0,0.2);
 }
 .btn span { position: relative; z-index: 1; display: inline-block; }
+/* sobe um degrau ao passar o mouse e afunda no clique */
+.btn:active { transform: translateY(0) scale(0.98); }
 
 /* ─── Scrollbar ──────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 3px; }
@@ -342,13 +386,11 @@ a, button, summary, input { scroll-margin-top: 5rem; }
   .glitch.is-glitching,
   .glitch.is-glitching::before,
   .glitch.is-glitching::after,
-  [data-reveal].visible,
   .nav-link:hover,
   .mobile-nav__link:hover,
   .lang-btn:hover,
   .navbar__logo:hover .logo-name,
   .btn:hover span,
-  .proj-card:hover .proj-card__title,
   .contact-card:hover .contact-card__label { animation: none; }
 
   /* O resto (pulsos, cursores piscando, barras que correm, entradas do topo)
