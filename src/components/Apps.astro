@@ -2,8 +2,9 @@
 // src/components/Apps.astro
 // Apps próprios (Campier). Vem logo depois do Hero: é o que eu crio e
 // publico sozinho, do código à loja. Dados em src/data/apps.ts.
-// Versão taste-skill: texto à esquerda e, à direita, o app de verdade: telas reais do
-// Parcelas (as capturas da Play Store, recortadas em public/apps/parcelas-tela-*.webp).
+// A marca (Campier) aparece uma vez, no topo. Cada app é um cartão: texto em cima e,
+// embaixo, o app de verdade (capturas reais da loja, recortadas em public/apps/*-tela-*.webp).
+// Dois cartões lado a lado a partir de 1024px; um embaixo do outro abaixo disso.
 import { useTranslations, type Lang } from '../i18n/translations';
 import { apps, campier, type StatusApp } from '../data/apps';
 interface Props { lang: Lang; }
@@ -15,8 +16,20 @@ const textoStatus: Record<StatusApp, string> = pt
   ? { 'em-breve': 'Em breve', 'teste-fechado': 'Em teste no Google Play', 'na-loja': 'No Google Play' }
   : { 'em-breve': 'Coming soon', 'teste-fechado': 'In testing on Google Play', 'na-loja': 'On Google Play' };
 
-// Telas reais do app em destaque (por enquanto só o Parcelas tem)
+// Telas reais de cada app (as duas primeiras do painel; a 2ª some no celular)
 const telas: Record<string, { src: string; altPt: string; altEn: string }[]> = {
+  financeiro: [
+    {
+      src: '/apps/financeiro-tela-1.webp',
+      altPt: 'Tela do Controle Financeiro com o painel do mês: saldo, receitas, despesas e os últimos lançamentos.',
+      altEn: 'Controle Financeiro screen with the monthly dashboard: balance, income, expenses and the latest entries.',
+    },
+    {
+      src: '/apps/financeiro-tela-2.webp',
+      altPt: 'Tela do Controle Financeiro com o gráfico de despesas por categoria e a lista com o valor e o percentual de cada uma.',
+      altEn: 'Controle Financeiro screen with the expenses-by-category chart and the list with the amount and share of each one.',
+    },
+  ],
   parcelas: [
     {
       src: '/apps/parcelas-tela-1.webp',
@@ -38,78 +51,78 @@ const telas: Record<string, { src: string; altPt: string; altEn: string }[]> = {
     <h2 class="section-title">{t('apps.title')}</h2>
     <p class="section-subtitle">&gt; {t('apps.sub')}</p>
 
-    {apps.map(app => (
-      <article class="grade app">
-        <div class="grade__esq app__texto">
-          <!-- A marca: quem publica o app -->
-          <a class="marca" href={campier.site} target="_blank" rel="noopener">
-            <svg class="marca__logo" viewBox="0 0 100 100" aria-hidden="true">
-              <path d="M50 14 A36 36 0 1 1 18.82 32" fill="none" stroke="currentColor" stroke-width="11" stroke-linecap="round"/>
-              <circle cx="32" cy="18.82" r="7.5" fill="#f5a524"/>
-            </svg>
-            <span class="marca__nome" translate="no">campier</span>
-            <span class="marca__link" translate="no">campier.app ↗</span>
-          </a>
-          <p class="marca__texto">{t('apps.campier')}</p>
+    <!-- A marca: quem publica os apps -->
+    <a class="marca" href={campier.site} target="_blank" rel="noopener">
+      <svg class="marca__logo" viewBox="0 0 100 100" aria-hidden="true">
+        <path d="M50 14 A36 36 0 1 1 18.82 32" fill="none" stroke="currentColor" stroke-width="11" stroke-linecap="round"/>
+        <circle cx="32" cy="18.82" r="7.5" fill="#f5a524"/>
+      </svg>
+      <span class="marca__nome" translate="no">campier</span>
+      <span class="marca__link" translate="no">campier.app ↗</span>
+    </a>
+    <p class="marca__texto">{t('apps.campier')}</p>
 
-          <div class="app__topo">
-            {app.icone
-              ? <img class="app__icone" src={app.icone} alt="" width="56" height="56" loading="lazy" />
-              : <span class="app__icone app__icone--letra" aria-hidden="true">{app.nome[0]}</span>}
-            <div>
-              <h3 class="app__nome" translate="no">{app.nome}</h3>
-              <span class={`app__status app__status--${app.status}`}>
-                <span class="app__ponto" aria-hidden="true"></span>{textoStatus[app.status]}
-              </span>
+    <div class="apps__lista">
+      {apps.map(app => (
+        <article class="app cartao">
+          <div class="app__texto">
+            <div class="app__topo">
+              {app.icone
+                ? <img class="app__icone" src={app.icone} alt="" width="56" height="56" loading="lazy" />
+                : <span class="app__icone app__icone--letra" aria-hidden="true">{app.nome[0]}</span>}
+              <div>
+                <h3 class="app__nome" translate="no">{app.nome}</h3>
+                <span class={`app__status app__status--${app.status}`}>
+                  <span class="app__ponto" aria-hidden="true"></span>{textoStatus[app.status]}
+                </span>
+              </div>
             </div>
-          </div>
 
-          <p class="app__desc">{pt ? app.descPt : app.descEn}</p>
+            <p class="app__desc">{pt ? app.descPt : app.descEn}</p>
 
-          <ul class="app__destaques">
-            {(pt ? app.destaquesPt : app.destaquesEn).map(d => <li>{d}</li>)}
-          </ul>
+            <ul class="app__destaques">
+              {(pt ? app.destaquesPt : app.destaquesEn).map(d => <li>{d}</li>)}
+            </ul>
 
-          <ul class="app__tags">
-            {app.tags.map(tag => <li class="tag">{tag}</li>)}
-          </ul>
+            <ul class="app__tags">
+              {app.tags.map(tag => <li class="tag">{tag}</li>)}
+            </ul>
 
-          <div class="app__links">
-            {app.play && (
-              <a class="btn btn--primary" href={app.play} target="_blank" rel="noopener"><span>▶ Google Play</span></a>
+            {(app.play || app.site) && (
+              <div class="app__links">
+                {app.play && (
+                  <a class="btn btn--primary" href={app.play} target="_blank" rel="noopener"><span>▶ Google Play</span></a>
+                )}
+                {app.site && (
+                  <a class={`btn ${app.play ? 'btn--ghost' : 'btn--primary'}`} href={app.site} target="_blank" rel="noopener">
+                    <span>{t('apps.conhecer')} {app.nome} ↗</span>
+                  </a>
+                )}
+              </div>
             )}
-            {app.site && (
-              <a class={`btn ${app.play ? 'btn--ghost' : 'btn--primary'}`} href={app.site} target="_blank" rel="noopener">
-                <span>{t('apps.conhecer')} {app.nome} ↗</span>
-              </a>
-            )}
           </div>
-        </div>
 
-        {telas[app.slug] && (
-          <div class="grade__dir app__painel">
-            {telas[app.slug].map((tela, i) => (
-              <figure class={`celular celular--${i + 1}`}>
-                <img src={tela.src} alt={pt ? tela.altPt : tela.altEn} width="480" height="912" loading="lazy" decoding="async" />
-              </figure>
-            ))}
-          </div>
-        )}
-      </article>
-    ))}
+          {telas[app.slug] && (
+            <div class="app__painel">
+              {telas[app.slug].map((tela, i) => (
+                <figure class={`celular celular--${i + 1}`}>
+                  <img src={tela.src} alt={pt ? tela.altPt : tela.altEn} width="480" height="920" loading="lazy" decoding="async" />
+                </figure>
+              ))}
+            </div>
+          )}
+        </article>
+      ))}
+    </div>
   </div>
 </section>
 
 <style>
-.app { align-items: stretch; row-gap: 2.5rem; }
-.app__texto { display: flex; flex-direction: column; gap: 1.25rem; }
-
 /* Marca */
 .marca {
   display: inline-flex;
   align-items: center;
   gap: 0.75rem;
-  align-self: flex-start;
   min-height: 44px;
   color: var(--text-primary);
 }
@@ -117,10 +130,20 @@ const telas: Record<string, { src: string; altPt: string; altEn: string }[]> = {
 .marca__nome { font-family: var(--font-display); font-size: 1.25rem; font-weight: 500; letter-spacing: 0.08em; }
 .marca__link { font-family: var(--font-mono); font-size: 0.8125rem; letter-spacing: 0.1em; color: var(--accent); }
 .marca:hover .marca__link { text-decoration: underline; text-underline-offset: 0.2em; }
-.marca__texto { font-size: 1rem; line-height: 1.625; color: var(--tinta); max-width: 62ch; margin-top: -0.5rem; }
+.marca__texto { font-size: 1rem; line-height: 1.625; color: var(--tinta); max-width: 62ch; margin: 0.25rem 0 2.5rem; }
+
+/* Cartões: lado a lado no computador, empilhados abaixo de 1024px */
+.apps__lista { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+@media (max-width: 1023px) { .apps__lista { grid-template-columns: minmax(0, 1fr); } }
+
+/* O cartão: texto em cima, o painel com o app embaixo, colado nas bordas.
+   Com os dois lado a lado, o texto estica e o painel fica na mesma altura nos dois. */
+.app { display: flex; flex-direction: column; overflow: hidden; }
+.app__texto { flex: 1; display: flex; flex-direction: column; gap: 1.25rem; padding: 2rem 2rem 2.25rem; }
+@media (max-width: 639px) { .app__texto { padding: 1.5rem 1.25rem 1.75rem; } }
 
 /* App */
-.app__topo { display: flex; align-items: center; gap: 1rem; margin-top: 0.75rem; }
+.app__topo { display: flex; align-items: center; gap: 1rem; }
 .app__icone { width: 56px; height: 56px; border-radius: 14px; flex: none; box-shadow: 0 6px 20px -6px rgba(0, 0, 0, 0.8); }
 .app__icone--letra {
   display: grid; place-items: center;
@@ -144,30 +167,31 @@ const telas: Record<string, { src: string; altPt: string; altEn: string }[]> = {
 .app__status--em-breve .app__ponto { background: var(--text-muted); }
 
 .app__desc { color: var(--tinta); font-size: 1rem; line-height: 1.625; max-width: 62ch; }
-.app__destaques { list-style: none; display: grid; gap: 0.4rem; color: var(--tinta); font-size: 1rem; line-height: 1.5; }
+.app__destaques { list-style: none; display: grid; gap: 0.5rem; color: var(--tinta); font-size: 1rem; line-height: 1.5; padding-left: 1rem; }
 /* o "›" pendurado para fora: o texto alinha com o resto da coluna */
 .app__destaques li { position: relative; }
 .app__destaques li::before { content: '›'; position: absolute; left: -1rem; color: var(--accent); }
 .app__tags { list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; }
 .app__links { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: auto; padding-top: 0.5rem; }
 
-/* O painel com o app: um campo âmbar aceso, as telas no tamanho de leitura, cortadas embaixo */
+/* O painel com o app: um campo âmbar aceso, duas telas saindo da borda de baixo.
+   A altura acompanha a largura (16:11) e o topo das telas é uma porcentagem dela, então a
+   proporção é a mesma em qualquer tamanho; o que passa da borda de baixo é cortado. */
 .app__painel {
   position: relative;
-  min-height: 560px;
+  aspect-ratio: 16 / 11;
+  max-height: 520px;
+  width: 100%;
   overflow: hidden;
-  border-radius: var(--radius-lg);
   background:
     radial-gradient(ellipse 70% 60% at 30% 20%, rgba(255, 179, 71, 0.30), transparent 70%),
     radial-gradient(ellipse 60% 70% at 85% 90%, rgba(255, 69, 0, 0.22), transparent 70%),
     linear-gradient(160deg, #2a1a0a 0%, #120c08 100%);
-  box-shadow: inset 0 0 0 1px var(--fio), inset 0 1px 0 rgb(255 255 255 / 0.06);
+  box-shadow: inset 0 1px 0 var(--fio);
 }
-/* Larguras em % da coluna e presos ao fundo: em qualquer tela os dois cabem lado a lado
-   e a borda de baixo do painel sempre corta as telas (40px e 110px) */
 .celular {
   position: absolute;
-  width: 44%;
+  width: 42%;
   margin: 0;
   border: 7px solid #15151b;
   border-bottom: 0;
@@ -177,21 +201,17 @@ const telas: Record<string, { src: string; altPt: string; altEn: string }[]> = {
   box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.06);
 }
 .celular img { display: block; width: 100%; height: auto; border-radius: 27px 27px 0 0; }
-.celular--1 { left: 4%; bottom: -40px; }
-.celular--2 { right: 4%; bottom: -110px; }
+.celular--1 { left: 5%; top: 9%; }
+.celular--2 { right: 5%; top: 21%; }
 
-@media (max-width: 1023px) {
-  .app__painel { min-height: 520px; }
-  .celular { width: 36%; }
-  .celular--1 { left: 12%; }
-  .celular--2 { right: 12%; }
-}
 /* Celular: uma tela só, no centro, grande o bastante para ler */
 @media (max-width: 639px) {
-  .app__painel { min-height: 440px; }
-  .celular { width: 64%; border-width: 5px; border-radius: 26px 26px 0 0; }
+  /* a altura acompanha a largura (20:23): a tela sempre passa da borda de baixo, até em 320px */
+  .app__painel { aspect-ratio: 20 / 23; }
+  .app__links .btn { padding-inline: 1.1em; letter-spacing: 0.1em; }
+  .celular { width: 62%; border-width: 5px; border-radius: 26px 26px 0 0; }
   .celular img { border-radius: 21px 21px 0 0; }
-  .celular--1 { left: 18%; bottom: -60px; }
+  .celular--1 { left: 19%; top: 8%; }
   .celular--2 { display: none; }
 }
 </style>

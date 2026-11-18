@@ -29,6 +29,27 @@ export const campier = {
 
 export const apps: App[] = [
   {
+    slug: 'financeiro',
+    nome: 'Controle Financeiro',
+    icone: '/apps/financeiro.webp',
+    descPt: 'Controle de gastos e receitas do mês: você escreve ou fala “gastei 50 no mercado ontem” e o app preenche valor, categoria e data.',
+    descEn: 'Tracks monthly spending and income: you type or say “spent 50 at the grocery store yesterday” and the app fills in the amount, category and date.',
+    destaquesPt: [
+      'Leitor de frases em Dart puro, com mais de 800 testes',
+      'Offline: SQLite com Drift e dinheiro em centavos inteiros',
+      'Backup em arquivo ou no Drive da própria pessoa, com login opcional',
+      'Cartões, limites por categoria com avisos e bloqueio por biometria',
+    ],
+    destaquesEn: [
+      'Sentence reader in pure Dart, with over 800 tests',
+      'Offline: SQLite with Drift and money kept as whole cents',
+      'Backup to a file or to the user’s own Drive, with optional sign-in',
+      'Credit cards, per-category limits with alerts and biometric lock',
+    ],
+    tags: ['Flutter', 'Dart', 'SQLite', 'Drift', 'Riverpod'],
+    status: 'teste-fechado',
+  },
+  {
     slug: 'parcelas',
     nome: 'Parcelas',
     icone: '/apps/parcelas.svg',
